@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 export const runtime = 'edge'
+export const preferredRegion = ['sin1','hkg1']
 
 // 简易内存缓存（同进程）
 type CryptoPayload = { data: Array<{ symbol: string; price: number; percent: number }>; ts: number }
