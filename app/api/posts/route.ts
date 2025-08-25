@@ -1,0 +1,98 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { supabase } from '@/lib/supabase'
+
+// CORS headers for Chrome extension
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+}
+
+// 临时内存存储（开发测试用）
+let memoryPosts: any[] = []
+
+export async function OPTIONS(request: NextRequest) {
+  return new Response(null, { status: 200, headers: corsHeaders })
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const { content, images, tweet_created_at, tweet_url } = body
+
+    // 如果有Supabase配置，使用数据库
+    if (supabase) {
+      const { data, error } = await supabase
+        .from('twitter_posts')
+        .insert([
+          {
+            content,
+            images,
+            tweet_created_at,
+            tweet_url,
+            created_at: new Date().toISOString()
+          }
+        ])
+        .select()
+
+      if (error) {
+        return NextResponse.json({ error: error.message }, { status: 400, headers: corsHeaders })
+      }
+
+      return NextResponse.json(data[0], { headers: corsHeaders })
+    } 
+    // 否则使用内存存储（临时方案）
+    else {
+      const newPost = {
+        id: `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        content,
+        images: images || [],
+        tweet_created_at,
+        tweet_url,
+        created_at: new Date().toISOString()
+      }
+
+      memoryPosts.unshift(newPost) // 添加到开头
+      
+      // 限制内存中最多保存50条记录
+      if (memoryPosts.length > 50) {
+        memoryPosts = memoryPosts.slice(0, 50)
+      }
+
+      console.log('保存到内存存储:', {
+        id: newPost.id,
+        content: content.substring(0, 50) + '...',
+        images: images?.length || 0
+      })
+
+      return NextResponse.json(newPost, { headers: corsHeaders })
+    }
+  } catch (error) {
+    console.error('API错误:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500, headers: corsHeaders })
+  }
+}
+
+export async function GET() {
+  try {
+    // 如果有Supabase配置，使用数据库
+    if (supabase) {
+      const { data, error } = await supabase
+        .from('twitter_posts')
+        .select('*')
+        .order('tweet_created_at', { ascending: false })
+
+      if (error) {
+        return NextResponse.json({ error: error.message }, { status: 400, headers: corsHeaders })
+      }
+
+      return NextResponse.json(data, { headers: corsHeaders })
+    } 
+    // 否则返回内存存储的数据
+    else {
+      return NextResponse.json(memoryPosts, { headers: corsHeaders })
+    }
+  } catch (error) {
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500, headers: corsHeaders })
+  }
+} 
