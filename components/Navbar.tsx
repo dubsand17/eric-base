@@ -35,7 +35,7 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
     let timer: number | undefined
     const load = async () => {
       try {
-        const res = await fetch('/api/crypto', { cache: 'no-store' })
+        const res = await fetch('/api/crypto?fresh=1', { cache: 'no-store' })
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
         const json = await res.json()
         const map: Record<string, { price: number; percent: number }> = {}
@@ -79,7 +79,7 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
       }
     }
     load()
-    timer = window.setInterval(load, 10000)
+    timer = window.setInterval(load, 5000)
     return () => { if (timer) window.clearInterval(timer) }
   }, [])
 

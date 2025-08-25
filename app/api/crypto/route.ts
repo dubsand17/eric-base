@@ -5,17 +5,19 @@ export const preferredRegion = ['sin1','hkg1']
 // 简易内存缓存（同进程）
 type CryptoPayload = { data: Array<{ symbol: string; price: number; percent: number }>; ts: number }
 let CACHE: { ts: number; payload: CryptoPayload } | null = null
-const TTL_MS = 60_000 // 60s 新鲜
+const TTL_MS = 10_000 // 10s 新鲜，便于前端轮询展示波动
 const STALE_MAX_MS = 10 * 60_000 // 10 分钟内可作为过期兜底
 
 // GET /api/crypto -> { data: Array<{ symbol: string; price: number; percent: number }>, ts: number }
-export async function GET() {
+export async function GET(req: Request) {
+  let lastStatus: number | undefined
   try {
-    // 命中缓存直接返回
+    // 命中缓存直接返回（支持 ?fresh=1 绕过缓存）
     const now = Date.now()
-    if (CACHE && now - CACHE.ts < TTL_MS) {
+    const bypass = (() => { try { const u = new URL(req.url); return u.searchParams.get('fresh') === '1' } catch { return false } })()
+    if (!bypass && CACHE && now - CACHE.ts < TTL_MS) {
       const res = NextResponse.json(CACHE.payload)
-      res.headers.set('Cache-Control', 'public, s-maxage=30, stale-while-revalidate=300')
+      res.headers.set('Cache-Control', 'public, s-maxage=5, stale-while-revalidate=120')
       res.headers.set('X-Cache', 'HIT')
       return res
     }
@@ -34,7 +36,6 @@ export async function GET() {
     ]
 
     let parsedArray: Array<any> | null = null
-    let lastStatus: number | undefined
 
     // 每个主机 5s 超时
     const fetchWithTimeout = async (url: string) => {
@@ -95,7 +96,7 @@ export async function GET() {
       // 无法回源时，如有可用过期缓存，返回 STALE 兜底
       if (CACHE && now - CACHE.ts < STALE_MAX_MS) {
         const stale = NextResponse.json(CACHE.payload)
-        stale.headers.set('Cache-Control', 'public, s-maxage=0, stale-while-revalidate=300')
+        stale.headers.set('Cache-Control', 'public, s-maxage=0, stale-while-revalidate=120')
         stale.headers.set('X-Cache', 'STALE')
         return stale
       }
@@ -116,7 +117,7 @@ export async function GET() {
             const payload: CryptoPayload = { data, ts: Date.now() }
             CACHE = { ts: now, payload }
             const ok = NextResponse.json(payload)
-            ok.headers.set('Cache-Control', 'public, s-maxage=30, stale-while-revalidate=300')
+            ok.headers.set('Cache-Control', 'public, s-maxage=5, stale-while-revalidate=120')
             ok.headers.set('X-Cache', 'FALLBACK-COINGECKO')
             return ok
           }
@@ -135,17 +136,17 @@ export async function GET() {
     const payload: CryptoPayload = { data, ts: Date.now() }
     CACHE = { ts: now, payload }
     const ok = NextResponse.json(payload)
-    ok.headers.set('Cache-Control', 'public, s-maxage=30, stale-while-revalidate=300')
-    ok.headers.set('X-Cache', CACHE ? 'MISS->SET' : 'MISS')
+    ok.headers.set('Cache-Control', 'public, s-maxage=5, stale-while-revalidate=120')
+    ok.headers.set('X-Cache', (bypass ? 'BYPASS' : 'MISS->SET'))
     return ok
   } catch (e: any) {
     const now = Date.now()
     if (CACHE && now - CACHE.ts < STALE_MAX_MS) {
       const stale = NextResponse.json(CACHE.payload)
-      stale.headers.set('Cache-Control', 'public, s-maxage=0, stale-while-revalidate=300')
+      stale.headers.set('Cache-Control', 'public, s-maxage=0, stale-while-revalidate=120')
       stale.headers.set('X-Cache', 'STALE')
       return stale
     }
-    return NextResponse.json({ error: e?.message || 'Unknown error' }, { status: 500 })
+    return NextResponse.json({ error: 'Upstream error', status: lastStatus ?? 500 }, { status: 502 })
   }
 }
