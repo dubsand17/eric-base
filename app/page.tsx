@@ -51,7 +51,7 @@ export default async function Home() {
 
   if (posts === null) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="min-h-screen bg-[#fafbfc] dark:bg-[#0d1117]">
         <ThemeToggle />
         <ErrorState error="获取数据失败，请检查服务器连接" />
       </div>
@@ -60,17 +60,22 @@ export default async function Home() {
 
   if (posts.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        <ThemeToggle />
-        <EmptyState />
+      <div className="min-h-screen bg-[#fafbfc] dark:bg-[#0d1117]">
+        <div className="container mx-auto py-6">
+          <h1 className="text-2xl font-semibold text-center mb-6 text-gray-900 dark:text-white">
+            Twitter Content Showcase
+          </h1>
+          <ThemeToggle />
+          <EmptyState />
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-[#fafbfc] dark:bg-[#0d1117]">
       <ThemeToggle />
       <MasonryGrid posts={posts} />
     </div>
   )
-} 
+}

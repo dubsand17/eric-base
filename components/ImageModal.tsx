@@ -28,6 +28,17 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
   const currentImage = imageList[currentImageIndex] || imageUrl
 
   useEffect(() => {
+    if (isOpen) {
+      // 重置状态
+      setScale(1)
+      setRotation(0)
+      setPosition({ x: 0, y: 0 })
+      setIsLoading(true)
+      // 找到当前图片在列表中的索引
+      const index = imageList.findIndex(img => img === imageUrl)
+      setCurrentImageIndex(index >= 0 ? index : 0)
+    }
+
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         onClose()
@@ -50,21 +61,11 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
     if (isOpen) {
       document.addEventListener('keydown', handleEscape)
       document.addEventListener('wheel', handleWheel, { passive: false })
-      document.body.style.overflow = 'hidden'
-      // 重置状态
-      setScale(1)
-      setRotation(0)
-      setPosition({ x: 0, y: 0 })
-      setIsLoading(true)
-      // 找到当前图片在列表中的索引
-      const index = imageList.findIndex(img => img === imageUrl)
-      setCurrentImageIndex(index >= 0 ? index : 0)
     }
 
     return () => {
       document.removeEventListener('keydown', handleEscape)
       document.removeEventListener('wheel', handleWheel)
-      document.body.style.overflow = 'unset'
     }
   }, [isOpen, onClose, imageUrl, imageList, currentImageIndex])
 
@@ -150,28 +151,28 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
 
   return (
     <div 
-      className="fixed inset-0 z-50 bg-black bg-opacity-95 backdrop-blur-sm"
+      className="fixed inset-0 z-50 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center p-6"
       onClick={handleBackdropClick}
     >
-      {/* 左右布局容器 */}
-      <div className="flex h-full">
+      {/* 中心容器 - Linear风格 */}
+      <div className="w-[90%] h-[90%] bg-white dark:bg-[#0d1117] rounded-lg overflow-hidden shadow-xl border border-gray-200/60 dark:border-gray-800/60 flex">
         {/* 左侧内容区域 */}
-        <div className="w-1/3 bg-gray-900 bg-opacity-90 p-6 overflow-y-auto">
+        <div className="w-1/3 bg-gray-50 dark:bg-[#161b22] p-5 overflow-y-auto border-r border-gray-200/60 dark:border-gray-800/60">
           <div className="max-w-md mx-auto">
             {/* 关闭按钮 */}
             <button
               onClick={onClose}
-              className="mb-4 p-2 text-white hover:text-gray-300 transition-colors rounded-full bg-black bg-opacity-30"
+              className="mb-5 p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors rounded-md bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
               title="关闭"
             >
-              <X className="w-6 h-6" />
+              <X className="w-5 h-5" />
             </button>
 
             {/* 推文内容 */}
             {content && (
-              <div className="mb-6">
-                <h3 className="text-white text-xl font-medium mb-3">百万Eric</h3>
-                <p className="text-gray-200 text-lg leading-relaxed whitespace-pre-wrap">
+              <div className="mb-5">
+                <h3 className="text-gray-900 dark:text-white text-base font-semibold mb-3">百万Eric</h3>
+                <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">
                   {content}
                 </p>
               </div>
@@ -180,7 +181,7 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
             {/* 时间信息 */}
             {tweetCreatedAt && (
               <div className="mb-4">
-                <p className="text-gray-400 text-base">
+                <p className="text-gray-500 dark:text-gray-400 text-xs">
                   发布时间: {new Date(tweetCreatedAt).toLocaleString('zh-CN')}
                 </p>
               </div>
@@ -188,15 +189,15 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
 
             {/* 原文链接 */}
             {tweetUrl && (
-              <div className="mb-6">
+              <div className="mb-5">
                 <a
                   href={tweetUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center space-x-2 text-blue-400 hover:text-blue-300 transition-colors"
+                  className="inline-flex items-center space-x-1.5 text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 transition-colors text-xs font-medium"
                 >
-                  <span className="text-base">查看原文</span>
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <span>查看原文</span>
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                   </svg>
                 </a>
@@ -206,21 +207,21 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
             {/* 图片信息 */}
             {imageList.length > 1 && (
               <div className="mb-4">
-                <p className="text-gray-400 text-sm mb-2">
+                <p className="text-gray-500 dark:text-gray-400 text-xs mb-3 font-medium">
                   图片 {currentImageIndex + 1} / {imageList.length}
                 </p>
                 <div className="flex space-x-2">
                   <button
                     onClick={handlePrevImage}
                     disabled={currentImageIndex === 0}
-                    className="px-3 py-1 bg-gray-700 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-600 transition-colors"
+                    className="px-3 py-1.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-xs font-medium"
                   >
                     上一张
                   </button>
                   <button
                     onClick={handleNextImage}
                     disabled={currentImageIndex === imageList.length - 1}
-                    className="px-3 py-1 bg-gray-700 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-600 transition-colors"
+                    className="px-3 py-1.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-xs font-medium"
                   >
                     下一张
                   </button>
@@ -234,7 +235,7 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
 
         {/* 右侧图片区域 */}
         <div 
-          className="flex-1 flex flex-col"
+          className="flex-1 flex flex-col bg-black"
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
@@ -300,41 +301,40 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
           </div>
 
           {/* 图片下方操作按钮 */}
-          <div className="p-6 bg-gray-900 bg-opacity-90 relative">
-            <div className="flex items-center justify-center space-x-4">
+          <div className="h-20 bg-black border-t border-gray-800 flex items-center justify-center pb-2">
+            <div className="flex items-center justify-center space-x-3">
               <button
                 onClick={handleZoomOut}
-                className="p-3 bg-gray-700 text-white rounded-full hover:bg-gray-600 transition-colors"
+                className="p-2 bg-gray-800 text-gray-400 rounded-md hover:bg-gray-700 transition-colors"
                 title="缩小"
               >
-                <ZoomOut className="w-5 h-5" />
+                <ZoomOut className="w-4 h-4" />
               </button>
-              <span className="text-white text-sm px-4 min-w-[60px] text-center bg-gray-700 rounded-full py-2">
+              <span className="text-gray-400 text-xs px-3 min-w-[50px] text-center bg-gray-800 rounded-md py-1.5 font-medium">
                 {Math.round(scale * 100)}%
               </span>
               <button
                 onClick={handleZoomIn}
-                className="p-3 bg-gray-700 text-white rounded-full hover:bg-gray-600 transition-colors"
+                className="p-2 bg-gray-800 text-gray-400 rounded-md hover:bg-gray-700 transition-colors"
                 title="放大"
               >
-                <ZoomIn className="w-5 h-5" />
+                <ZoomIn className="w-4 h-4" />
               </button>
               <button
                 onClick={handleRotate}
-                className="p-3 bg-gray-700 text-white rounded-full hover:bg-gray-600 transition-colors"
+                className="p-2 bg-gray-800 text-gray-400 rounded-md hover:bg-gray-700 transition-colors"
                 title="旋转"
               >
-                <RotateCw className="w-5 h-5" />
+                <RotateCw className="w-4 h-4" />
               </button>
               <button
                 onClick={handleDownload}
-                className="p-3 bg-gray-700 text-white rounded-full hover:bg-gray-600 transition-colors"
+                className="p-2 bg-violet-600 hover:bg-violet-700 text-white rounded-md transition-colors"
                 title="下载"
               >
-                <Download className="w-5 h-5" />
+                <Download className="w-4 h-4" />
               </button>
             </div>
-            
           </div>
         </div>
       </div>
