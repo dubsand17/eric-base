@@ -73,26 +73,64 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    // 获取分页参数
+    const { searchParams } = new URL(request.url)
+    const page = parseInt(searchParams.get('page') || '1')
+    const pageSize = parseInt(searchParams.get('pageSize') || '30')
+    
+    // 计算偏移量
+    const offset = (page - 1) * pageSize
+    
     // 如果有Supabase配置，使用数据库
     if (supabase) {
+      // 获取总数
+      const { count, error: countError } = await supabase
+        .from('twitter_posts')
+        .select('*', { count: 'exact', head: true })
+      
+      if (countError) {
+        return NextResponse.json({ error: countError.message }, { status: 400, headers: corsHeaders })
+      }
+      
+      // 获取分页数据
       const { data, error } = await supabase
         .from('twitter_posts')
         .select('*')
-        .order('tweet_created_at', { ascending: false })
+        .order('tweet_created_at', { ascending: false }) // 确保按 tweet_created_at 倒序排序
+        .range(offset, offset + pageSize - 1)
 
       if (error) {
         return NextResponse.json({ error: error.message }, { status: 400, headers: corsHeaders })
       }
 
-      return NextResponse.json(data, { headers: corsHeaders })
+      return NextResponse.json({
+        data,
+        pagination: {
+          total: count || 0,
+          page,
+          pageSize,
+          totalPages: Math.ceil((count || 0) / pageSize)
+        }
+      }, { headers: corsHeaders })
     } 
     // 否则返回内存存储的数据
     else {
-      return NextResponse.json(memoryPosts, { headers: corsHeaders })
+      const total = memoryPosts.length
+      const paginatedPosts = memoryPosts.slice(offset, offset + pageSize)
+      
+      return NextResponse.json({
+        data: paginatedPosts,
+        pagination: {
+          total,
+          page,
+          pageSize,
+          totalPages: Math.ceil(total / pageSize)
+        }
+      }, { headers: corsHeaders })
     }
   } catch (error) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500, headers: corsHeaders })
   }
-} 
+}

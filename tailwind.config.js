@@ -17,4 +17,9 @@ module.exports = {
     },
   },
   plugins: [],
-} 
+  variants: {
+    extend: {
+      display: ['image-only-mode']
+    },
+  },
+}

@@ -62,7 +62,7 @@ export default function TwitterCard({ post }: TwitterCardProps) {
         {/* 内容 */}
         <div className="p-4">
           <p 
-            className={`text-gray-900 dark:text-gray-100 text-sm leading-relaxed whitespace-pre-wrap mb-3 font-normal ${
+            className={`text-gray-900 dark:text-gray-100 text-sm leading-relaxed whitespace-pre-wrap mb-3 font-normal image-only-mode:hidden ${
               post.images && post.images.length > 0 ? 'cursor-pointer hover:text-violet-600 dark:hover:text-violet-400 transition-colors' : ''
             }`}
             onClick={handleContentClick}
@@ -163,4 +163,4 @@ export default function TwitterCard({ post }: TwitterCardProps) {
       />
     </>
   )
-} 
+}

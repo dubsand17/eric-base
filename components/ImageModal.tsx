@@ -27,18 +27,24 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
   const imageList = images.length > 0 ? images : [imageUrl]
   const currentImage = imageList[currentImageIndex] || imageUrl
 
-  useEffect(() => {
-    if (isOpen) {
-      // 重置状态
-      setScale(1)
-      setRotation(0)
-      setPosition({ x: 0, y: 0 })
-      setIsLoading(true)
-      // 找到当前图片在列表中的索引
-      const index = imageList.findIndex(img => img === imageUrl)
-      setCurrentImageIndex(index >= 0 ? index : 0)
-    }
+  // 用于处理触摸手势的状态
+  const [touchStartDistance, setTouchStartDistance] = useState<number | null>(null)
+  const [touchStartPosition, setTouchStartPosition] = useState<{x: number, y: number} | null>(null)
+  const [lastTapTime, setLastTapTime] = useState(0)
 
+  // 打开时仅重置一次并对齐起始索引，避免翻页时被重置回第一张
+  useEffect(() => {
+    if (!isOpen) return
+    setScale(1)
+    setRotation(0)
+    setPosition({ x: 0, y: 0 })
+    setIsLoading(true)
+    const index = imageList.findIndex(img => img === imageUrl)
+    setCurrentImageIndex(index >= 0 ? index : 0)
+  }, [isOpen, imageUrl])
+
+  // 事件监听：键盘与滚轮
+  useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         onClose()
@@ -67,8 +73,9 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
       document.removeEventListener('keydown', handleEscape)
       document.removeEventListener('wheel', handleWheel)
     }
-  }, [isOpen, onClose, imageUrl, imageList, currentImageIndex])
+  }, [isOpen, onClose, currentImageIndex, imageList.length])
 
+  // 鼠标事件处理
   const handleMouseDown = (e: React.MouseEvent) => {
     if (scale > 1) {
       setIsDragging(true)
@@ -90,6 +97,75 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
 
   const handleMouseUp = () => {
     setIsDragging(false)
+  }
+  
+  // 触摸事件处理
+  const handleTouchStart = (e: React.TouchEvent) => {
+    e.preventDefault() // 防止页面滚动
+    
+    // 检测双击
+    const now = Date.now()
+    if (now - lastTapTime < 300) { // 300ms内的两次点击视为双击
+      // 双击时切换缩放
+      if (scale > 1) {
+        setScale(1)
+        setPosition({ x: 0, y: 0 })
+      } else {
+        setScale(2)
+      }
+      setLastTapTime(0) // 重置，避免连续触发
+      return
+    }
+    setLastTapTime(now)
+    
+    // 单指触摸 - 拖动
+    if (e.touches.length === 1 && scale > 1) {
+      setIsDragging(true)
+      setTouchStartPosition({
+        x: e.touches[0].clientX - position.x,
+        y: e.touches[0].clientY - position.y
+      })
+    }
+    
+    // 双指触摸 - 缩放
+    if (e.touches.length === 2) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX
+      const dy = e.touches[0].clientY - e.touches[1].clientY
+      const distance = Math.sqrt(dx * dx + dy * dy)
+      setTouchStartDistance(distance)
+    }
+  }
+  
+  const handleTouchMove = (e: React.TouchEvent) => {
+    e.preventDefault() // 防止页面滚动
+    
+    // 单指拖动
+    if (e.touches.length === 1 && touchStartPosition && scale > 1) {
+      setPosition({
+        x: e.touches[0].clientX - touchStartPosition.x,
+        y: e.touches[0].clientY - touchStartPosition.y
+      })
+    }
+    
+    // 双指缩放
+    if (e.touches.length === 2 && touchStartDistance !== null) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX
+      const dy = e.touches[0].clientY - e.touches[1].clientY
+      const distance = Math.sqrt(dx * dx + dy * dy)
+      
+      // 计算缩放比例变化
+      const delta = distance / touchStartDistance
+      const newScale = Math.max(0.5, Math.min(3, scale * delta))
+      
+      setScale(newScale)
+      setTouchStartDistance(distance) // 更新起始距离，使缩放更平滑
+    }
+  }
+  
+  const handleTouchEnd = () => {
+    setIsDragging(false)
+    setTouchStartDistance(null)
+    setTouchStartPosition(null)
   }
 
   const handleZoomIn = () => {
@@ -151,13 +227,13 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
 
   return (
     <div 
-      className="fixed inset-0 z-50 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center p-6"
+      className="fixed inset-0 z-50 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center p-2 md:p-6"
       onClick={handleBackdropClick}
     >
       {/* 中心容器 - Linear风格 */}
-      <div className="w-[90%] h-[90%] bg-white dark:bg-[#0d1117] rounded-lg overflow-hidden shadow-xl border border-gray-200/60 dark:border-gray-800/60 flex">
-        {/* 左侧内容区域 */}
-        <div className="w-1/3 bg-gray-50 dark:bg-[#161b22] p-5 overflow-y-auto border-r border-gray-200/60 dark:border-gray-800/60">
+      <div className="w-[95%] md:w-[90%] h-[95%] md:h-[90%] bg-white dark:bg-[#0d1117] rounded-lg overflow-hidden shadow-xl border border-gray-200/60 dark:border-gray-800/60 flex flex-col md:flex-row">
+        {/* 左侧内容区域 - 在移动端变为顶部区域 */}
+        <div className="w-full md:w-1/3 h-auto md:h-full bg-gray-50 dark:bg-[#161b22] p-3 md:p-5 overflow-y-auto border-b md:border-b-0 md:border-r border-gray-200/60 dark:border-gray-800/60 max-h-[30vh] md:max-h-none">
           <div className="max-w-md mx-auto">
             {/* 关闭按钮 */}
             <button
@@ -171,8 +247,8 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
             {/* 推文内容 */}
             {content && (
               <div className="mb-5">
-                <h3 className="text-gray-900 dark:text-white text-base font-semibold mb-3">百万Eric</h3>
-                <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">
+                <h3 className="text-gray-900 dark:text-white text-lg font-semibold mb-3">百万Eric</h3>
+                <p className="text-gray-700 dark:text-gray-300 text-base leading-relaxed whitespace-pre-wrap">
                   {content}
                 </p>
               </div>
@@ -233,9 +309,9 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
           </div>
         </div>
 
-        {/* 右侧图片区域 */}
+        {/* 右侧图片区域 - 在移动端变为底部区域 */}
         <div 
-          className="flex-1 flex flex-col bg-black"
+          className="flex-1 flex flex-col bg-black min-h-0"
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
@@ -248,14 +324,14 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
                 <button
                   onClick={handlePrevImage}
                   disabled={currentImageIndex === 0}
-                  className="absolute left-4 z-10 p-3 bg-black bg-opacity-50 text-white rounded-full hover:bg-opacity-70 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="absolute left-4 z-20 p-3 bg-black bg-opacity-50 text-white rounded-full hover:bg-opacity-70 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   <ChevronLeft className="w-6 h-6" />
                 </button>
                 <button
                   onClick={handleNextImage}
                   disabled={currentImageIndex === imageList.length - 1}
-                  className="absolute right-4 z-10 p-3 bg-black bg-opacity-50 text-white rounded-full hover:bg-opacity-70 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="absolute right-4 z-20 p-3 bg-black bg-opacity-50 text-white rounded-full hover:bg-opacity-70 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   <ChevronRight className="w-6 h-6" />
                 </button>
@@ -264,12 +340,15 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
 
             {/* 图片容器 */}
             <div 
-              className="relative max-w-full max-h-full cursor-grab active:cursor-grabbing"
+              className="relative max-w-full max-h-full cursor-grab active:cursor-grabbing z-0"
               style={{
                 transform: `translate(${position.x}px, ${position.y}px)`,
                 cursor: scale > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default'
               }}
               onMouseDown={handleMouseDown}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
             >
               {/* 加载指示器 */}
               {isLoading && (
@@ -290,7 +369,7 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
                   alt={`图片 ${currentImageIndex + 1}`}
                   width={800}
                   height={600}
-                  className="object-contain max-w-[60vw] max-h-[80vh] w-auto h-auto"
+                  className="object-contain max-w-[90vw] md:max-w-[60vw] max-h-[70vh] md:max-h-[80vh] w-auto h-auto"
                   onLoad={() => setIsLoading(false)}
                   onError={() => setIsLoading(false)}
                   priority
@@ -301,7 +380,7 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
           </div>
 
           {/* 图片下方操作按钮 */}
-          <div className="h-20 bg-black border-t border-gray-800 flex items-center justify-center pb-2">
+          <div className="h-16 md:h-20 bg-black border-t border-gray-800 flex items-center justify-center pb-1 md:pb-2">
             <div className="flex items-center justify-center space-x-3">
               <button
                 onClick={handleZoomOut}
@@ -341,4 +420,4 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
 
     </div>
   )
-} 
+}

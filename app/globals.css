@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 自定义变体 */
+@layer utilities {
+  .image-only-mode\:hidden {
+    display: none;
+  }
+  html.image-only-mode .image-only-mode\:hidden {
+    display: none;
+  }
+}
+
 @layer base {
   body {
     @apply bg-[#fafbfc] dark:bg-[#0d1117] text-gray-900 dark:text-gray-100;
@@ -34,10 +44,7 @@
       column-gap: 0.75rem;
       padding: 0.75rem;
     }
-    
-    .masonry-item {
-      margin-bottom: 0.75rem;
-    }
+    .masonry-item { margin-bottom: 0.75rem; }
   }
 
   /* 平板端 - 2列 */
@@ -47,10 +54,7 @@
       column-gap: 1rem;
       padding: 1rem;
     }
-    
-    .masonry-item {
-      margin-bottom: 1rem;
-    }
+    .masonry-item { margin-bottom: 1rem; }
   }
 
   /* 桌面端 - 3列 */
@@ -60,10 +64,7 @@
       column-gap: 1rem;
       padding: 1rem;
     }
-    
-    .masonry-item {
-      margin-bottom: 1rem;
-    }
+    .masonry-item { margin-bottom: 1rem; }
   }
 
   /* 大屏端 - 4列 */
@@ -73,10 +74,7 @@
       column-gap: 1rem;
       padding: 1rem;
     }
-    
-    .masonry-item {
-      margin-bottom: 1rem;
-    }
+    .masonry-item { margin-bottom: 1rem; }
   }
 }
 
@@ -106,4 +104,4 @@
   ::-webkit-scrollbar-thumb:hover {
     background: #4b5563;
   }
-} 
+}
