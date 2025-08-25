@@ -79,6 +79,9 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const page = parseInt(searchParams.get('page') || '1')
     const pageSize = parseInt(searchParams.get('pageSize') || '30')
+    const q = searchParams.get('q')?.trim() || ''
+    const from = searchParams.get('from') || ''
+    const to = searchParams.get('to') || ''
     
     // 计算偏移量
     const offset = (page - 1) * pageSize
@@ -86,20 +89,25 @@ export async function GET(request: NextRequest) {
     // 如果有Supabase配置，使用数据库
     if (supabase) {
       // 获取总数
-      const { count, error: countError } = await supabase
-        .from('twitter_posts')
-        .select('*', { count: 'exact', head: true })
+      let baseCount = supabase.from('twitter_posts').select('*', { count: 'exact', head: true })
+      if (q) baseCount = baseCount.ilike('content', `%${q}%`)
+      if (from) baseCount = baseCount.gte('tweet_created_at', from)
+      if (to) baseCount = baseCount.lte('tweet_created_at', to)
+      const { count, error: countError } = await baseCount
       
       if (countError) {
         return NextResponse.json({ error: countError.message }, { status: 400, headers: corsHeaders })
       }
       
       // 获取分页数据
-      const { data, error } = await supabase
+      let baseQuery = supabase
         .from('twitter_posts')
         .select('*')
-        .order('tweet_created_at', { ascending: false }) // 确保按 tweet_created_at 倒序排序
-        .range(offset, offset + pageSize - 1)
+        .order('tweet_created_at', { ascending: false })
+      if (q) baseQuery = baseQuery.ilike('content', `%${q}%`)
+      if (from) baseQuery = baseQuery.gte('tweet_created_at', from)
+      if (to) baseQuery = baseQuery.lte('tweet_created_at', to)
+      const { data, error } = await baseQuery.range(offset, offset + pageSize - 1)
 
       if (error) {
         return NextResponse.json({ error: error.message }, { status: 400, headers: corsHeaders })
@@ -117,8 +125,18 @@ export async function GET(request: NextRequest) {
     } 
     // 否则返回内存存储的数据
     else {
-      const total = memoryPosts.length
-      const paginatedPosts = memoryPosts.slice(offset, offset + pageSize)
+      // 过滤内存数据
+      let filtered = memoryPosts as any[]
+      if (q) {
+        const lower = q.toLowerCase()
+        filtered = filtered.filter(p => (p.content || '').toLowerCase().includes(lower))
+      }
+      if (from) filtered = filtered.filter(p => p.tweet_created_at >= from)
+      if (to) filtered = filtered.filter(p => p.tweet_created_at <= to)
+      const total = filtered.length
+      const paginatedPosts = filtered
+        .sort((a, b) => (b.tweet_created_at || '').localeCompare(a.tweet_created_at || ''))
+        .slice(offset, offset + pageSize)
       
       return NextResponse.json({
         data: paginatedPosts,

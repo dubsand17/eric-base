@@ -35,7 +35,7 @@ export default function DisplayModeToggle({ className = '' }: DisplayModeToggleP
   return (
     <button
       onClick={toggleDisplayMode}
-      className={`fixed top-4 right-16 z-50 p-2 rounded-full bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-200 ${className}`}
+      className={`p-2 rounded-full bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-200 ${className}`}
       aria-label="切换显示模式"
       title={isTextHidden ? "显示文字内容" : "仅显示图片"}
     >

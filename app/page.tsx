@@ -5,8 +5,7 @@ import MasonryGrid from '@/components/MasonryGrid'
 import { supabase } from '@/lib/supabase'
 import { samplePosts } from '@/lib/sample-data'
 import EmptyState from '@/components/EmptyState'
-import ThemeToggle from '@/components/ThemeToggle'
-import DisplayModeToggle from '@/components/DisplayModeToggle'
+import Navbar from '@/components/Navbar'
 import LoadingGrid from '@/components/LoadingGrid'
 import ErrorState from '@/components/ErrorState'
 import SkeletonCard from '@/components/SkeletonCard'
@@ -36,6 +35,11 @@ export default function Home() {
   })
   const [loadingMore, setLoadingMore] = useState(false)
   const sentinelRef = useRef<HTMLDivElement | null>(null)
+  // 搜索与时间过滤
+  const [query, setQuery] = useState('')
+  const [from, setFrom] = useState<string | undefined>(undefined)
+  const [to, setTo] = useState<string | undefined>(undefined)
+  const [debouncedQuery, setDebouncedQuery] = useState('')
   
   // 获取帖子数据
   async function fetchPosts(page = 1) {
@@ -48,6 +52,9 @@ export default function Home() {
       const url = new URL('/api/posts', window.location.origin)
       url.searchParams.append('page', page.toString())
       url.searchParams.append('pageSize', pagination.pageSize.toString())
+      if (debouncedQuery) url.searchParams.append('q', debouncedQuery)
+      if (from) url.searchParams.append('from', from)
+      if (to) url.searchParams.append('to', to)
       
       const response = await fetch(url.toString())
       
@@ -84,6 +91,20 @@ export default function Home() {
     fetchPosts()
   }, [])
 
+  // 搜索关键词防抖
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedQuery(query.trim()), 300)
+    return () => clearTimeout(t)
+  }, [query])
+
+  // 过滤条件变化时重置列表并重新加载第一页
+  useEffect(() => {
+    setPosts([])
+    setPagination(prev => ({ ...prev, page: 1 }))
+    fetchPosts(1)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedQuery, from, to])
+
   // 底部哨兵自动加载更多（IntersectionObserver）
   useEffect(() => {
     if (!sentinelRef.current) return
@@ -108,8 +129,13 @@ export default function Home() {
   if (loading && posts.length === 0) {
     return (
       <div className="min-h-screen bg-[#fafbfc] dark:bg-[#0d1117]">
-        <ThemeToggle />
-        <DisplayModeToggle />
+        <Navbar
+          query={query}
+          onQueryChange={setQuery}
+          from={from}
+          to={to}
+          onDateChange={({ from: f, to: t }) => { setFrom(f); setTo(t) }}
+        />
         <LoadingGrid />
       </div>
     )
@@ -119,8 +145,13 @@ export default function Home() {
   if (error) {
     return (
       <div className="min-h-screen bg-[#fafbfc] dark:bg-[#0d1117]">
-        <ThemeToggle />
-        <DisplayModeToggle />
+        <Navbar
+          query={query}
+          onQueryChange={setQuery}
+          from={from}
+          to={to}
+          onDateChange={({ from: f, to: t }) => { setFrom(f); setTo(t) }}
+        />
         <ErrorState error={error} />
       </div>
     )
@@ -130,12 +161,15 @@ export default function Home() {
   if (posts.length === 0) {
     return (
       <div className="min-h-screen bg-[#fafbfc] dark:bg-[#0d1117]">
+        <Navbar
+          query={query}
+          onQueryChange={setQuery}
+          from={from}
+          to={to}
+          onDateChange={({ from: f, to: t }) => { setFrom(f); setTo(t) }}
+        />
         <div className="container mx-auto py-6">
-          <h1 className="text-2xl font-semibold text-center mb-6 text-gray-900 dark:text-white">
-            Twitter Content Showcase
-          </h1>
-          <ThemeToggle />
-          <DisplayModeToggle />
+          <h1 className="text-2xl font-semibold text-center mb-6 text-gray-900 dark:text-white">Twitter Content Showcase</h1>
           <EmptyState />
         </div>
       </div>
@@ -145,8 +179,13 @@ export default function Home() {
   // 渲染内容
   return (
     <div className="min-h-screen bg-[#fafbfc] dark:bg-[#0d1117]">
-      <ThemeToggle />
-      <DisplayModeToggle />
+      <Navbar
+        query={query}
+        onQueryChange={setQuery}
+        from={from}
+        to={to}
+        onDateChange={({ from: f, to: t }) => { setFrom(f); setTo(t) }}
+      />
       <MasonryGrid posts={posts} loadingMore={loadingMore} />
 
       {/* 底部哨兵（自动加载更多） */}

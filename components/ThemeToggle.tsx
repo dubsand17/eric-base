@@ -2,7 +2,11 @@
 
 import { useEffect, useState } from 'react'
 
-export default function ThemeToggle() {
+interface ThemeToggleProps {
+  className?: string
+}
+
+export default function ThemeToggle({ className = '' }: ThemeToggleProps) {
   const [isDark, setIsDark] = useState(false)
 
   useEffect(() => {
@@ -24,7 +28,7 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className="fixed top-4 right-4 z-50 p-2 rounded-full bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-200"
+      className={`p-2 rounded-full bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-200 ${className}`}
       aria-label="切换主题"
     >
       {isDark ? (
