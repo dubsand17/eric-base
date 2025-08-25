@@ -5,9 +5,10 @@ import ThemeToggle from '@/components/ThemeToggle'
 import DisplayModeToggle from '@/components/DisplayModeToggle'
 import * as Toolbar from '@radix-ui/react-toolbar'
 import * as Popover from '@radix-ui/react-popover'
+import * as Dialog from '@radix-ui/react-dialog'
 import * as Tooltip from '@radix-ui/react-tooltip'
 import * as Separator from '@radix-ui/react-separator'
-import { Calendar, Clock } from 'lucide-react'
+import { Calendar, Clock, Menu, X } from 'lucide-react'
 
 interface NavbarProps {
   query: string
@@ -103,25 +104,85 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
       <div className="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-gray-900/60 bg-white/80 dark:bg-gray-900/80 border-b border-gray-200/70 dark:border-gray-800/70">
         <div className="px-4 sm:px-6 lg:px-8">
           <Toolbar.Root className="h-12 flex items-center gap-3" aria-label="主工具栏">
-            {/* Brand */}
-            <div className="flex items-center gap-2 mr-2">
+            {/* Mobile menu button (only on small screens) -> opens side drawer */}
+            <Dialog.Root>
+              <Dialog.Trigger asChild>
+                <button
+                  className="sm:hidden -ml-2 h-9 w-9 rounded-full border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 text-gray-700 dark:text-gray-300 flex items-center justify-center"
+                  aria-label="打开菜单"
+                >
+                  <Menu className="w-5 h-5" />
+                </button>
+              </Dialog.Trigger>
+              <Dialog.Portal>
+                <Dialog.Overlay className="fixed inset-0 bg-black/30 data-[state=open]:animate-in data-[state=closed]:animate-out" />
+                <Dialog.Content className="fixed inset-x-0 bottom-0 max-h-[80vh] w-full bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 shadow-2xl rounded-t-2xl data-[state=open]:animate-in data-[state=closed]:animate-out flex flex-col overflow-hidden">
+                  <div className="flex items-center justify-between px-4 pt-3 pb-2">
+                    <div className="absolute left-1/2 -translate-x-1/2 top-1.5 h-1.5 w-10 rounded-full bg-gray-300/80 dark:bg-gray-700/80" />
+                    <div className="flex items-center gap-2">
+                      <img src="/icon.svg" alt="logo" className="h-5 w-5" />
+                      <span className="text-sm font-medium text-gray-800 dark:text-gray-100">快速设置</span>
+                    </div>
+                    <Dialog.Close asChild>
+                      <button aria-label="关闭" className="h-8 w-8 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center text-gray-500">
+                        <X className="w-4 h-4" />
+                      </button>
+                    </Dialog.Close>
+                  </div>
+                  <div className="h-full flex flex-col overflow-hidden px-4">
+                    <div className="flex-1 overflow-y-auto" />
+                    <div className="sticky bottom-0 space-y-3 pt-3 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-1 pb-4" style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 14px)' }}>
+                      {/* 时间格式 */}
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-700 dark:text-gray-300">时间格式</span>
+                        <div className="inline-flex rounded-md border border-gray-200 dark:border-gray-700 overflow-hidden">
+                          <button
+                            className={`px-3 h-8 text-xs ${!showAbsoluteTime ? 'bg-violet-600 text-white' : 'bg-transparent text-gray-700 dark:text-gray-300'}`}
+                            aria-pressed={!showAbsoluteTime}
+                            onClick={() => { if (showAbsoluteTime) onToggleTimeFormat?.() }}
+                          >相对时间</button>
+                          <button
+                            className={`px-3 h-8 text-xs ${showAbsoluteTime ? 'bg-violet-600 text-white' : 'bg-transparent text-gray-700 dark:text-gray-300'}`}
+                            aria-pressed={showAbsoluteTime}
+                            onClick={() => { if (!showAbsoluteTime) onToggleTimeFormat?.() }}
+                          >绝对时间</button>
+                        </div>
+                      </div>
+                      {/* 显示模式 */}
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-700 dark:text-gray-300">显示模式</span>
+                        <DisplayModeToggle />
+                      </div>
+                      {/* 主题 */}
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-700 dark:text-gray-300">主题</span>
+                        <ThemeToggle />
+                      </div>
+                    </div>
+                  </div>
+                </Dialog.Content>
+              </Dialog.Portal>
+            </Dialog.Root>
+
+            {/* Brand (only show from xl and up to save space) */}
+            <div className="hidden xl:flex items-center gap-2 mr-2">
               <img src="/icon.svg" alt="logo" className="h-6 w-6" />
               <span className="text-sm font-medium leading-none text-gray-800 dark:text-gray-100">百万Eric</span>
             </div>
 
             {/* Search */}
-            <div>
-              <div className="relative w-[260px] sm:w-[340px] md:w-[420px] lg:w-[480px]">
+            <div className="flex-1 min-w-0 sm:flex-none">
+              <div className="relative w-full sm:w-[260px] md:w-[420px] lg:w-[480px]">
                 <input
                   value={localQuery}
                   onChange={(e) => {
                     setLocalQuery(e.target.value)
-                    onQueryChange(e.target.value)
+                    onQueryChange?.(e.target.value)
                   }}
+                  className="h-9 w-full pl-10 pr-9 rounded-md border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 text-sm placeholder-gray-400 dark:placeholder-gray-500 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-500/50"
                   placeholder="搜索内容关键词..."
-                  className="w-full h-9 rounded-md border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 px-3 pr-10 text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500/50"
                 />
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400">
+                <div className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
                     <path fillRule="evenodd" d="M10.5 3.75a6.75 6.75 0 104.238 12.016l3.748 3.748a.75.75 0 101.06-1.06l-3.748-3.748A6.75 6.75 0 0010.5 3.75zm-5.25 6.75a5.25 5.25 0 1110.5 0 5.25 5.25 0 01-10.5 0z" clipRule="evenodd" />
                   </svg>
@@ -132,7 +193,10 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
             {/* Date range in Popover */}
             <Popover.Root>
               <Popover.Trigger asChild>
-                <button className="h-9 px-3 rounded-md border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 text-sm text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700">
+                <button
+                  className="h-9 w-auto whitespace-nowrap px-3 rounded-md border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2 -mr-2 sm:mr-0"
+                  aria-haspopup="dialog"
+                >
                   日期筛选
                 </button>
               </Popover.Trigger>
@@ -174,17 +238,17 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
               </Popover.Content>
             </Popover.Root>
 
-            {/* Crypto tickers (right side) */}
-            <div className="ml-auto hidden md:flex items-center gap-2">
+            {/* Crypto tickers (right side) - full list only on xl and up */}
+            <div className="ml-auto hidden xl:flex items-center gap-2">
               {['BTCUSDT','ETHUSDT','SOLUSDT'].map((s) => {
                 const alias = s.replace('USDT','')
                 const item = prices?.[s]
                 const d = dir[s] || 'none'
                 const color = d === 'up' ? 'text-emerald-600' : d === 'down' ? 'text-rose-600' : 'text-gray-500'
                 const p = item?.percent
-                const percentColor = d === 'up' ? 'text-emerald-600' : d === 'down' ? 'text-rose-600' : (typeof p === 'number' && p < 0 ? 'text-rose-600' : 'text-emerald-600')
+                const percentColor = (typeof p === 'number' && !isNaN(p)) ? (p > 0 ? 'text-emerald-600' : p < 0 ? 'text-rose-600' : 'text-gray-500') : 'text-gray-500'
                 return (
-                  <div key={s} className={`flex items-center gap-1 h-7 px-2 rounded border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/70 text-xs text-gray-800 dark:text-gray-100 ${pulse[s] === 'up' ? 'pulse-up' : pulse[s] === 'down' ? 'pulse-down' : ''}`}>
+                  <div key={s} className={`flex items-center gap-1 h-7 px-2 rounded border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/70 text-xs text-gray-800 dark:text-gray-100`}>
                     <span className="font-medium">{alias}</span>
                     <span className={`tabular-nums ${color}`}>{fmtPrice(item?.price)}</span>
                     <span className={`tabular-nums ${percentColor}`}>{fmtPct(item?.percent)}</span>
@@ -193,17 +257,36 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
               })}
             </div>
 
-            {/* Mobile compressed tickers */}
-            <div className="ml-auto flex md:hidden items-center gap-1">
+            {/* Single BTC ticker for md–lg only (price only, no percent) */}
+            <div className="ml-auto hidden md:flex xl:hidden items-center gap-2">
+              {(() => {
+                const s = 'BTCUSDT'
+                const alias = 'BTC'
+                const item = prices?.[s]
+                const d = dir[s] || 'none'
+                const color = d === 'up' ? 'text-emerald-600' : d === 'down' ? 'text-rose-600' : 'text-gray-500'
+                const p = item?.percent
+                const percentColor = (typeof p === 'number' && !isNaN(p)) ? (p > 0 ? 'text-emerald-600' : p < 0 ? 'text-rose-600' : 'text-gray-500') : 'text-gray-500'
+                return (
+                  <div className={`flex items-center gap-1 h-7 px-2 rounded border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/70 text-xs text-gray-800 dark:text-gray-100`}>
+                    <span className="font-medium">{alias}</span>
+                    <span className={`tabular-nums ${color}`}>{fmtPrice(item?.price)}</span>
+                  </div>
+                )
+              })()}
+            </div>
+
+            {/* Mobile compressed tickers - keep hidden on small screens */}
+            <div className="hidden sm:hidden">
               {['BTCUSDT','ETHUSDT','SOLUSDT'].map((s) => {
                 const alias = s.replace('USDT','')
                 const item = prices?.[s]
                 const d = dir[s] || 'none'
                 const color = d === 'up' ? 'text-emerald-600' : d === 'down' ? 'text-rose-600' : 'text-gray-500'
                 const p = item?.percent
-                const percentColor = d === 'up' ? 'text-emerald-600' : d === 'down' ? 'text-rose-600' : (typeof p === 'number' && p < 0 ? 'text-rose-600' : 'text-emerald-600')
+                const percentColor = (typeof p === 'number' && !isNaN(p)) ? (p > 0 ? 'text-emerald-600' : p < 0 ? 'text-rose-600' : 'text-gray-500') : 'text-gray-500'
                 return (
-                  <div key={s} className={`flex items-center gap-1 h-6 px-1.5 rounded border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/70 text-[10px] text-gray-800 dark:text-gray-100 ${pulse[s] === 'up' ? 'pulse-up' : pulse[s] === 'down' ? 'pulse-down' : ''}`}>
+                  <div key={s} className={`flex items-center gap-1 h-6 px-1.5 rounded border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/70 text-[10px] text-gray-800 dark:text-gray-100`}>
                     <span className="font-medium">{alias}</span>
                     <span className={`tabular-nums ${color}`}>{fmtCompact(item?.price)}</span>
                     <span className={`tabular-nums ${percentColor}`}>{(() => { const p = item?.percent; return (typeof p !== 'number' || isNaN(p)) ? '—' : (p > 0 ? '▲' : p < 0 ? '▼' : '·') })()}</span>
@@ -212,8 +295,8 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
               })}
             </div>
 
-            {/* Toggles */}
-            <div className="flex items-center gap-2 ml-2">
+            {/* Toggles - hidden on small screens */}
+            <div className="hidden sm:flex items-center gap-2 ml-2">
               {/* Time format toggle */}
               <Tooltip.Root>
                 <Tooltip.Trigger asChild>
