@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+export const runtime = 'edge'
 
 // 简易内存缓存（同进程）
 type CryptoPayload = { data: Array<{ symbol: string; price: number; percent: number }>; ts: number }
@@ -21,9 +22,14 @@ export async function GET() {
     const symbols = ["BTCUSDT", "ETHUSDT", "SOLUSDT"]
     const query = `symbols=${encodeURIComponent(JSON.stringify(symbols))}`
     const hosts = [
-      'https://data.binance.com',      // CDN 加速域，通常无地理限制
-      'https://api.binance.com',       // 主域，可能 451
-      'https://api.binance.me'         // 备用域
+      'https://data.binance.com',         // CDN 加速域
+      'https://data-api.binance.vision',  // 官方开源镜像
+      'https://api-gcp.binance.com',      // GCP 边缘
+      'https://api1.binance.com',         // 轮询域
+      'https://api2.binance.com',
+      'https://api3.binance.com',
+      'https://api.binance.com',          // 主域，可能 451
+      'https://api.binance.me'            // 备用域
     ]
 
     let parsedArray: Array<any> | null = null
@@ -92,6 +98,29 @@ export async function GET() {
         stale.headers.set('X-Cache', 'STALE')
         return stale
       }
+      // 二级兜底：CoinGecko（USD 视作 USDT 展示）
+      try {
+        const gecko = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd&include_24hr_change=true', {
+          headers: { 'Accept': 'application/json', 'User-Agent': 'eric-base/1.0' },
+          next: { revalidate: 30 }
+        })
+        if (gecko.ok) {
+          const j = await gecko.json() as any
+          const data = [
+            { symbol: 'BTCUSDT', price: Number(j?.bitcoin?.usd ?? NaN), percent: Number(j?.bitcoin?.usd_24h_change ?? NaN) },
+            { symbol: 'ETHUSDT', price: Number(j?.ethereum?.usd ?? NaN), percent: Number(j?.ethereum?.usd_24h_change ?? NaN) },
+            { symbol: 'SOLUSDT', price: Number(j?.solana?.usd ?? NaN), percent: Number(j?.solana?.usd_24h_change ?? NaN) },
+          ].filter(x => Number.isFinite(x.price) && Number.isFinite(x.percent))
+          if (data.length) {
+            const payload: CryptoPayload = { data, ts: Date.now() }
+            CACHE = { ts: now, payload }
+            const ok = NextResponse.json(payload)
+            ok.headers.set('Cache-Control', 'public, s-maxage=30, stale-while-revalidate=300')
+            ok.headers.set('X-Cache', 'FALLBACK-COINGECKO')
+            return ok
+          }
+        }
+      } catch {}
       return NextResponse.json({ error: 'Upstream error', status: lastStatus ?? 500 }, { status: 502 })
     }
 
