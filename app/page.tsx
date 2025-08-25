@@ -147,12 +147,7 @@ export default function Home() {
     <div className="min-h-screen bg-[#fafbfc] dark:bg-[#0d1117]">
       <ThemeToggle />
       <DisplayModeToggle />
-      <MasonryGrid posts={posts} />
-      
-      {/* 加载更多状态指示器 */}
-      {loadingMore && (
-        <LoadingGrid count={1} />
-      )}
+      <MasonryGrid posts={posts} loadingMore={loadingMore} />
 
       {/* 底部哨兵（自动加载更多） */}
       <div ref={sentinelRef} className="h-1" />

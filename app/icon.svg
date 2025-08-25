@@ -1,0 +1,46 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" fill="none">
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#6EE7B7"/>
+      <stop offset="100%" stop-color="#10B981"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#60A5FA"/>
+      <stop offset="100%" stop-color="#3B82F6"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect x="0" y="0" width="512" height="512" rx="96" fill="#0D1117"/>
+  <rect x="8" y="8" width="496" height="496" rx="88" fill="#111827"/>
+
+  <!-- Grid lines -->
+  <g opacity="0.2" stroke="#94A3B8" stroke-width="2">
+    <path d="M96 128 H416"/>
+    <path d="M96 192 H416"/>
+    <path d="M96 256 H416"/>
+    <path d="M96 320 H416"/>
+    <path d="M96 384 H416"/>
+  </g>
+
+  <!-- Candlesticks -->
+  <!-- Bullish -->
+  <g>
+    <line x1="160" x2="160" y1="170" y2="350" stroke="url(#g1)" stroke-width="12" stroke-linecap="round"/>
+    <rect x="140" y="210" width="40" height="90" rx="6" fill="url(#g1)"/>
+  </g>
+  <g>
+    <line x1="240" x2="240" y1="150" y2="340" stroke="url(#g1)" stroke-width="12" stroke-linecap="round"/>
+    <rect x="220" y="180" width="40" height="110" rx="6" fill="url(#g1)"/>
+  </g>
+
+  <!-- Bearish -->
+  <g>
+    <line x1="320" x2="320" y1="160" y2="360" stroke="url(#g2)" stroke-width="12" stroke-linecap="round"/>
+    <rect x="300" y="240" width="40" height="80" rx="6" fill="url(#g2)"/>
+  </g>
+
+  <!-- Trend line -->
+  <path d="M112 336 L192 256 L272 224 L352 160" stroke="#F59E0B" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="352" cy="160" r="10" fill="#F59E0B"/>
+</svg>

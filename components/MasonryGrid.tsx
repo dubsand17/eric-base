@@ -2,10 +2,12 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import TwitterCard from './TwitterCard'
+import SkeletonCard from './SkeletonCard'
 import { TwitterPost } from '@/lib/supabase'
 
 interface MasonryGridProps {
   posts: TwitterPost[]
+  loadingMore?: boolean
 }
 
 function getColumnCount(width: number): number {
@@ -15,7 +17,7 @@ function getColumnCount(width: number): number {
   return 4 // xl+
 }
 
-export default function MasonryGrid({ posts }: MasonryGridProps) {
+export default function MasonryGrid({ posts, loadingMore = false }: MasonryGridProps) {
   // 为了避免 SSR 不一致，同时在大屏首帧尽量占满，初始列数设为 4
   const [colCount, setColCount] = useState<number>(4)
 
@@ -44,13 +46,23 @@ export default function MasonryGrid({ posts }: MasonryGridProps) {
           'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4'
         }
       >
-        {columns.map((col, colIndex) => (
-          <div key={`col-${colIndex}`} className="flex flex-col gap-4">
-            {col.map((post) => (
-              <TwitterCard key={post.id} post={post} />
-            ))}
-          </div>
-        ))}
+        {(() => {
+          // 计算最短列索引（以条目数量近似列高度）
+          const minIndex = columns.reduce((min, col, idx, arr) => (
+            arr[idx].length < arr[min].length ? idx : min
+          ), 0)
+
+          return columns.map((col, colIndex) => (
+            <div key={`col-${colIndex}`} className="flex flex-col gap-4">
+              {col.map((post) => (
+                <TwitterCard key={post.id} post={post} />
+              ))}
+              {loadingMore && colIndex === minIndex && (
+                <SkeletonCard />
+              )}
+            </div>
+          ))
+        })()}
       </div>
     </div>
   )
