@@ -16,6 +16,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="zh" className="dark">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var d=document.documentElement;var t=localStorage.getItem('theme');if(t==='light'){d.classList.remove('dark');}else{d.classList.add('dark');}var dm=localStorage.getItem('display-mode');if(dm==='full-content'){d.classList.remove('image-only-mode');}else{d.classList.add('image-only-mode');}}catch(e){}`
+          }}
+        />
+      </head>
       <body className={`${inter.className} bg-gray-50 dark:bg-gray-900 transition-colors duration-200`}>
         <main className="min-h-screen">
           {children}

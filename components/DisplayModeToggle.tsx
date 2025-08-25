@@ -9,14 +9,23 @@ interface DisplayModeToggleProps {
 }
 
 export default function DisplayModeToggle({ className = '' }: DisplayModeToggleProps) {
-  const [isTextHidden, setIsTextHidden] = useState(false)
+  const [isTextHidden, setIsTextHidden] = useState(true)
 
   useEffect(() => {
-    // 从localStorage读取用户偏好设置
+    // 从localStorage读取用户偏好设置；无则采用默认：仅图片
     const savedPreference = localStorage.getItem('display-mode')
+    if (!savedPreference) {
+      document.documentElement.classList.add('image-only-mode')
+      localStorage.setItem('display-mode', 'image-only')
+      setIsTextHidden(true)
+      return
+    }
     if (savedPreference === 'image-only') {
       setIsTextHidden(true)
       document.documentElement.classList.add('image-only-mode')
+    } else {
+      setIsTextHidden(false)
+      document.documentElement.classList.remove('image-only-mode')
     }
   }, [])
 

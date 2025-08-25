@@ -44,7 +44,7 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
     setCurrentImageIndex(index >= 0 ? index : 0)
   }, [isOpen, imageUrl])
 
-  // 事件监听：键盘与滚轮
+  // 事件监听：键盘（移除滚轮缩放）
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -58,21 +58,12 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
       }
     }
 
-    const handleWheel = (e: WheelEvent) => {
-      if (!isOpen) return
-      e.preventDefault()
-      const delta = e.deltaY > 0 ? -0.1 : 0.1
-      setScale(prev => Math.max(0.5, Math.min(3, prev + delta)))
-    }
-
     if (isOpen) {
       document.addEventListener('keydown', handleEscape)
-      document.addEventListener('wheel', handleWheel, { passive: false })
     }
 
     return () => {
       document.removeEventListener('keydown', handleEscape)
-      document.removeEventListener('wheel', handleWheel)
     }
   }, [isOpen, onClose, currentImageIndex, imageList.length])
 
@@ -228,16 +219,19 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
         {/* 左侧内容区域 - 在移动端变为顶部区域 */}
         <div className="w-full md:w-1/3 h-auto md:h-full bg-gray-50 dark:bg-[#161b22] p-3 md:p-5 overflow-y-auto border-b md:border-b-0 md:border-r border-gray-200/60 dark:border-gray-800/60 max-h-[30vh] md:max-h-none">
           <div className="max-w-md mx-auto">
-            {/* 关闭按钮 */}
-            <Dialog.Close asChild>
-              <button
-                className="mb-5 p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors rounded-md bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
-                title="关闭"
-                aria-label="关闭"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </Dialog.Close>
+            {/* 关闭按钮 + ESC 提示 */}
+            <div className="mb-5 flex items-center gap-2">
+              <Dialog.Close asChild>
+                <button
+                  className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors rounded-md bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
+                  title="关闭"
+                  aria-label="关闭"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </Dialog.Close>
+              <span className="text-[11px] text-gray-400 dark:text-gray-500 select-none">ESC</span>
+            </div>
 
             {/* 推文内容 */}
             {content && (
@@ -306,7 +300,7 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
 
         {/* 右侧图片区域 - 在移动端变为底部区域 */}
         <div 
-          className="flex-1 flex flex-col bg-black min-h-0"
+          className="flex-1 flex flex-col bg-white dark:bg-black min-h-0"
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
@@ -375,28 +369,28 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
           </div>
 
           {/* 图片下方操作按钮 */}
-          <div className="h-16 md:h-20 bg-black border-t border-gray-800 flex items-center justify-center pb-1 md:pb-2">
+          <div className="h-16 md:h-20 bg-white dark:bg-black border-t border-gray-200 dark:border-gray-800 flex items-center justify-center pb-1 md:pb-2">
             <div className="flex items-center justify-center space-x-3">
               <button
                 onClick={handleZoomOut}
-                className="p-2 bg-gray-800 text-gray-400 rounded-md hover:bg-gray-700 transition-colors"
+                className="p-2 rounded-md transition-colors bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
                 title="缩小"
               >
                 <ZoomOut className="w-4 h-4" />
               </button>
-              <span className="text-gray-400 text-xs px-3 min-w-[50px] text-center bg-gray-800 rounded-md py-1.5 font-medium">
+              <span className="text-gray-700 dark:text-gray-400 text-xs px-3 min-w-[50px] text-center bg-gray-100 dark:bg-gray-800 rounded-md py-1.5 font-medium">
                 {Math.round(scale * 100)}%
               </span>
               <button
                 onClick={handleZoomIn}
-                className="p-2 bg-gray-800 text-gray-400 rounded-md hover:bg-gray-700 transition-colors"
+                className="p-2 rounded-md transition-colors bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
                 title="放大"
               >
                 <ZoomIn className="w-4 h-4" />
               </button>
               <button
                 onClick={handleRotate}
-                className="p-2 bg-gray-800 text-gray-400 rounded-md hover:bg-gray-700 transition-colors"
+                className="p-2 rounded-md transition-colors bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
                 title="旋转"
               >
                 <RotateCw className="w-4 h-4" />

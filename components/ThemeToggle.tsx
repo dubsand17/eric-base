@@ -19,8 +19,10 @@ export default function ThemeToggle({ className = '' }: ThemeToggleProps) {
     setIsDark(pressed)
     if (pressed) {
       document.documentElement.classList.add('dark')
+      try { localStorage.setItem('theme', 'dark') } catch {}
     } else {
       document.documentElement.classList.remove('dark')
+      try { localStorage.setItem('theme', 'light') } catch {}
     }
   }
 

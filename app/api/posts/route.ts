@@ -8,16 +8,24 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 }
 
+// CDN caching headers for Vercel/Edge
+const cacheHeaders = {
+  'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+  // Some CDNs respect these explicit headers too
+  'CDN-Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+  'Vercel-CDN-Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+}
+
 // 仅使用 Supabase，移除临时内存存储
 
 export async function OPTIONS(request: NextRequest) {
-  return new Response(null, { status: 200, headers: corsHeaders })
+  return new Response(null, { status: 200, headers: { ...corsHeaders } })
 }
 
 export async function POST(request: NextRequest) {
   try {
     if (!supabase) {
-      return NextResponse.json({ error: 'Supabase 未配置，请设置 NEXT_PUBLIC_SUPABASE_URL 与 NEXT_PUBLIC_SUPABASE_ANON_KEY' }, { status: 500, headers: corsHeaders })
+      return NextResponse.json({ error: 'Supabase 未配置，请设置 NEXT_PUBLIC_SUPABASE_URL 与 NEXT_PUBLIC_SUPABASE_ANON_KEY' }, { status: 500, headers: { ...corsHeaders } })
     }
     const body = await request.json()
     const { content, images, tweet_created_at, tweet_url } = body
@@ -36,13 +44,13 @@ export async function POST(request: NextRequest) {
       .select()
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400, headers: corsHeaders })
+      return NextResponse.json({ error: error.message }, { status: 400, headers: { ...corsHeaders } })
     }
 
-    return NextResponse.json(data[0], { headers: corsHeaders })
+    return NextResponse.json(data[0], { headers: { ...corsHeaders } })
   } catch (error) {
     console.error('API错误:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500, headers: corsHeaders })
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500, headers: { ...corsHeaders } })
   }
 }
 
@@ -71,7 +79,7 @@ export async function GET(request: NextRequest) {
     const { count, error: countError } = await baseCount
       
     if (countError) {
-      return NextResponse.json({ error: countError.message }, { status: 400, headers: corsHeaders })
+      return NextResponse.json({ error: countError.message }, { status: 400, headers: { ...corsHeaders, ...cacheHeaders } })
     }
       
       // 获取分页数据
@@ -96,8 +104,8 @@ export async function GET(request: NextRequest) {
         pageSize,
         totalPages: Math.ceil((count || 0) / pageSize)
       }
-    }, { headers: corsHeaders })
+    }, { headers: { ...corsHeaders, ...cacheHeaders } })
   } catch (error) {
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500, headers: corsHeaders })
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500, headers: { ...corsHeaders, ...cacheHeaders } })
   }
 }

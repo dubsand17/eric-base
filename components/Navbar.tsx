@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import ThemeToggle from '@/components/ThemeToggle'
 import DisplayModeToggle from '@/components/DisplayModeToggle'
 import * as Toolbar from '@radix-ui/react-toolbar'
@@ -21,10 +21,81 @@ interface NavbarProps {
 
 export default function Navbar({ query, onQueryChange, from, to, onDateChange, showAbsoluteTime = false, onToggleTimeFormat }: NavbarProps) {
   const [localQuery, setLocalQuery] = useState(query)
+  const [prices, setPrices] = useState<Record<string, { price: number; percent: number }> | null>(null)
+  const prevRef = useRef<Record<string, { price: number; percent: number }> | null>(null)
+  const [pulse, setPulse] = useState<Record<string, 'up' | 'down' | undefined>>({})
+  const [dir, setDir] = useState<Record<string, 'up' | 'down' | 'none'>>({})
 
   useEffect(() => {
     setLocalQuery(query)
   }, [query])
+
+  // Fetch crypto prices periodically from our API route
+  useEffect(() => {
+    let timer: number | undefined
+    const load = async () => {
+      try {
+        const res = await fetch('/api/crypto', { cache: 'no-store' })
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        const json = await res.json()
+        const map: Record<string, { price: number; percent: number }> = {}
+        for (const item of json.data as Array<{ symbol: string; price: number; percent: number }>) {
+          map[item.symbol] = { price: item.price, percent: item.percent }
+        }
+        // Determine delta vs previous poll for color and animation
+        const prev = prevRef.current
+        const toPulse: Record<string, 'up' | 'down'> = {}
+        const toDir: Record<string, 'up' | 'down' | 'none'> = {}
+        for (const s of Object.keys(map)) {
+          const oldP = prev?.[s]?.price
+          const newP = map[s]?.price
+          if (typeof oldP === 'number' && typeof newP === 'number') {
+            if (newP > oldP) { toPulse[s] = 'up'; toDir[s] = 'up' }
+            else if (newP < oldP) { toPulse[s] = 'down'; toDir[s] = 'down' }
+            else { toDir[s] = 'none' }
+          } else {
+            toDir[s] = 'none'
+          }
+        }
+
+        // trigger pulse only when changed
+        if (Object.keys(toPulse).length) {
+          setPulse((p) => ({ ...p, ...toPulse }))
+          window.setTimeout(() => {
+            setPulse((p) => {
+              const next = { ...p }
+              for (const s of Object.keys(toPulse)) next[s] = undefined
+              return next
+            })
+          }, 1200)
+        }
+
+        setDir(toDir)
+        setPrices(map)
+        prevRef.current = map
+      } catch (e) {
+        // keep last successful
+        console.warn('Fetch /api/crypto failed:', e)
+      }
+    }
+    load()
+    timer = window.setInterval(load, 10000)
+    return () => { if (timer) window.clearInterval(timer) }
+  }, [])
+
+  const fmtPrice = (n?: number) => {
+    if (typeof n !== 'number' || isNaN(n)) return '—'
+    return new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(n)
+  }
+  const fmtPct = (n?: number) => {
+    if (typeof n !== 'number' || isNaN(n)) return '—'
+    const sign = n > 0 ? '+' : ''
+    return `${sign}${n.toFixed(2)}%`
+  }
+  const fmtCompact = (n?: number) => {
+    if (typeof n !== 'number' || isNaN(n)) return '—'
+    return new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(n)
+  }
 
   // Basic Linear-like top bar with Radix Toolbar
   return (
@@ -102,6 +173,44 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
                 <Popover.Arrow className="fill-white dark:fill-gray-800" />
               </Popover.Content>
             </Popover.Root>
+
+            {/* Crypto tickers (right side) */}
+            <div className="ml-auto hidden md:flex items-center gap-2">
+              {['BTCUSDT','ETHUSDT','SOLUSDT'].map((s) => {
+                const alias = s.replace('USDT','')
+                const item = prices?.[s]
+                const d = dir[s] || 'none'
+                const color = d === 'up' ? 'text-emerald-600' : d === 'down' ? 'text-rose-600' : 'text-gray-500'
+                const p = item?.percent
+                const percentColor = d === 'up' ? 'text-emerald-600' : d === 'down' ? 'text-rose-600' : (typeof p === 'number' && p < 0 ? 'text-rose-600' : 'text-emerald-600')
+                return (
+                  <div key={s} className={`flex items-center gap-1 h-7 px-2 rounded border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/70 text-xs text-gray-800 dark:text-gray-100 ${pulse[s] === 'up' ? 'pulse-up' : pulse[s] === 'down' ? 'pulse-down' : ''}`}>
+                    <span className="font-medium">{alias}</span>
+                    <span className={`tabular-nums ${color}`}>{fmtPrice(item?.price)}</span>
+                    <span className={`tabular-nums ${percentColor}`}>{fmtPct(item?.percent)}</span>
+                  </div>
+                )
+              })}
+            </div>
+
+            {/* Mobile compressed tickers */}
+            <div className="ml-auto flex md:hidden items-center gap-1">
+              {['BTCUSDT','ETHUSDT','SOLUSDT'].map((s) => {
+                const alias = s.replace('USDT','')
+                const item = prices?.[s]
+                const d = dir[s] || 'none'
+                const color = d === 'up' ? 'text-emerald-600' : d === 'down' ? 'text-rose-600' : 'text-gray-500'
+                const p = item?.percent
+                const percentColor = d === 'up' ? 'text-emerald-600' : d === 'down' ? 'text-rose-600' : (typeof p === 'number' && p < 0 ? 'text-rose-600' : 'text-emerald-600')
+                return (
+                  <div key={s} className={`flex items-center gap-1 h-6 px-1.5 rounded border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/70 text-[10px] text-gray-800 dark:text-gray-100 ${pulse[s] === 'up' ? 'pulse-up' : pulse[s] === 'down' ? 'pulse-down' : ''}`}>
+                    <span className="font-medium">{alias}</span>
+                    <span className={`tabular-nums ${color}`}>{fmtCompact(item?.price)}</span>
+                    <span className={`tabular-nums ${percentColor}`}>{(() => { const p = item?.percent; return (typeof p !== 'number' || isNaN(p)) ? '—' : (p > 0 ? '▲' : p < 0 ? '▼' : '·') })()}</span>
+                  </div>
+                )
+              })}
+            </div>
 
             {/* Toggles */}
             <div className="flex items-center gap-2 ml-2">
