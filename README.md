@@ -1,6 +1,7 @@
-# Twitter Content Showcase
+# Twitter Content Showcase（私有仓库）
 
-一个清爽的Twitter内容展示网站，采用瀑布流布局，参考read.cv的设计风格。
+一个清爽的 Twitter 内容展示网站，采用瀑布流布局，参考 read.cv 的设计风格。
+本仓库为私有仓库，文档仅供团队内部使用。
 
 ## 功能特点
 
@@ -24,12 +25,12 @@
 ### 1. 环境设置
 
 ```bash
-# 克隆项目
-git clone <your-repo-url>
-cd twitter-content-showcase
+# 克隆项目（私有仓库）
+git clone <your-private-repo-url>
+cd eric-base
 
-# 安装依赖
-npm install
+# 安装依赖（使用 Yarn）
+yarn install
 ```
 
 ### 2. 数据库设置
@@ -54,8 +55,12 @@ CREATE INDEX idx_twitter_posts_created_at ON twitter_posts(created_at DESC);
 CREATE INDEX idx_twitter_posts_tweet_id ON twitter_posts(tweet_id);
 ```
 
-4. 获取项目URL和API密钥
-5. 创建 `.env.local` 文件：
+4. 获取项目 URL 和 API 密钥
+5. 复制环境变量并填写：
+
+```bash
+cp env.example .env.local
+```
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
@@ -65,7 +70,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 ### 3. 本地开发
 
 ```bash
-npm run dev
+yarn dev
 ```
 
 访问 http://localhost:3000
@@ -78,14 +83,16 @@ npm run dev
 4. 选择 `chrome-extension` 文件夹
 5. 在 `popup.js` 中更新 `YOUR_VERCEL_URL` 为你的实际部署URL
 
-### 5. 部署到Vercel
+### 5. 部署到 Vercel（可选）
 
-1. 将代码推送到GitHub
+1. 将代码推送到 GitHub 私有仓库
 2. 在 [Vercel](https://vercel.com) 中导入项目
 3. 添加环境变量：
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 4. 部署完成
+
+> 私有仓库部署到 Vercel 时，默认不会暴露源码；请确保仅为受信任团队成员配置访问权限。
 
 ## 使用方法
 
@@ -114,6 +121,31 @@ npm run dev
 │   └── content.js         # 内容脚本
 └── README.md              # 项目说明
 ```
+
+## 项目脚本（package.json）
+
+```bash
+yarn dev      # 启动本地开发（Next.js 14）
+yarn build    # 生产构建
+yarn start    # 生产运行（本地）
+yarn lint     # 代码检查
+```
+
+## 故障排查
+
+- 依赖安装失败：删除 node_modules 和 yarn.lock 后重装
+  ```bash
+  rm -rf node_modules yarn.lock && yarn install
+  ```
+- 环境变量无效：确认已创建 `.env.local` 且重启 dev 进程
+- 图片显示或放大问题：检查 `components/ImageModal.tsx` 与浏览器缓存，尝试硬刷新
+- Supabase 401/403：检查 `NEXT_PUBLIC_SUPABASE_*` 是否对应正确 Project 的 anon key
+
+## 隐私与安全
+
+- 本仓库为私有仓库，禁止公开分享源码或部署地址
+- 不要将任何私密 Token 直接写入代码，统一放入 `.env.local`
+- 如需分享演示，请在 Vercel 上配置受限访问或使用受控的预览链接
 
 ## 自定义
 
