@@ -170,8 +170,8 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
             {/* 推文内容 */}
             {content && (
               <div className="mb-6">
-                <h3 className="text-white text-lg font-medium mb-3">百万Eric</h3>
-                <p className="text-gray-200 leading-relaxed whitespace-pre-wrap">
+                <h3 className="text-white text-xl font-medium mb-3">百万Eric</h3>
+                <p className="text-gray-200 text-lg leading-relaxed whitespace-pre-wrap">
                   {content}
                 </p>
               </div>
@@ -180,7 +180,7 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
             {/* 时间信息 */}
             {tweetCreatedAt && (
               <div className="mb-4">
-                <p className="text-gray-400 text-sm">
+                <p className="text-gray-400 text-base">
                   发布时间: {new Date(tweetCreatedAt).toLocaleString('zh-CN')}
                 </p>
               </div>
@@ -195,8 +195,8 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
                   rel="noopener noreferrer"
                   className="inline-flex items-center space-x-2 text-blue-400 hover:text-blue-300 transition-colors"
                 >
-                  <span>查看原文</span>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <span className="text-base">查看原文</span>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                   </svg>
                 </a>
