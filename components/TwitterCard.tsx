@@ -10,11 +10,12 @@ import { Clock, Eye } from 'lucide-react'
 
 interface TwitterCardProps {
   post: TwitterPost
+  showAbsoluteTime?: boolean
+  onToggleTimeFormat?: () => void
 }
 
-export default function TwitterCard({ post }: TwitterCardProps) {
+export default function TwitterCard({ post, showAbsoluteTime = false, onToggleTimeFormat }: TwitterCardProps) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
-  const [showAbsoluteTime, setShowAbsoluteTime] = useState(false)
   const [viewCount, setViewCount] = useState<number>(0)
 
   // 初始化查看次数
@@ -53,7 +54,7 @@ export default function TwitterCard({ post }: TwitterCardProps) {
   }
 
   const toggleTimeFormat = () => {
-    setShowAbsoluteTime(!showAbsoluteTime)
+    onToggleTimeFormat?.()
   }
 
   return (

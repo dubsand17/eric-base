@@ -38,6 +38,8 @@ export default function Home() {
   const [from, setFrom] = useState<string | undefined>(undefined)
   const [to, setTo] = useState<string | undefined>(undefined)
   const [debouncedQuery, setDebouncedQuery] = useState('')
+  // 全局时间显示：相对/绝对
+  const [showAbsoluteTime, setShowAbsoluteTime] = useState(false)
   
   // 获取帖子数据
   async function fetchPosts(page = 1) {
@@ -133,6 +135,8 @@ export default function Home() {
           from={from}
           to={to}
           onDateChange={({ from: f, to: t }) => { setFrom(f); setTo(t) }}
+          showAbsoluteTime={showAbsoluteTime}
+          onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)}
         />
         <LoadingGrid />
       </div>
@@ -149,6 +153,8 @@ export default function Home() {
           from={from}
           to={to}
           onDateChange={({ from: f, to: t }) => { setFrom(f); setTo(t) }}
+          showAbsoluteTime={showAbsoluteTime}
+          onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)}
         />
         <ErrorState error={error} />
       </div>
@@ -165,9 +171,10 @@ export default function Home() {
           from={from}
           to={to}
           onDateChange={({ from: f, to: t }) => { setFrom(f); setTo(t) }}
+          showAbsoluteTime={showAbsoluteTime}
+          onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)}
         />
         <div className="container mx-auto py-6">
-          <h1 className="text-2xl font-semibold text-center mb-6 text-gray-900 dark:text-white">Twitter Content Showcase</h1>
           <EmptyState />
         </div>
       </div>
@@ -183,8 +190,10 @@ export default function Home() {
         from={from}
         to={to}
         onDateChange={({ from: f, to: t }) => { setFrom(f); setTo(t) }}
+        showAbsoluteTime={showAbsoluteTime}
+        onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)}
       />
-      <MasonryGrid posts={posts} loadingMore={loadingMore} />
+      <MasonryGrid posts={posts} loadingMore={loadingMore} showAbsoluteTime={showAbsoluteTime} onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)} />
 
       {/* 底部哨兵（自动加载更多） */}
       <div ref={sentinelRef} className="h-1" />

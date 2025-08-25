@@ -8,6 +8,8 @@ import { TwitterPost } from '@/lib/supabase'
 interface MasonryGridProps {
   posts: TwitterPost[]
   loadingMore?: boolean
+  showAbsoluteTime?: boolean
+  onToggleTimeFormat?: () => void
 }
 
 function getColumnCount(width: number): number {
@@ -17,7 +19,7 @@ function getColumnCount(width: number): number {
   return 4 // xl+
 }
 
-export default function MasonryGrid({ posts, loadingMore = false }: MasonryGridProps) {
+export default function MasonryGrid({ posts, loadingMore = false, showAbsoluteTime = false, onToggleTimeFormat }: MasonryGridProps) {
   // 为了避免 SSR 不一致，同时在大屏首帧尽量占满，初始列数设为 4
   const [colCount, setColCount] = useState<number>(4)
 
@@ -38,7 +40,7 @@ export default function MasonryGrid({ posts, loadingMore = false }: MasonryGridP
   }, [posts, colCount])
 
   return (
-    <div className="w-full px-4 py-8">
+    <div className="w-full px-4 py-4 md:py-6">
       <div
         className={
           // 仅用于列容器，不用网格行，避免强制对齐导致的空隙
@@ -55,7 +57,7 @@ export default function MasonryGrid({ posts, loadingMore = false }: MasonryGridP
           return columns.map((col, colIndex) => (
             <div key={`col-${colIndex}`} className="flex flex-col gap-4">
               {col.map((post) => (
-                <TwitterCard key={post.id} post={post} />
+                <TwitterCard key={post.id} post={post} showAbsoluteTime={showAbsoluteTime} onToggleTimeFormat={onToggleTimeFormat} />
               ))}
               {loadingMore && colIndex === minIndex && (
                 <SkeletonCard />

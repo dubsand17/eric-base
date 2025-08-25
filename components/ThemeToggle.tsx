@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import * as Toggle from '@radix-ui/react-toggle'
 
 interface ThemeToggleProps {
   className?: string
@@ -14,11 +15,9 @@ export default function ThemeToggle({ className = '' }: ThemeToggleProps) {
     setIsDark(isDarkMode)
   }, [])
 
-  const toggleTheme = () => {
-    const newTheme = !isDark
-    setIsDark(newTheme)
-    
-    if (newTheme) {
+  const handlePressedChange = (pressed: boolean) => {
+    setIsDark(pressed)
+    if (pressed) {
       document.documentElement.classList.add('dark')
     } else {
       document.documentElement.classList.remove('dark')
@@ -26,9 +25,10 @@ export default function ThemeToggle({ className = '' }: ThemeToggleProps) {
   }
 
   return (
-    <button
-      onClick={toggleTheme}
-      className={`p-2 rounded-full bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-200 ${className}`}
+    <Toggle.Root
+      pressed={isDark}
+      onPressedChange={handlePressedChange}
+      className={`p-2 rounded-full bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-200 data-[state=on]:ring-2 data-[state=on]:ring-violet-500/40 ${className}`}
       aria-label="切换主题"
     >
       {isDark ? (
@@ -40,6 +40,7 @@ export default function ThemeToggle({ className = '' }: ThemeToggleProps) {
           <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
         </svg>
       )}
-    </button>
+    </Toggle.Root>
   )
-} 
+}
+ 

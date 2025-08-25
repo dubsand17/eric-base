@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { X, ZoomIn, ZoomOut, RotateCw, Download, ChevronLeft, ChevronRight } from 'lucide-react'
+import * as Dialog from '@radix-ui/react-dialog'
 
 interface ImageModalProps {
   isOpen: boolean
@@ -217,32 +218,26 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
     }
   }
 
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      onClose()
-    }
-  }
-
-  if (!isOpen) return null
-
   return (
-    <div 
-      className="fixed inset-0 z-50 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center p-2 md:p-6"
-      onClick={handleBackdropClick}
-    >
-      {/* 中心容器 - Linear风格 */}
-      <div className="w-[95%] md:w-[90%] h-[95%] md:h-[90%] bg-white dark:bg-[#0d1117] rounded-lg overflow-hidden shadow-xl border border-gray-200/60 dark:border-gray-800/60 flex flex-col md:flex-row">
+    <Dialog.Root open={isOpen} onOpenChange={(open) => { if (!open) onClose() }}>
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 z-50 bg-black bg-opacity-40 backdrop-blur-sm" />
+        <Dialog.Content className="fixed inset-0 z-50 flex items-center justify-center p-2 md:p-6">
+          {/* 中心容器 - Linear风格 */}
+          <div className="w-[95%] md:w-[90%] h-[95%] md:h-[90%] bg-white dark:bg-[#0d1117] rounded-lg overflow-hidden shadow-xl border border-gray-200/60 dark:border-gray-800/60 flex flex-col md:flex-row" role="dialog" aria-modal="true">
         {/* 左侧内容区域 - 在移动端变为顶部区域 */}
         <div className="w-full md:w-1/3 h-auto md:h-full bg-gray-50 dark:bg-[#161b22] p-3 md:p-5 overflow-y-auto border-b md:border-b-0 md:border-r border-gray-200/60 dark:border-gray-800/60 max-h-[30vh] md:max-h-none">
           <div className="max-w-md mx-auto">
             {/* 关闭按钮 */}
-            <button
-              onClick={onClose}
-              className="mb-5 p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors rounded-md bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
-              title="关闭"
-            >
-              <X className="w-5 h-5" />
-            </button>
+            <Dialog.Close asChild>
+              <button
+                className="mb-5 p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors rounded-md bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
+                title="关闭"
+                aria-label="关闭"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </Dialog.Close>
 
             {/* 推文内容 */}
             {content && (
@@ -417,7 +412,8 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
           </div>
         </div>
       </div>
-
-    </div>
-  )
+      </Dialog.Content>
+    </Dialog.Portal>
+  </Dialog.Root>
+)
 }
