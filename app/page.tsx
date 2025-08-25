@@ -13,7 +13,7 @@ async function fetchPosts() {
       const { data: posts, error } = await supabase
         .from('twitter_posts')
         .select('*')
-        .order('tweet_created_at', { ascending: false, nullsFirst: false })
+        .order('tweet_created_at', { ascending: false })
 
       if (error) {
         console.error('Supabase error:', error)
@@ -25,7 +25,8 @@ async function fetchPosts() {
     // 否则从API获取（包括内存存储的数据）
     else {
       const response = await fetch('http://localhost:3000/api/posts', {
-        cache: 'no-store' // 确保获取最新数据
+        cache: 'no-store', // 确保获取最新数据
+        next: { revalidate: 0 } // 禁用缓存
       })
       
       if (!response.ok) {
@@ -41,6 +42,9 @@ async function fetchPosts() {
     return null
   }
 }
+
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export default async function Home() {
   const posts = await fetchPosts()
