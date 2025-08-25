@@ -13,11 +13,13 @@ async function fetchPosts() {
       const { data: posts, error } = await supabase
         .from('twitter_posts')
         .select('*')
-        .order('tweet_created_at', { ascending: false })
+        .order('tweet_created_at', { ascending: false, nullsFirst: false })
 
       if (error) {
+        console.error('Supabase error:', error)
         throw error
       }
+      console.log('Supabase返回数据条数:', posts?.length)
       return posts || []
     } 
     // 否则从API获取（包括内存存储的数据）
@@ -31,6 +33,7 @@ async function fetchPosts() {
       }
       
       const posts = await response.json()
+      console.log('API返回数据条数:', posts?.length)
       return posts || []
     }
   } catch (error) {

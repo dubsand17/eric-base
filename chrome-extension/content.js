@@ -49,13 +49,17 @@ function injectCollectButtons() {
         const tweetData = extractTweetDataFromElement(tweetElement);
         
         // 发送到API
-        const response = await fetch('http://localhost:3000/api/posts', {
+        console.log('发送推文数据:', tweetData);
+        const response = await fetch('https://eric-base.vercel.app/api/posts', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(tweetData)
         });
+        
+        console.log('API响应状态:', response.status);
+        console.log('API响应头:', response.headers);
 
         if (response.ok) {
           // 成功反馈
@@ -79,6 +83,8 @@ function injectCollectButtons() {
         }
       } catch (error) {
         console.error('收藏失败:', error);
+        console.error('错误详情:', error.stack);
+        
         // 错误反馈
         const originalHTML = collectBtn.innerHTML;
         collectBtn.innerHTML = `
@@ -89,7 +95,15 @@ function injectCollectButtons() {
           </div>
         `;
         
-        showToast(`收藏失败: ${error.message}`, 'error');
+        // 显示更详细的错误信息
+        let errorMessage = '收藏失败';
+        if (error.name === 'TypeError' && error.message.includes('fetch')) {
+          errorMessage = '网络连接失败，请检查网络或稍后重试';
+        } else if (error.message) {
+          errorMessage = `收藏失败: ${error.message}`;
+        }
+        
+        showToast(errorMessage, 'error');
         
         setTimeout(() => {
           collectBtn.innerHTML = originalHTML;
