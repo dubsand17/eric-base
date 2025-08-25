@@ -3,12 +3,10 @@
 import { useState, useEffect, useRef } from 'react'
 import MasonryGrid from '@/components/MasonryGrid'
 import { supabase } from '@/lib/supabase'
-import { samplePosts } from '@/lib/sample-data'
 import EmptyState from '@/components/EmptyState'
 import Navbar from '@/components/Navbar'
 import LoadingGrid from '@/components/LoadingGrid'
 import ErrorState from '@/components/ErrorState'
-import SkeletonCard from '@/components/SkeletonCard'
 import { TwitterPost } from '@/lib/supabase'
 
 interface PaginationData {
