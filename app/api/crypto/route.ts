@@ -26,7 +26,7 @@ export async function GET() {
       'https://api.binance.me'         // 备用域
     ]
 
-    let res: Response | null = null
+    let parsedArray: Array<any> | null = null
     let lastStatus: number | undefined
 
     // 每个主机 5s 超时
@@ -53,9 +53,29 @@ export async function GET() {
       try {
         const r = await fetchWithTimeout(url)
         lastStatus = r.status
-        if (r.ok) { res = r; break }
-        // 对 451/403/429 等继续尝试下一个 host
-        if ([451, 403, 429, 502, 503, 504].includes(r.status)) {
+        if (!r.ok) {
+          // 对 451/403/429 等继续尝试下一个 host
+          if ([451, 403, 429, 502, 503, 504].includes(r.status)) continue
+          else continue
+        }
+        const ct = r.headers.get('content-type') || ''
+        const txt = await r.text()
+        if (!txt || !txt.trim()) continue
+        let json: any
+        try {
+          json = JSON.parse(txt)
+        } catch {
+          // 非 JSON，继续尝试下一个 host
+          continue
+        }
+        if (Array.isArray(json)) {
+          parsedArray = json
+          break
+        } else if (json && typeof json === 'object' && json.symbol) {
+          parsedArray = [json]
+          break
+        } else {
+          // 格式不符合预期，继续下一个 host
           continue
         }
       } catch (e) {
@@ -64,7 +84,7 @@ export async function GET() {
       }
     }
 
-    if (!res) {
+    if (!parsedArray) {
       // 无法回源时，如有可用过期缓存，返回 STALE 兜底
       if (CACHE && now - CACHE.ts < STALE_MAX_MS) {
         const stale = NextResponse.json(CACHE.payload)
@@ -75,7 +95,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Upstream error', status: lastStatus ?? 500 }, { status: 502 })
     }
 
-    const raw = await res.json() as Array<any>
+    const raw = parsedArray
     const data = raw.map(item => ({
       symbol: item.symbol as string,
       price: parseFloat(item.lastPrice),
