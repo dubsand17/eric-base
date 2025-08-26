@@ -13,10 +13,10 @@ interface MasonryGridProps {
 }
 
 function getColumnCount(width: number): number {
-  if (width <= 640) return 1 // sm-
-  if (width <= 1024) return 2 // md
-  if (width <= 1400) return 3 // lg
-  return 4 // xl+
+  if (width < 640) return 1 // sm-
+  if (width < 1024) return 2 // md
+  if (width < 1536) return 3 // lg (matches lg:grid-cols-3)
+  return 4 // 2xl+ (matches 2xl:grid-cols-4)
 }
 
 export default function MasonryGrid({ posts, loadingMore = false, showAbsoluteTime = false, onToggleTimeFormat }: MasonryGridProps) {
@@ -24,6 +24,9 @@ export default function MasonryGrid({ posts, loadingMore = false, showAbsoluteTi
   const [colCount, setColCount] = useState<number>(4)
 
   useEffect(() => {
+    // 初始化时设置正确的列数
+    setColCount(getColumnCount(window.innerWidth))
+    
     const onResize = () => setColCount(getColumnCount(window.innerWidth))
     window.addEventListener('resize', onResize)
     return () => window.removeEventListener('resize', onResize)
