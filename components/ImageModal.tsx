@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { X, ZoomIn, ZoomOut, RotateCw, Download, ChevronLeft, ChevronRight } from 'lucide-react'
 import * as Dialog from '@radix-ui/react-dialog'
+import TypewriterText from './TypewriterText'
 
 interface ImageModalProps {
   isOpen: boolean
@@ -237,9 +238,11 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
             {content && (
               <div className="mb-5">
                 <h3 className="text-gray-900 dark:text-white text-lg font-semibold mb-3">百万Eric</h3>
-                <p className="text-gray-700 dark:text-gray-300 text-base leading-relaxed whitespace-pre-wrap">
-                  {content}
-                </p>
+                <TypewriterText
+                  text={content}
+                  speed={100}
+                  className="text-gray-700 dark:text-gray-300 text-base leading-relaxed"
+                />
               </div>
             )}
 
