@@ -102,6 +102,8 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
       return
     }
     const controller = new AbortController()
+    // 先标记为加载中，再清空列表，避免一帧内出现 EmptyState 闪烁
+    setLoading(true)
     setPosts([])
     setPagination(prev => ({ ...prev, page: 1 }))
     fetchPosts(1, controller.signal)
@@ -206,7 +208,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
 
       {pagination.page >= pagination.totalPages && posts.length > 0 && (
         <div className="w-full flex justify-center py-8 text-sm text-gray-500 dark:text-gray-400">
-          已经到底了
+          已加载完毕 · 共 {pagination.total} 条知识点
         </div>
       )}
     </div>

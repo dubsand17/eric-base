@@ -165,10 +165,16 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
             </Dialog.Root>
 
             {/* Brand (only show from xl and up to save space) */}
-            <div className="hidden xl:flex items-center gap-2 mr-2">
+            <a
+              href="https://x.com/CycleStudies"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden xl:flex items-center gap-2 mr-2"
+              aria-label="前往 CycleStudies 的 X 主页"
+            >
               <img src="/icon.svg" alt="logo" className="h-6 w-6" />
               <span className="text-sm font-medium leading-none text-gray-800 dark:text-gray-100">百万Eric</span>
-            </div>
+            </a>
 
             {/* Search */}
             <div className="flex-1 min-w-0 sm:flex-none">
