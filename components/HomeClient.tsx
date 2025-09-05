@@ -41,6 +41,9 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
   const sentinelRef = useRef<HTMLDivElement | null>(null)
   const cacheRef = useRef<Map<string, { ts: number; data: PostsResponse }>>(new Map())
   const skipFirstFiltersRunRef = useRef(true)
+  const requestIdRef = useRef(0)
+  const [hasSearched, setHasSearched] = useState(false)
+  const [fetchingInitial, setFetchingInitial] = useState(false)
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedQuery(query.trim()), 300)
@@ -48,9 +51,10 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
   }, [query])
 
   async function fetchPosts(page = 1, signal?: AbortSignal) {
+    const reqId = ++requestIdRef.current
     try {
       const isInitialLoad = page === 1
-      if (isInitialLoad) setLoading(true)
+      if (isInitialLoad) { setLoading(true); setFetchingInitial(true) }
       else setLoadingMore(true)
 
       const url = new URL('/api/posts', window.location.origin)
@@ -68,6 +72,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
         if (isInitialLoad) setPosts(result.data)
         else setPosts(prev => [...prev, ...result.data])
         setPagination(result.pagination)
+        if (isInitialLoad) setFetchingInitial(false)
         return result.data
       }
 
@@ -79,6 +84,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
       else setPosts(prev => [...prev, ...result.data])
       setPagination(result.pagination)
       cacheRef.current.set(key, { ts: now, data: result })
+      if (isInitialLoad) setFetchingInitial(false)
       return result.data
     } catch (err: any) {
       if (err?.name === 'AbortError' || err?.message?.includes('aborted')) {
@@ -89,8 +95,13 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
       setError(err instanceof Error ? err.message : '获取数据失败')
       return null
     } finally {
-      setLoading(false)
-      setLoadingMore(false)
+      // 仅对最后一次请求生效，避免被取消/过期请求将 loading 错误地置为 false
+      // 从而导致 posts 仍为空时短暂落入 EmptyState 分支
+      const isLatest = requestIdRef.current === reqId
+      if (isLatest) {
+        setLoading(false)
+        setLoadingMore(false)
+      }
     }
   }
 
@@ -103,7 +114,9 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
     }
     const controller = new AbortController()
     // 先标记为加载中，再清空列表，避免一帧内出现 EmptyState 闪烁
+    setHasSearched(true)
     setLoading(true)
+    setFetchingInitial(true)
     setPosts([])
     setPagination(prev => ({ ...prev, page: 1 }))
     fetchPosts(1, controller.signal)
@@ -127,7 +140,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
     return () => observer.disconnect()
   }, [pagination.page, pagination.totalPages, loadingMore])
 
-  if (loading && posts.length === 0) {
+  if (fetchingInitial && posts.length === 0) {
     return (
       <div className="min-h-screen bg-[#fafbfc] dark:bg-[#0d1117]">
         <Navbar
@@ -161,7 +174,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
     )
   }
 
-  if (posts.length === 0) {
+  if (!fetchingInitial && posts.length === 0) {
     return (
       <div className="min-h-screen bg-[#fafbfc] dark:bg-[#0d1117]">
         <Navbar
@@ -174,7 +187,11 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
           onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)}
         />
         <div className="container mx-auto py-6">
-          <EmptyState />
+          <EmptyState
+            state={hasSearched ? 'no_results' : 'idle'}
+            query={debouncedQuery}
+            onClear={() => { setQuery(''); setFrom(undefined); setTo(undefined) }}
+          />
         </div>
       </div>
     )
