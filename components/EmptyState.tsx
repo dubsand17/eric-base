@@ -29,9 +29,9 @@ export default function EmptyState({ state = "idle", query, onClear }: EmptyStat
     <div className="min-h-[60vh] flex items-center justify-center px-4">
       <div className="relative w-full max-w-2xl">
         {/* 背景装饰 */}
-        <div className="pointer-events-none absolute inset-0 -z-10 rounded-3xl bg-gradient-to-b from-violet-500/10 via-transparent to-transparent blur-xl" />
+        <div className="pointer-events-none absolute inset-0 -z-10 rounded-3xl bg-gradient-to-b from-white/40 via-transparent to-transparent dark:from-white/10 blur-xl" />
 
-        <div className="rounded-2xl border border-gray-200/60 dark:border-gray-800/60 bg-white/60 dark:bg-gray-900/50 backdrop-blur-md p-8 text-center shadow-sm">
+        <div className="rounded-2xl border border-black/10 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur-xl p-8 text-center">
           <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-tr from-violet-500/15 to-blue-500/15 text-violet-600 dark:text-violet-300">
             {isSearching ? (
               <Loader2 className="h-7 w-7 animate-spin" />
@@ -55,14 +55,14 @@ export default function EmptyState({ state = "idle", query, onClear }: EmptyStat
           {/* 动作区 */}
           <div className="mt-6 flex items-center justify-center gap-2">
             {isSearching && (
-              <span className="inline-flex items-center gap-2 rounded-full border border-gray-200 dark:border-gray-800 px-3 py-1.5 text-xs text-gray-600 dark:text-gray-300">
+              <span className="inline-flex items-center gap-2 rounded-full border border-black/10 dark:border-white/10 bg-white/30 dark:bg-white/5 backdrop-blur-md px-3 py-1.5 text-xs text-gray-700 dark:text-gray-300">
                 <Loader2 className="h-3.5 w-3.5 animate-spin" /> 正在为你检索
               </span>
             )}
             {isNoResults && (
               <button
                 onClick={onClear}
-                className="inline-flex items-center gap-2 rounded-full border border-gray-200 dark:border-gray-800 bg-white/70 dark:bg-gray-900/70 px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-800"
+                className="inline-flex items-center gap-2 rounded-full border border-black/10 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur-md px-3 py-1.5 text-xs text-gray-800 hover:bg-white/50 dark:text-gray-200 dark:hover:bg-white/10 transition"
               >
                 <RefreshCw className="h-3.5 w-3.5" /> 清空条件再试
               </button>
@@ -76,8 +76,8 @@ export default function EmptyState({ state = "idle", query, onClear }: EmptyStat
 
 function Tip({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) {
   return (
-    <div className="rounded-xl border border-gray-200/60 dark:border-gray-800/60 bg-white/50 dark:bg-gray-900/40 p-3 text-left">
-      <div className="mb-1 flex items-center gap-2 text-gray-800 dark:text-gray-100">
+    <div className="rounded-xl border border-black/10 dark:border-white/10 bg-white/30 dark:bg-white/5 backdrop-blur-md p-3 text-left">
+      <div className="mb-1 flex items-center gap-2 text-gray-900 dark:text-gray-100">
         <span className="text-violet-600 dark:text-violet-300">{icon}</span>
         <span className="text-sm font-medium">{title}</span>
       </div>

@@ -44,7 +44,7 @@ export default function DisplayModeToggle({ className = '' }: DisplayModeToggleP
     <Toggle.Root
       pressed={isTextHidden}
       onPressedChange={handlePressedChange}
-      className={`p-2 rounded-full bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-200 data-[state=on]:ring-2 data-[state=on]:ring-violet-500/40 ${className}`}
+      className={`h-9 w-9 rounded-full border border-black/10 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur-md flex items-center justify-center transition hover:bg-white/50 dark:hover:bg-white/10 data-[state=on]:ring-2 data-[state=on]:ring-white/30 ${className}`}
       aria-label="切换显示模式"
       title={isTextHidden ? "显示文字内容" : "仅显示图片"}
     >

@@ -101,22 +101,26 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
   // Basic Linear-like top bar with Radix Toolbar
   return (
     <Tooltip.Provider delayDuration={200}>
-      <div className="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-gray-900/60 bg-white/80 dark:bg-gray-900/80 border-b border-gray-200/70 dark:border-gray-800/70">
+      <div className="sticky top-2 sm:top-3 z-40 bg-transparent">
         <div className="px-4 sm:px-6 lg:px-8">
-          <Toolbar.Root className="h-12 flex items-center gap-3" aria-label="主工具栏">
+          {/* Glass container */}
+          <div className="relative mx-auto rounded-2xl border border-black/5 dark:border-white/10 bg-white/40 dark:bg-[#0b0f14]/40 backdrop-blur-xl shadow-[0_4px_12px_rgba(0,0,0,0.06)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.35)] ring-1 ring-black/5 py-2">
+            {/* Gentle vertical sheen */}
+            <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-b from-white/20 to-transparent dark:from-white/5" />
+            <Toolbar.Root className="relative h-12 flex items-center gap-3 px-3" aria-label="主工具栏">
             {/* Mobile menu button (only on small screens) -> opens side drawer */}
             <Dialog.Root>
               <Dialog.Trigger asChild>
                 <button
-                  className="sm:hidden -ml-2 h-9 w-9 rounded-full border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 text-gray-700 dark:text-gray-300 flex items-center justify-center"
+                  className="sm:hidden h-9 w-9 rounded-full border border-black/10 dark:border-white/10 bg-white/30 dark:bg-white/5 backdrop-blur-md text-gray-700 dark:text-gray-300 flex items-center justify-center hover:bg-white/40 dark:hover:bg-white/10 transition"
                   aria-label="打开菜单"
                 >
                   <Menu className="w-5 h-5" />
                 </button>
               </Dialog.Trigger>
               <Dialog.Portal>
-                <Dialog.Overlay className="fixed inset-0 bg-black/30 data-[state=open]:animate-in data-[state=closed]:animate-out" />
-                <Dialog.Content className="fixed inset-x-0 bottom-0 max-h-[80vh] w-full bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 shadow-2xl rounded-t-2xl data-[state=open]:animate-in data-[state=closed]:animate-out flex flex-col overflow-hidden">
+                <Dialog.Overlay className="fixed inset-0 bg-black/50 backdrop-blur-md data-[state=open]:animate-in data-[state=closed]:animate-out" />
+                <Dialog.Content className="fixed inset-x-0 bottom-0 max-h-[80vh] w-full border border-white/20 dark:border-white/10 bg-white/20 dark:bg-white/5 backdrop-blur-2xl shadow-[0_10px_40px_rgba(0,0,0,0.35)] rounded-t-2xl data-[state=open]:animate-in data-[state=closed]:animate-out flex flex-col overflow-hidden">
                   <div className="flex items-center justify-between px-4 pt-3 pb-2">
                     <div className="absolute left-1/2 -translate-x-1/2 top-1.5 h-1.5 w-10 rounded-full bg-gray-300/80 dark:bg-gray-700/80" />
                     <a
@@ -130,7 +134,7 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
                       <span className="text-sm font-medium text-gray-800 dark:text-gray-100">快速设置</span>
                     </a>
                     <Dialog.Close asChild>
-                      <button aria-label="关闭" className="h-8 w-8 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center text-gray-500">
+                      <button aria-label="关闭" className="h-8 w-8 rounded-full border border-black/10 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur-md flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-white/10 transition">
                         <X className="w-4 h-4" />
                       </button>
                     </Dialog.Close>
@@ -138,18 +142,18 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
                   <div className="h-full flex flex-col overflow-hidden px-4">
                     <div className="flex-1 overflow-y-auto space-y-4 pb-4">
                       {/* 品牌与主页 */}
-                      <div className="rounded-lg border border-gray-200 dark:border-gray-800 bg-white/70 dark:bg-gray-900/70 p-3">
+                      <div className="rounded-xl border border-black/10 dark:border-white/10 bg-white/15 dark:bg-white/5 backdrop-blur-md p-3">
                         <div className="flex items-center gap-3">
                           <img src="https://pbs.twimg.com/profile_images/1777702437023035392/tOpH3slc_400x400.jpg" alt="品牌" className="h-6 w-6 rounded" />
                           <div className="flex-1 min-w-0">
-                            <div className="text-sm font-medium text-gray-800 dark:text-gray-100 truncate">百萬Eric | Day Trader</div>
-                            <div className="text-xs text-gray-500 dark:text-gray-400 truncate">美股自营基金日内交易员 | 纽约大学数据科学 | 极限运动 | Proprietary Day Trader | NYU Data Science | X Sports</div>
+                            <div className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">百萬Eric | Day Trader</div>
+                            <div className="text-xs text-gray-600 dark:text-gray-400 truncate">美股自营基金日内交易员 | 纽约大学数据科学 | 极限运动 | Proprietary Day Trader | NYU Data Science | X Sports</div>
                           </div>
                           <a
                             href="https://x.com/CycleStudies"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 h-8 px-2 rounded-md border border-gray-200 dark:border-gray-700 text-xs text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800"
+                            className="inline-flex items-center gap-1 h-8 px-2 rounded-lg border border-black/10 dark:border-white/10 bg-white/30 dark:bg-white/5 backdrop-blur-md text-xs text-gray-800 dark:text-gray-200 hover:bg-white/40 dark:hover:bg-white/10"
                           >
                             访问 X 主页 <ExternalLink className="w-3.5 h-3.5" />
                           </a>
@@ -157,24 +161,24 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
                       </div>
 
                       {/* 社交链接 */}
-                      <div className="rounded-lg border border-gray-200 dark:border-gray-800 bg-white/70 dark:bg-gray-900/70 p-3">
-                        <div className="mb-2 text-xs font-medium text-gray-700 dark:text-gray-300">关注频道</div>
+                      <div className="rounded-xl border border-black/10 dark:border-white/10 bg-white/15 dark:bg-white/5 backdrop-blur-md p-3">
+                        <div className="mb-2 text-xs font-medium text-gray-900 dark:text-gray-300">关注频道</div>
                         <div className="flex items-center gap-2">
                           <a
                             href="https://space.bilibili.com/40257375"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex-1 inline-flex items-center justify-center gap-2 h-9 rounded-md border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 text-sm text-gray-800 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700"
+                            className="flex-1 inline-flex items-center justify-center gap-2 h-9 rounded-lg border border-black/10 dark:border-white/10 bg-white/30 dark:bg-white/5 backdrop-blur-md text-sm text-gray-800 dark:text-gray-100 hover:bg-white/40 dark:hover:bg-white/10"
                             aria-label="Bilibili 空间"
                           >
-                            <Tv className="w-5 h-5" />
+                            <Tv className="w-4 h-4" />
                             <span className="text-xs sm:text-[13px]">Bilibili</span>
                           </a>
                           <a
                             href="https://www.youtube.com/channel/UC0h5WHVgdGyBk5cbB8XiUxw"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex-1 inline-flex items-center justify-center gap-2 h-9 rounded-md border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 text-sm text-gray-800 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700"
+                            className="flex-1 inline-flex items-center justify-center gap-2 h-9 rounded-lg border border-black/10 dark:border-white/10 bg-white/30 dark:bg-white/5 backdrop-blur-md text-sm text-gray-800 dark:text-gray-100 hover:bg-white/40 dark:hover:bg-white/10"
                             aria-label="YouTube 频道"
                           >
                             <Youtube className="w-5 h-5" />
@@ -183,32 +187,34 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
                         </div>
                       </div>
                     </div>
-                    <div className="sticky bottom-0 space-y-3 pt-3 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-1 pb-4" style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 14px)' }}>
-                      {/* 时间格式 */}
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-700 dark:text-gray-300">时间格式</span>
-                        <div className="inline-flex rounded-md border border-gray-200 dark:border-gray-700 overflow-hidden">
-                          <button
-                            className={`px-3 h-8 text-xs ${!showAbsoluteTime ? 'bg-violet-600 text-white' : 'bg-transparent text-gray-700 dark:text-gray-300'}`}
-                            aria-pressed={!showAbsoluteTime}
-                            onClick={() => { if (showAbsoluteTime) onToggleTimeFormat?.() }}
-                          >相对时间</button>
-                          <button
-                            className={`px-3 h-8 text-xs ${showAbsoluteTime ? 'bg-violet-600 text-white' : 'bg-transparent text-gray-700 dark:text-gray-300'}`}
-                            aria-pressed={showAbsoluteTime}
-                            onClick={() => { if (!showAbsoluteTime) onToggleTimeFormat?.() }}
-                          >绝对时间</button>
+                    <div className="sticky bottom-0 px-1 pb-4 pt-3" style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 14px)' }}>
+                      <div className="rounded-xl border border-black/10 dark:border-white/10 bg-white/15 dark:bg-white/5 backdrop-blur-md p-3 space-y-3">
+                        {/* 时间格式 */}
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-gray-900 dark:text-gray-300">时间格式</span>
+                          <div className="inline-flex rounded-xl border border-black/10 dark:border-white/10 bg-white/30 dark:bg-white/5 backdrop-blur-md overflow-hidden">
+                            <button
+                              className={`px-3 h-8 text-xs transition ${!showAbsoluteTime ? 'bg-violet-600 text-white' : 'bg-transparent text-gray-800 dark:text-gray-300'}`}
+                              aria-pressed={!showAbsoluteTime}
+                              onClick={() => { if (showAbsoluteTime) onToggleTimeFormat?.() }}
+                            >相对时间</button>
+                            <button
+                              className={`px-3 h-8 text-xs transition ${showAbsoluteTime ? 'bg-violet-600 text-white' : 'bg-transparent text-gray-800 dark:text-gray-300'}`}
+                              aria-pressed={showAbsoluteTime}
+                              onClick={() => { if (!showAbsoluteTime) onToggleTimeFormat?.() }}
+                            >绝对时间</button>
+                          </div>
                         </div>
-                      </div>
-                      {/* 显示模式 */}
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-700 dark:text-gray-300">显示模式</span>
-                        <DisplayModeToggle />
-                      </div>
-                      {/* 主题 */}
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-700 dark:text-gray-300">主题</span>
-                        <ThemeToggle />
+                        {/* 显示模式 */}
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-gray-900 dark:text-gray-300">显示模式</span>
+                          <DisplayModeToggle />
+                        </div>
+                        {/* 主题 */}
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-gray-900 dark:text-gray-300">主题</span>
+                          <ThemeToggle />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -236,11 +242,11 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
                       href="https://space.bilibili.com/40257375"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="h-8 w-8 rounded-full border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 text-gray-700 dark:text-gray-300 flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-700"
+                      className="h-8 w-8 rounded-full border border-black/10 dark:border-white/10 bg-white/30 dark:bg-white/5 backdrop-blur-md text-gray-700 dark:text-gray-300 flex items-center justify-center hover:bg-white/40 dark:hover:bg-white/10 transition"
                       aria-label="前往 Bilibili 空间"
                       title="Bilibili"
                     >
-                      <Tv className="w-5 h-5" />
+                      <Tv className="w-4 h-4" />
                     </a>
                   </Tooltip.Trigger>
                   <Tooltip.Content sideOffset={8} className="rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-2 py-1 text-xs text-gray-700 dark:text-gray-200 shadow">
@@ -254,7 +260,7 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
                       href="https://www.youtube.com/channel/UC0h5WHVgdGyBk5cbB8XiUxw"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="h-8 w-8 rounded-full border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 text-gray-700 dark:text-gray-300 flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-700"
+                      className="h-8 w-8 rounded-full border border-black/10 dark:border-white/10 bg-white/30 dark:bg-white/5 backdrop-blur-md text-gray-700 dark:text-gray-300 flex items-center justify-center hover:bg-white/40 dark:hover:bg-white/10 transition"
                       aria-label="前往 YouTube 频道"
                       title="YouTube"
                     >
@@ -278,7 +284,7 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
                     setLocalQuery(e.target.value)
                     onQueryChange?.(e.target.value)
                   }}
-                  className="h-9 w-full pl-10 pr-9 rounded-md border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 text-sm placeholder-gray-400 dark:placeholder-gray-500 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-500/50"
+                  className="h-9 w-full pl-10 pr-9 rounded-xl border border-black/10 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur-md text-sm placeholder-gray-500 dark:placeholder-gray-500 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-black/10 dark:focus:ring-white/10 focus:border-black/20 dark:focus:border-white/20"
                   placeholder="搜索内容关键词..."
                 />
                 <div className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500">
@@ -293,13 +299,13 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
             <Popover.Root>
               <Popover.Trigger asChild>
                 <button
-                  className="h-9 w-auto whitespace-nowrap px-3 rounded-md border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2 -mr-2 sm:mr-0"
+                  className="h-9 w-auto whitespace-nowrap px-3 rounded-xl border border-black/10 dark:border-white/10 bg-white/30 dark:bg-white/5 backdrop-blur-md text-sm text-gray-700 dark:text-gray-200 hover:bg-white/40 dark:hover:bg-white/10 flex items-center gap-2  sm:mr-0 transition"
                   aria-haspopup="dialog"
                 >
                   日期筛选
                 </button>
               </Popover.Trigger>
-              <Popover.Content side="bottom" align="start" sideOffset={8} className="rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-3 shadow-lg w-[320px] max-w-[90vw]">
+              <Popover.Content side="bottom" align="start" sideOffset={8} className="rounded-2xl border border-black/10 dark:border-white/10 bg-white dark:bg-[#0b0f14]/95 p-3 shadow-[0_10px_30px_rgba(0,0,0,0.15)] w-[320px] max-w-[90vw]">
                 <div className="flex items-center gap-2">
                   <div className="flex flex-col flex-1 min-w-0">
                     <label className="text-[11px] text-gray-500 dark:text-gray-400 mb-1">开始</label>
@@ -307,7 +313,7 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
                       type="date"
                       value={from || ''}
                       onChange={(e) => onDateChange({ from: e.target.value || undefined, to })}
-                      className="w-full min-w-0 h-8 rounded-md border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 px-2 text-xs text-gray-900 dark:text-gray-100 focus:outline-none"
+                      className="w-full min-w-0 h-8 rounded-lg border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 backdrop-blur-md px-2 text-xs text-gray-900 dark:text-gray-100 focus:outline-none"
                       aria-label="开始日期"
                       title="开始日期"
                     />
@@ -319,7 +325,7 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
                       type="date"
                       value={to || ''}
                       onChange={(e) => onDateChange({ from, to: e.target.value || undefined })}
-                      className="w-full min-w-0 h-8 rounded-md border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 px-2 text-xs text-gray-900 dark:text-gray-100 focus:outline-none"
+                      className="w-full min-w-0 h-8 rounded-lg border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 backdrop-blur-md px-2 text-xs text-gray-900 dark:text-gray-100 focus:outline-none"
                       aria-label="结束日期"
                       title="结束日期"
                     />
@@ -328,9 +334,9 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
                 <div className="mt-3 flex justify-end">
                   <button
                     onClick={() => onDateChange({ from: undefined, to: undefined })}
-                    className="h-8 px-2 rounded-md border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/70 text-xs text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                    className="h-8 px-2 rounded-lg border border-black/10 dark:border-white/10 bg-white/30 dark:bg-white/5 backdrop-blur-md text-xs text-gray-700 dark:text-gray-200 hover:bg-white/40 dark:hover:bg-white/10 transition"
                   >
-                    重置
+                    清空
                   </button>
                 </div>
                 <Popover.Arrow className="fill-white dark:fill-gray-800" />
@@ -347,7 +353,7 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
                 const p = item?.percent
                 const percentColor = (typeof p === 'number' && !isNaN(p)) ? (p > 0 ? 'text-emerald-600' : p < 0 ? 'text-rose-600' : 'text-gray-500') : 'text-gray-500'
                 return (
-                  <div key={s} className={`flex items-center gap-1 h-7 px-2 rounded border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/70 text-xs text-gray-800 dark:text-gray-100`}>
+                  <div key={s} className={`flex items-center gap-1 h-7 px-2 rounded-xl border border-black/10 dark:border-white/10 bg-white/15 dark:bg-white/5 backdrop-blur-md text-xs text-gray-800 dark:text-gray-100`}>
                     <span className="font-medium">{alias}</span>
                     <span className={`tabular-nums ${color}`}>{fmtPrice(item?.price)}</span>
                     <span className={`tabular-nums ${percentColor}`}>{fmtPct(item?.percent)}</span>
@@ -367,7 +373,7 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
                 const p = item?.percent
                 const percentColor = (typeof p === 'number' && !isNaN(p)) ? (p > 0 ? 'text-emerald-600' : p < 0 ? 'text-rose-600' : 'text-gray-500') : 'text-gray-500'
                 return (
-                  <div className={`flex items-center gap-1 h-7 px-2 rounded border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/70 text-xs text-gray-800 dark:text-gray-100`}>
+                  <div className={`flex items-center gap-1 h-7 px-2 rounded-xl border border-black/10 dark:border-white/10 bg-white/15 dark:bg-white/5 backdrop-blur-md text-xs text-gray-800 dark:text-gray-100`}>
                     <span className="font-medium">{alias}</span>
                     <span className={`tabular-nums ${color}`}>{fmtPrice(item?.price)}</span>
                   </div>
@@ -385,7 +391,7 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
                 const p = item?.percent
                 const percentColor = (typeof p === 'number' && !isNaN(p)) ? (p > 0 ? 'text-emerald-600' : p < 0 ? 'text-rose-600' : 'text-gray-500') : 'text-gray-500'
                 return (
-                  <div key={s} className={`flex items-center gap-1 h-6 px-1.5 rounded border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/70 text-[10px] text-gray-800 dark:text-gray-100`}>
+                  <div key={s} className={`flex items-center gap-1 h-6 px-1.5 rounded-lg border border-black/10 dark:border-white/10 bg-white/15 dark:bg-white/5 backdrop-blur-md text-[10px] text-gray-800 dark:text-gray-100`}>
                     <span className="font-medium">{alias}</span>
                     <span className={`tabular-nums ${color}`}>{fmtCompact(item?.price)}</span>
                     <span className={`tabular-nums ${percentColor}`}>{(() => { const p = item?.percent; return (typeof p !== 'number' || isNaN(p)) ? '—' : (p > 0 ? '▲' : p < 0 ? '▼' : '·') })()}</span>
@@ -402,11 +408,11 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
                   <button
                     onClick={() => onToggleTimeFormat?.()}
                     aria-pressed={showAbsoluteTime}
-                    className={`h-9 w-9 rounded-full border flex items-center justify-center transition-colors ${
-                      showAbsoluteTime
-                        ? 'border-violet-500/60 bg-violet-500/10 text-violet-600 dark:text-violet-300'
-                        : 'border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
-                    }`}
+                    className={`h-9 w-9 rounded-full border flex items-center justify-center transition ${
+                    showAbsoluteTime
+                      ? 'border-black/10 dark:border-white/10 bg-white/30 dark:bg-white/5 backdrop-blur-md text-violet-600 dark:text-violet-300 hover:bg-white/40 dark:hover:bg-white/10'
+                      : 'border-black/10 dark:border-white/10 bg-white/30 dark:bg-white/5 backdrop-blur-md text-gray-700 dark:text-gray-300 hover:bg-white/40 dark:hover:bg-white/10'
+                  }`}
                     title="切换时间显示"
                   >
                     {showAbsoluteTime ? (
@@ -445,7 +451,8 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
                 </Tooltip.Content>
               </Tooltip.Root>
             </div>
-          </Toolbar.Root>
+            </Toolbar.Root>
+          </div>
         </div>
       </div>
     </Tooltip.Provider>
