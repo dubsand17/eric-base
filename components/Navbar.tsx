@@ -8,7 +8,7 @@ import * as Popover from '@radix-ui/react-popover'
 import * as Dialog from '@radix-ui/react-dialog'
 import * as Tooltip from '@radix-ui/react-tooltip'
 import * as Separator from '@radix-ui/react-separator'
-import { Calendar, Clock, Menu, X } from 'lucide-react'
+import { Calendar, Clock, Menu, X, Youtube, Tv, ExternalLink } from 'lucide-react'
 
 interface NavbarProps {
   query: string
@@ -119,10 +119,16 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
                 <Dialog.Content className="fixed inset-x-0 bottom-0 max-h-[80vh] w-full bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 shadow-2xl rounded-t-2xl data-[state=open]:animate-in data-[state=closed]:animate-out flex flex-col overflow-hidden">
                   <div className="flex items-center justify-between px-4 pt-3 pb-2">
                     <div className="absolute left-1/2 -translate-x-1/2 top-1.5 h-1.5 w-10 rounded-full bg-gray-300/80 dark:bg-gray-700/80" />
-                    <div className="flex items-center gap-2">
+                    <a
+                      href="https://x.com/CycleStudies"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2"
+                      aria-label="前往 CycleStudies 的 X 主页"
+                    >
                       <img src="/icon.svg" alt="logo" className="h-5 w-5" />
                       <span className="text-sm font-medium text-gray-800 dark:text-gray-100">快速设置</span>
-                    </div>
+                    </a>
                     <Dialog.Close asChild>
                       <button aria-label="关闭" className="h-8 w-8 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center text-gray-500">
                         <X className="w-4 h-4" />
@@ -130,7 +136,53 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
                     </Dialog.Close>
                   </div>
                   <div className="h-full flex flex-col overflow-hidden px-4">
-                    <div className="flex-1 overflow-y-auto" />
+                    <div className="flex-1 overflow-y-auto space-y-4 pb-4">
+                      {/* 品牌与主页 */}
+                      <div className="rounded-lg border border-gray-200 dark:border-gray-800 bg-white/70 dark:bg-gray-900/70 p-3">
+                        <div className="flex items-center gap-3">
+                          <img src="https://pbs.twimg.com/profile_images/1777702437023035392/tOpH3slc_400x400.jpg" alt="品牌" className="h-6 w-6 rounded" />
+                          <div className="flex-1 min-w-0">
+                            <div className="text-sm font-medium text-gray-800 dark:text-gray-100 truncate">百萬Eric | Day Trader</div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400 truncate">美股自营基金日内交易员 | 纽约大学数据科学 | 极限运动 | Proprietary Day Trader | NYU Data Science | X Sports</div>
+                          </div>
+                          <a
+                            href="https://x.com/CycleStudies"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 h-8 px-2 rounded-md border border-gray-200 dark:border-gray-700 text-xs text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800"
+                          >
+                            访问 X 主页 <ExternalLink className="w-3.5 h-3.5" />
+                          </a>
+                        </div>
+                      </div>
+
+                      {/* 社交链接 */}
+                      <div className="rounded-lg border border-gray-200 dark:border-gray-800 bg-white/70 dark:bg-gray-900/70 p-3">
+                        <div className="mb-2 text-xs font-medium text-gray-700 dark:text-gray-300">关注频道</div>
+                        <div className="flex items-center gap-2">
+                          <a
+                            href="https://space.bilibili.com/40257375"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex-1 inline-flex items-center justify-center gap-2 h-9 rounded-md border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 text-sm text-gray-800 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700"
+                            aria-label="Bilibili 空间"
+                          >
+                            <Tv className="w-5 h-5" />
+                            <span className="text-xs sm:text-[13px]">Bilibili</span>
+                          </a>
+                          <a
+                            href="https://www.youtube.com/channel/UC0h5WHVgdGyBk5cbB8XiUxw"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex-1 inline-flex items-center justify-center gap-2 h-9 rounded-md border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 text-sm text-gray-800 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700"
+                            aria-label="YouTube 频道"
+                          >
+                            <Youtube className="w-5 h-5" />
+                            <span className="text-xs sm:text-[13px]">YouTube</span>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
                     <div className="sticky bottom-0 space-y-3 pt-3 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-1 pb-4" style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 14px)' }}>
                       {/* 时间格式 */}
                       <div className="flex items-center justify-between">
@@ -165,16 +217,57 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
             </Dialog.Root>
 
             {/* Brand (only show from xl and up to save space) */}
-            <a
-              href="https://x.com/CycleStudies"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden xl:flex items-center gap-2 mr-2"
-              aria-label="前往 CycleStudies 的 X 主页"
-            >
-              <img src="/icon.svg" alt="logo" className="h-6 w-6" />
-              <span className="text-sm font-medium leading-none text-gray-800 dark:text-gray-100">百万Eric</span>
-            </a>
+            <div className="hidden xl:flex items-center gap-3 mr-2">
+              <a
+                href="https://x.com/CycleStudies"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2"
+                aria-label="前往 CycleStudies 的 X 主页"
+              >
+                <img src="/icon.svg" alt="logo" className="h-6 w-6" />
+                <span className="text-sm font-medium leading-none text-gray-800 dark:text-gray-100">百万Eric</span>
+              </a>
+              {/* Social icons next to brand */}
+              <div className="flex items-center gap-1">
+                <Tooltip.Root>
+                  <Tooltip.Trigger asChild>
+                    <a
+                      href="https://space.bilibili.com/40257375"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="h-8 w-8 rounded-full border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 text-gray-700 dark:text-gray-300 flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-700"
+                      aria-label="前往 Bilibili 空间"
+                      title="Bilibili"
+                    >
+                      <Tv className="w-5 h-5" />
+                    </a>
+                  </Tooltip.Trigger>
+                  <Tooltip.Content sideOffset={8} className="rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-2 py-1 text-xs text-gray-700 dark:text-gray-200 shadow">
+                    Bilibili
+                    <Tooltip.Arrow className="fill-white dark:fill-gray-800" />
+                  </Tooltip.Content>
+                </Tooltip.Root>
+                <Tooltip.Root>
+                  <Tooltip.Trigger asChild>
+                    <a
+                      href="https://www.youtube.com/channel/UC0h5WHVgdGyBk5cbB8XiUxw"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="h-8 w-8 rounded-full border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 text-gray-700 dark:text-gray-300 flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-700"
+                      aria-label="前往 YouTube 频道"
+                      title="YouTube"
+                    >
+                      <Youtube className="w-5 h-5" />
+                    </a>
+                  </Tooltip.Trigger>
+                  <Tooltip.Content sideOffset={8} className="rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-2 py-1 text-xs text-gray-700 dark:text-gray-200 shadow">
+                    YouTube
+                    <Tooltip.Arrow className="fill-white dark:fill-gray-800" />
+                  </Tooltip.Content>
+                </Tooltip.Root>
+              </div>
+            </div>
 
             {/* Search */}
             <div className="flex-1 min-w-0 sm:flex-none">

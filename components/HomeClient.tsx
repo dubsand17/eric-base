@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Navbar from '@/components/Navbar'
+import BackToTop from '@/components/BackToTop'
 import MasonryGrid from '@/components/MasonryGrid'
 import LoadingGrid from '@/components/LoadingGrid'
 import ErrorState from '@/components/ErrorState'
@@ -153,6 +154,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
           onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)}
         />
         <LoadingGrid />
+        <BackToTop />
       </div>
     )
   }
@@ -170,6 +172,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
           onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)}
         />
         <ErrorState error={error} />
+        <BackToTop />
       </div>
     )
   }
@@ -193,6 +196,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
             onClear={() => { setQuery(''); setFrom(undefined); setTo(undefined) }}
           />
         </div>
+        <BackToTop />
       </div>
     )
   }
@@ -228,6 +232,8 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
           已加载完毕 · 共 {pagination.total} 条知识点
         </div>
       )}
+
+      <BackToTop />
     </div>
   )
 }
