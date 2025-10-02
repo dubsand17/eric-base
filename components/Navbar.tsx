@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import ThemeToggle from '@/components/ThemeToggle'
 import DisplayModeToggle from '@/components/DisplayModeToggle'
+import PositionBuilder from '@/components/PositionBuilder'
 import * as Toolbar from '@radix-ui/react-toolbar'
 import * as Popover from '@radix-ui/react-popover'
 import * as Dialog from '@radix-ui/react-dialog'
@@ -342,6 +343,9 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
                 <Popover.Arrow className="fill-white dark:fill-gray-800" />
               </Popover.Content>
             </Popover.Root>
+
+            {/* Position Builder */}
+            <PositionBuilder />
 
             {/* Crypto tickers (right side) - full list only on xl and up */}
             <div className="ml-auto hidden xl:flex items-center gap-2">
