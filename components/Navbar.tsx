@@ -223,6 +223,17 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
               </Dialog.Portal>
             </Dialog.Root>
 
+            {/* Simplified logo for md-lg screens */}
+            <a
+              href="https://x.com/CycleStudies"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden md:flex xl:hidden items-center"
+              aria-label="前往 CycleStudies 的 X 主页"
+            >
+              <img src="/icon.svg" alt="logo" className="h-6 w-6" />
+            </a>
+
             {/* Brand (only show from xl and up to save space) */}
             <div className="hidden xl:flex items-center gap-3 mr-2">
               <a
@@ -278,7 +289,7 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
 
             {/* Search */}
             <div className="flex-1 min-w-0 sm:flex-none">
-              <div className="relative w-full sm:w-[260px] md:w-[420px] lg:w-[480px]">
+              <div className="relative w-full sm:w-[200px] md:w-[280px] lg:w-[320px]">
                 <input
                   value={localQuery}
                   onChange={(e) => {
@@ -347,8 +358,11 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
             {/* Position Builder */}
             <PositionBuilder />
 
+            {/* Spacer to push crypto and toggles to the right (hidden on mobile) */}
+            <div className="hidden sm:block flex-1" />
+
             {/* Crypto tickers (right side) - full list only on xl and up */}
-            <div className="ml-auto hidden xl:flex items-center gap-2">
+            <div className="hidden xl:flex items-center gap-2">
               {['BTCUSDT','ETHUSDT','SOLUSDT'].map((s) => {
                 const alias = s.replace('USDT','')
                 const item = prices?.[s]
@@ -367,7 +381,7 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
             </div>
 
             {/* Single BTC ticker for md–lg only (price only, no percent) */}
-            <div className="ml-auto hidden md:flex xl:hidden items-center gap-2">
+            <div className="hidden md:flex xl:hidden items-center gap-2">
               {(() => {
                 const s = 'BTCUSDT'
                 const alias = 'BTC'
@@ -405,7 +419,7 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
             </div>
 
             {/* Toggles - hidden on small screens */}
-            <div className="hidden sm:flex items-center gap-2 ml-2">
+            <div className="hidden sm:flex items-center gap-2">
               {/* Time format toggle */}
               <Tooltip.Root>
                 <Tooltip.Trigger asChild>

@@ -149,7 +149,7 @@ export default function PositionBuilder() {
               aria-label="建仓计算器"
             >
               <TrendingUp className="w-4 h-4" />
-              <span className="hidden lg:inline">建仓</span>
+              <span className="hidden md:inline">建仓</span>
             </button>
           </Dialog.Trigger>
         </Tooltip.Trigger>
