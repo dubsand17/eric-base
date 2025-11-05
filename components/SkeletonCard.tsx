@@ -1,6 +1,6 @@
 export default function SkeletonCard() {
   return (
-    <div className="bg-white dark:bg-[#0d1117] rounded-lg shadow-sm border border-gray-200/60 dark:border-gray-800/60 overflow-hidden animate-pulse">
+    <div className="bg-terminal-surface-light dark:bg-terminal-surface-dark rounded-lg shadow-sm border-2 border-terminal-border-light/40 dark:border-terminal-border-dark overflow-hidden animate-pulse">
       {/* 内容骨架 */}
       <div className="p-4">
         <div className="space-y-2 mb-3">

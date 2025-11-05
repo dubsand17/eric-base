@@ -145,7 +145,7 @@ export default function PositionBuilder() {
         <Tooltip.Trigger asChild>
           <Dialog.Trigger asChild>
             <button
-              className="h-9 px-3 rounded-xl border border-black/10 dark:border-white/10 bg-white/30 dark:bg-white/5 backdrop-blur-md text-sm text-gray-700 dark:text-gray-200 hover:bg-white/40 dark:hover:bg-white/10 flex items-center gap-2 transition"
+              className="h-9 px-3 rounded-xl border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-surface-light dark:bg-terminal-surface-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark flex items-center gap-2 transition"
               aria-label="建仓计算器"
             >
               <TrendingUp className="w-4 h-4" />
@@ -153,23 +153,23 @@ export default function PositionBuilder() {
             </button>
           </Dialog.Trigger>
         </Tooltip.Trigger>
-        <Tooltip.Content sideOffset={8} className="rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-2 py-1 text-xs text-gray-700 dark:text-gray-200 shadow">
+        <Tooltip.Content sideOffset={8} className="rounded-md border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-surface-light dark:bg-terminal-surface-dark px-2 py-1 text-xs text-terminal-text-primary-light dark:text-terminal-text-primary-dark shadow-lg">
           建仓计算器
-          <Tooltip.Arrow className="fill-white dark:fill-gray-800" />
+          <Tooltip.Arrow className="fill-terminal-surface-light dark:fill-terminal-surface-dark" />
         </Tooltip.Content>
       </Tooltip.Root>
       
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 bg-black/50 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out z-50" />
-        <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[95vw] max-w-4xl max-h-[90vh] border border-white/20 dark:border-white/10 bg-white/95 dark:bg-[#0b0f14]/95 backdrop-blur-2xl shadow-[0_10px_40px_rgba(0,0,0,0.35)] rounded-2xl data-[state=open]:animate-in data-[state=closed]:animate-out z-50 flex flex-col overflow-hidden">
-          <div className="sticky top-0 flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-white/10 bg-white/80 dark:bg-[#0b0f14]/80 backdrop-blur-md">
-            <Dialog.Title className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        <Dialog.Overlay className="fixed inset-0 bg-black/70 data-[state=open]:animate-in data-[state=closed]:animate-out z-50" />
+        <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[95vw] max-w-4xl max-h-[90vh] border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-surface-light dark:bg-terminal-surface-dark shadow-[0_10px_50px_rgba(0,0,0,0.5)] dark:shadow-[0_10px_50px_rgba(6,182,212,0.3)] rounded-2xl data-[state=open]:animate-in data-[state=closed]:animate-out z-50 flex flex-col overflow-hidden">
+          <div className="sticky top-0 flex items-center justify-between px-6 py-4 border-b-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark">
+            <Dialog.Title className="text-lg font-semibold text-terminal-text-primary-light dark:text-terminal-text-primary-dark">
               建仓计算器
             </Dialog.Title>
             <Dialog.Close asChild>
               <button
                 aria-label="关闭"
-                className="h-8 w-8 rounded-full border border-black/10 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur-md flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-white/10 transition"
+                className="h-8 w-8 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-surface-light dark:bg-terminal-surface-dark flex items-center justify-center text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -182,18 +182,15 @@ export default function PositionBuilder() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <button
                   onClick={() => setMode('pyramid')}
-                  className="relative p-8 rounded-2xl border border-black/10 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur-xl hover:bg-white/60 dark:hover:bg-white/10 transition-all group overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_16px_rgba(0,0,0,0.3)]"
+                  className="relative p-8 rounded-2xl border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-surface-light dark:bg-terminal-surface-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition-all group overflow-hidden shadow-lg"
                 >
-                  {/* Gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 to-purple-500/5 dark:from-violet-400/10 dark:to-purple-400/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  
-                  {/* Sheen effect */}
-                  <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent dark:from-white/5 pointer-events-none" />
+                  {/* Accent line */}
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-terminal-accent-light to-terminal-accent-light/50 dark:from-terminal-accent-dark dark:to-terminal-accent-dark/50 opacity-0 group-hover:opacity-100 transition-opacity" />
                   
                   <div className="relative">
                     <div className="text-3xl mb-3">📊</div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">金字塔建仓</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                    <h3 className="text-lg font-semibold text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">金字塔建仓</h3>
+                    <p className="text-sm text-terminal-text-secondary-light dark:text-terminal-text-secondary-dark leading-relaxed">
                       在价格区间内分批建仓，价格越低买入越多
                     </p>
                   </div>
@@ -201,18 +198,15 @@ export default function PositionBuilder() {
                 
                 <button
                   onClick={() => setMode('dca')}
-                  className="relative p-8 rounded-2xl border border-black/10 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur-xl hover:bg-white/60 dark:hover:bg-white/10 transition-all group overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_16px_rgba(0,0,0,0.3)]"
+                  className="relative p-8 rounded-2xl border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-surface-light dark:bg-terminal-surface-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition-all group overflow-hidden shadow-lg"
                 >
-                  {/* Gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 dark:from-blue-400/10 dark:to-cyan-400/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  
-                  {/* Sheen effect */}
-                  <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent dark:from-white/5 pointer-events-none" />
+                  {/* Accent line */}
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-terminal-accent-light to-terminal-accent-light/50 dark:from-terminal-accent-dark dark:to-terminal-accent-dark/50 opacity-0 group-hover:opacity-100 transition-opacity" />
                   
                   <div className="relative">
                     <div className="text-3xl mb-3">💰</div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">DCA 建仓</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                    <h3 className="text-lg font-semibold text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">DCA 建仓</h3>
+                    <p className="text-sm text-terminal-text-secondary-light dark:text-terminal-text-secondary-dark leading-relaxed">
                       定投策略，按触发间隔分批买入固定金额
                     </p>
                   </div>
@@ -225,69 +219,69 @@ export default function PositionBuilder() {
               <div className="space-y-6">
                 <button
                   onClick={() => setMode(null)}
-                  className="text-sm text-violet-600 dark:text-violet-400 hover:underline"
+                  className="text-sm text-terminal-accent-light dark:text-terminal-accent-dark hover:underline"
                 >
                   ← 返回选择
                 </button>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-sm font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">
                       最高价格
                     </label>
                     <input
                       type="number"
                       value={pyramidParams.maxPrice}
                       onChange={(e) => setPyramidParams({ ...pyramidParams, maxPrice: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 backdrop-blur-md text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                      className="w-full h-10 px-3 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                     />
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-sm font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">
                       最低价格
                     </label>
                     <input
                       type="number"
                       value={pyramidParams.minPrice}
                       onChange={(e) => setPyramidParams({ ...pyramidParams, minPrice: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 backdrop-blur-md text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                      className="w-full h-10 px-3 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                     />
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-sm font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">
                       订单数量
                     </label>
                     <input
                       type="number"
                       value={pyramidParams.orderCount}
                       onChange={(e) => setPyramidParams({ ...pyramidParams, orderCount: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 backdrop-blur-md text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                      className="w-full h-10 px-3 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                     />
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-sm font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">
                       总投资额
                     </label>
                     <input
                       type="number"
                       value={pyramidParams.totalInvestment}
                       onChange={(e) => setPyramidParams({ ...pyramidParams, totalInvestment: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 backdrop-blur-md text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                      className="w-full h-10 px-3 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                     />
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-sm font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">
                       当前价格
                     </label>
                     <input
                       type="number"
                       value={pyramidParams.currentPrice}
                       onChange={(e) => setPyramidParams({ ...pyramidParams, currentPrice: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 backdrop-blur-md text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                      className="w-full h-10 px-3 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                     />
                   </div>
                   
@@ -306,25 +300,25 @@ export default function PositionBuilder() {
                   <div className="mt-6 -mx-6 px-6 overflow-x-auto">
                     <div className="min-w-[600px]">
                       <table className="w-full text-sm">
-                        <thead className="sticky top-0 bg-white dark:bg-[#0b0f14] z-10">
-                          <tr className="border-b-2 border-gray-300 dark:border-white/20">
-                            <th className="text-left py-3 px-2 font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0b0f14]">订单顺序</th>
-                            <th className="text-right py-3 px-2 font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0b0f14]">开仓价格</th>
-                            <th className="text-right py-3 px-2 font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0b0f14]">订单大小</th>
-                            <th className="text-right py-3 px-2 font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0b0f14]">订单价值</th>
-                            <th className="text-right py-3 px-2 font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0b0f14]">累计投资</th>
-                            <th className="text-right py-3 px-2 font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0b0f14]">平均价格</th>
+                        <thead className="sticky top-0 bg-terminal-surface-light dark:bg-terminal-surface-dark z-10">
+                          <tr className="border-b-2 border-terminal-border-light dark:border-terminal-border-dark">
+                            <th className="text-left py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-terminal-surface-light dark:bg-terminal-surface-dark">订单顺序</th>
+                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-terminal-surface-light dark:bg-terminal-surface-dark">开仓价格</th>
+                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-terminal-surface-light dark:bg-terminal-surface-dark">订单大小</th>
+                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-terminal-surface-light dark:bg-terminal-surface-dark">订单价值</th>
+                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-terminal-surface-light dark:bg-terminal-surface-dark">累计投资</th>
+                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-terminal-surface-light dark:bg-terminal-surface-dark">平均价格</th>
                           </tr>
                         </thead>
                         <tbody>
                           {pyramidResults.orders.map((order) => (
-                            <tr key={order.order} className="border-b border-gray-100 dark:border-white/5 hover:bg-gray-50 dark:hover:bg-white/5">
-                              <td className="py-3 px-2 text-gray-900 dark:text-gray-100">{order.order}</td>
-                              <td className="py-3 px-2 text-right text-gray-900 dark:text-gray-100">{order.entryPrice}</td>
-                              <td className="py-3 px-2 text-right text-gray-900 dark:text-gray-100">{order.orderSize}</td>
-                              <td className="py-3 px-2 text-right text-gray-900 dark:text-gray-100">{order.orderValue}</td>
-                              <td className="py-3 px-2 text-right text-gray-900 dark:text-gray-100">{order.cumulativeInvestment}</td>
-                              <td className="py-3 px-2 text-right text-gray-900 dark:text-gray-100">{order.averagePrice}</td>
+                            <tr key={order.order} className="border-b border-terminal-border-light/30 dark:border-terminal-border-dark/50 hover:bg-terminal-accent-light/5 dark:hover:bg-terminal-accent-dark/5">
+                              <td className="py-3 px-2 text-terminal-text-primary-light dark:text-terminal-text-primary-dark">{order.order}</td>
+                              <td className="py-3 px-2 text-right text-terminal-text-primary-light dark:text-terminal-text-primary-dark">{order.entryPrice}</td>
+                              <td className="py-3 px-2 text-right text-terminal-text-primary-light dark:text-terminal-text-primary-dark">{order.orderSize}</td>
+                              <td className="py-3 px-2 text-right text-terminal-text-primary-light dark:text-terminal-text-primary-dark">{order.orderValue}</td>
+                              <td className="py-3 px-2 text-right text-terminal-text-primary-light dark:text-terminal-text-primary-dark">{order.cumulativeInvestment}</td>
+                              <td className="py-3 px-2 text-right text-terminal-text-primary-light dark:text-terminal-text-primary-dark">{order.averagePrice}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -340,81 +334,81 @@ export default function PositionBuilder() {
               <div className="space-y-6">
                 <button
                   onClick={() => setMode(null)}
-                  className="text-sm text-violet-600 dark:text-violet-400 hover:underline"
+                  className="text-sm text-terminal-accent-light dark:text-terminal-accent-dark hover:underline"
                 >
                   ← 返回选择
                 </button>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-sm font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">
                       总投入金额
                     </label>
                     <input
                       type="number"
                       value={dcaParams.totalInvestment}
                       onChange={(e) => setDCAParams({ ...dcaParams, totalInvestment: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 backdrop-blur-md text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full h-10 px-3 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                     />
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-sm font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">
                       总加仓次数
                     </label>
                     <input
                       type="number"
                       value={dcaParams.buyTimes}
                       onChange={(e) => setDCAParams({ ...dcaParams, buyTimes: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 backdrop-blur-md text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full h-10 px-3 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                     />
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-sm font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">
                       触发间隔(%)
                     </label>
                     <input
                       type="number"
                       value={dcaParams.triggerInterval}
                       onChange={(e) => setDCAParams({ ...dcaParams, triggerInterval: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 backdrop-blur-md text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full h-10 px-3 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                     />
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-sm font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">
                       最大亏损比例(%)
                     </label>
                     <input
                       type="number"
                       value={dcaParams.maxLossPercent}
                       onChange={(e) => setDCAParams({ ...dcaParams, maxLossPercent: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 backdrop-blur-md text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full h-10 px-3 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                     />
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-sm font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">
                       入场价格
                     </label>
                     <input
                       type="number"
                       value={dcaParams.entryPrice}
                       onChange={(e) => setDCAParams({ ...dcaParams, entryPrice: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 backdrop-blur-md text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full h-10 px-3 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                     />
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-sm font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">
                       当前价格
                     </label>
                     <input
                       type="number"
                       value={dcaParams.currentPrice}
                       onChange={(e) => setDCAParams({ ...dcaParams, currentPrice: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 backdrop-blur-md text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full h-10 px-3 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                     />
                   </div>
                   
@@ -459,25 +453,25 @@ export default function PositionBuilder() {
                   <div className="mt-6 -mx-6 px-6 overflow-x-auto">
                     <div className="min-w-[600px]">
                       <table className="w-full text-sm">
-                        <thead className="sticky top-0 bg-white dark:bg-[#0b0f14] z-10">
-                          <tr className="border-b-2 border-gray-300 dark:border-white/20">
-                            <th className="text-left py-3 px-2 font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0b0f14]">订单顺序</th>
-                            <th className="text-right py-3 px-2 font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0b0f14]">开仓价格</th>
-                            <th className="text-right py-3 px-2 font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0b0f14]">订单大小</th>
-                            <th className="text-right py-3 px-2 font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0b0f14]">订单价值</th>
-                            <th className="text-right py-3 px-2 font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0b0f14]">累计投资</th>
-                            <th className="text-right py-3 px-2 font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0b0f14]">平均价格</th>
+                        <thead className="sticky top-0 bg-terminal-surface-light dark:bg-terminal-surface-dark z-10">
+                          <tr className="border-b-2 border-terminal-border-light dark:border-terminal-border-dark">
+                            <th className="text-left py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-terminal-surface-light dark:bg-terminal-surface-dark">订单顺序</th>
+                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-terminal-surface-light dark:bg-terminal-surface-dark">开仓价格</th>
+                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-terminal-surface-light dark:bg-terminal-surface-dark">订单大小</th>
+                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-terminal-surface-light dark:bg-terminal-surface-dark">订单价值</th>
+                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-terminal-surface-light dark:bg-terminal-surface-dark">累计投资</th>
+                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-terminal-surface-light dark:bg-terminal-surface-dark">平均价格</th>
                           </tr>
                         </thead>
                         <tbody>
                           {dcaResults.orders.map((order) => (
-                            <tr key={order.order} className="border-b border-gray-100 dark:border-white/5 hover:bg-gray-50 dark:hover:bg-white/5">
-                              <td className="py-3 px-2 text-gray-900 dark:text-gray-100">{order.order}</td>
-                              <td className="py-3 px-2 text-right text-gray-900 dark:text-gray-100">{order.entryPrice}</td>
-                              <td className="py-3 px-2 text-right text-gray-900 dark:text-gray-100">{order.orderSize}</td>
-                              <td className="py-3 px-2 text-right text-gray-900 dark:text-gray-100">{order.orderValue}</td>
-                              <td className="py-3 px-2 text-right text-gray-900 dark:text-gray-100">{order.cumulativeInvestment}</td>
-                              <td className="py-3 px-2 text-right text-gray-900 dark:text-gray-100">{order.averagePrice}</td>
+                            <tr key={order.order} className="border-b border-terminal-border-light/30 dark:border-terminal-border-dark/50 hover:bg-terminal-accent-light/5 dark:hover:bg-terminal-accent-dark/5">
+                              <td className="py-3 px-2 text-terminal-text-primary-light dark:text-terminal-text-primary-dark">{order.order}</td>
+                              <td className="py-3 px-2 text-right text-terminal-text-primary-light dark:text-terminal-text-primary-dark">{order.entryPrice}</td>
+                              <td className="py-3 px-2 text-right text-terminal-text-primary-light dark:text-terminal-text-primary-dark">{order.orderSize}</td>
+                              <td className="py-3 px-2 text-right text-terminal-text-primary-light dark:text-terminal-text-primary-dark">{order.orderValue}</td>
+                              <td className="py-3 px-2 text-right text-terminal-text-primary-light dark:text-terminal-text-primary-dark">{order.cumulativeInvestment}</td>
+                              <td className="py-3 px-2 text-right text-terminal-text-primary-light dark:text-terminal-text-primary-dark">{order.averagePrice}</td>
                             </tr>
                           ))}
                         </tbody>

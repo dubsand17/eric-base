@@ -28,11 +28,8 @@ export default function EmptyState({ state = "idle", query, onClear }: EmptyStat
   return (
     <div className="min-h-[60vh] flex items-center justify-center px-4">
       <div className="relative w-full max-w-2xl">
-        {/* 背景装饰 */}
-        <div className="pointer-events-none absolute inset-0 -z-10 rounded-3xl bg-gradient-to-b from-white/40 via-transparent to-transparent dark:from-white/10 blur-xl" />
-
-        <div className="rounded-2xl border border-black/10 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur-xl p-8 text-center">
-          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-tr from-violet-500/15 to-blue-500/15 text-violet-600 dark:text-violet-300">
+        <div className="rounded-2xl border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-surface-light dark:bg-terminal-surface-dark shadow-[0_4px_24px_rgba(0,0,0,0.08)] dark:shadow-[0_4px_24px_rgba(6,182,212,0.1)] p-8 text-center">
+          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-xl border-2 border-terminal-accent-light/30 dark:border-terminal-accent-dark/40 bg-terminal-accent-light/5 dark:bg-terminal-accent-dark/10 text-terminal-accent-light dark:text-terminal-accent-dark">
             {isSearching ? (
               <Loader2 className="h-7 w-7 animate-spin" />
             ) : isNoResults ? (
@@ -42,8 +39,8 @@ export default function EmptyState({ state = "idle", query, onClear }: EmptyStat
             )}
           </div>
 
-          <h3 className="mb-2 text-lg font-semibold tracking-tight text-gray-900 dark:text-gray-100">{title}</h3>
-          <p className="mb-6 text-sm text-gray-600 dark:text-gray-400">{subtitle}</p>
+          <h3 className="mb-2 text-lg font-semibold tracking-tight text-terminal-text-primary-light dark:text-terminal-text-primary-dark">{title}</h3>
+          <p className="mb-6 text-sm text-terminal-text-secondary-light dark:text-terminal-text-secondary-dark">{subtitle}</p>
 
           {/* 学习/交易员导向的建议 */}
           <div className="mx-auto grid max-w-xl grid-cols-1 gap-3 sm:grid-cols-3">
@@ -55,14 +52,14 @@ export default function EmptyState({ state = "idle", query, onClear }: EmptyStat
           {/* 动作区 */}
           <div className="mt-6 flex items-center justify-center gap-2">
             {isSearching && (
-              <span className="inline-flex items-center gap-2 rounded-full border border-black/10 dark:border-white/10 bg-white/30 dark:bg-white/5 backdrop-blur-md px-3 py-1.5 text-xs text-gray-700 dark:text-gray-300">
+              <span className="inline-flex items-center gap-2 rounded-full border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-surface-light dark:bg-terminal-surface-dark px-3 py-1.5 text-xs text-terminal-text-primary-light dark:text-terminal-text-primary-dark">
                 <Loader2 className="h-3.5 w-3.5 animate-spin" /> 正在为你检索
               </span>
             )}
             {isNoResults && (
               <button
                 onClick={onClear}
-                className="inline-flex items-center gap-2 rounded-full border border-black/10 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur-md px-3 py-1.5 text-xs text-gray-800 hover:bg-white/50 dark:text-gray-200 dark:hover:bg-white/10 transition"
+                className="inline-flex items-center gap-2 rounded-full border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-surface-light dark:bg-terminal-surface-dark px-3 py-1.5 text-xs text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition"
               >
                 <RefreshCw className="h-3.5 w-3.5" /> 清空条件再试
               </button>
@@ -76,12 +73,12 @@ export default function EmptyState({ state = "idle", query, onClear }: EmptyStat
 
 function Tip({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) {
   return (
-    <div className="rounded-xl border border-black/10 dark:border-white/10 bg-white/30 dark:bg-white/5 backdrop-blur-md p-3 text-left">
-      <div className="mb-1 flex items-center gap-2 text-gray-900 dark:text-gray-100">
-        <span className="text-violet-600 dark:text-violet-300">{icon}</span>
+    <div className="rounded-xl border-2 border-terminal-border-light/50 dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark p-3 text-left">
+      <div className="mb-1 flex items-center gap-2 text-terminal-text-primary-light dark:text-terminal-text-primary-dark">
+        <span className="text-terminal-accent-light dark:text-terminal-accent-dark">{icon}</span>
         <span className="text-sm font-medium">{title}</span>
       </div>
-      <p className="text-xs text-gray-600 dark:text-gray-400">{desc}</p>
+      <p className="text-xs text-terminal-text-secondary-light dark:text-terminal-text-secondary-dark">{desc}</p>
     </div>
   )
 }

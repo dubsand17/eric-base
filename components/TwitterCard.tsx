@@ -59,12 +59,12 @@ export default function TwitterCard({ post, showAbsoluteTime = false, onToggleTi
 
   return (
     <>
-      <div className="bg-white dark:bg-[#0d1117] rounded-lg shadow-sm border border-gray-200/60 dark:border-gray-800/60 overflow-hidden hover:shadow-lg hover:border-gray-300/60 dark:hover:border-gray-700/60 transition-all duration-200">
+      <div className="bg-terminal-surface-light dark:bg-terminal-surface-dark rounded-lg shadow-sm border border-terminal-border-light/50 dark:border-terminal-border-dark/70 overflow-hidden hover:shadow-[0_8px_24px_rgba(6,182,212,0.15)] dark:hover:shadow-[0_8px_24px_rgba(6,182,212,0.25)] hover:border-terminal-accent-light/30 dark:hover:border-terminal-accent-dark/40 transition-all duration-300">
         {/* 内容 */}
         <div className="p-4">
           <p 
-            className={`text-gray-900 dark:text-gray-100 text-sm leading-relaxed whitespace-pre-wrap mb-3 font-normal image-only-mode:hidden ${
-              post.images && post.images.length > 0 ? 'cursor-pointer hover:text-violet-600 dark:hover:text-violet-400 transition-colors' : ''
+            className={`text-terminal-text-primary-light dark:text-terminal-text-primary-dark text-sm leading-relaxed whitespace-pre-wrap mb-3 font-normal image-only-mode:hidden ${
+              post.images && post.images.length > 0 ? 'cursor-pointer hover:text-terminal-accent-light dark:hover:text-terminal-accent-dark transition-colors' : ''
             }`}
             onClick={handleContentClick}
             title={post.images && post.images.length > 0 ? '点击查看图片' : ''}
@@ -73,10 +73,10 @@ export default function TwitterCard({ post, showAbsoluteTime = false, onToggleTi
           </p>
           
           {/* 发布时间和原链接 */}
-          <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+          <div className="flex items-center justify-between text-xs text-terminal-text-secondary-light dark:text-terminal-text-secondary-dark">
             <button
               onClick={toggleTimeFormat}
-              className="flex items-center space-x-1 hover:text-gray-700 dark:hover:text-gray-300 transition-colors cursor-pointer"
+              className="flex items-center space-x-1 hover:text-terminal-text-primary-light dark:hover:text-terminal-text-primary-dark transition-colors cursor-pointer"
               title="点击切换时间格式"
             >
               <Clock className="w-3 h-3" />
@@ -94,7 +94,7 @@ export default function TwitterCard({ post, showAbsoluteTime = false, onToggleTi
             <div className="flex items-center space-x-2">
               {/* 已读标记和查看次数 */}
               {viewCount > 0 && (
-                <div className="flex items-center space-x-1 text-gray-400 dark:text-gray-500">
+                <div className="flex items-center space-x-1 text-terminal-text-muted-light dark:text-terminal-text-muted-dark">
                   <Eye className="w-3 h-3" />
                   <span className="text-xs font-medium">{viewCount}</span>
                 </div>
@@ -104,7 +104,7 @@ export default function TwitterCard({ post, showAbsoluteTime = false, onToggleTi
                   href={post.tweet_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center space-x-0.5 hover:text-violet-600 dark:hover:text-violet-400 transition-colors font-medium"
+                  className="flex items-center space-x-0.5 hover:text-terminal-accent-light dark:hover:text-terminal-accent-dark transition-colors font-medium"
                 >
                   <span>查看原文</span>
                   <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -128,7 +128,7 @@ export default function TwitterCard({ post, showAbsoluteTime = false, onToggleTi
               {post.images.map((image, index) => (
                 <div
                   key={index}
-                  className={`relative bg-gray-50 dark:bg-gray-900 rounded-md overflow-hidden cursor-pointer hover:opacity-95 transition-opacity ${
+                  className={`relative bg-terminal-bg-light dark:bg-[#0a0e14] rounded-md overflow-hidden cursor-pointer hover:opacity-95 transition-opacity ${
                     post.images.length === 3 && index === 0 ? 'sm:row-span-2' : ''
                   }`}
                   onClick={() => handleImageClick(image)}
