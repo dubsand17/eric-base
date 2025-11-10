@@ -367,9 +367,9 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
                 const alias = s.replace('USDT','')
                 const item = prices?.[s]
                 const d = dir[s] || 'none'
-                const color = d === 'up' ? 'text-terminal-up' : d === 'down' ? 'text-terminal-down' : 'text-terminal-text-muted-light dark:text-terminal-text-muted-dark'
+                const color = d === 'up' ? 'text-terminal-up dark:text-terminal-up-dark' : d === 'down' ? 'text-terminal-down' : 'text-terminal-text-muted-light dark:text-terminal-text-muted-dark'
                 const p = item?.percent
-                const percentColor = (typeof p === 'number' && !isNaN(p)) ? (p > 0 ? 'text-terminal-up' : p < 0 ? 'text-terminal-down' : 'text-terminal-text-muted-light dark:text-terminal-text-muted-dark') : 'text-terminal-text-muted-light dark:text-terminal-text-muted-dark'
+                const percentColor = (typeof p === 'number' && !isNaN(p)) ? (p > 0 ? 'text-terminal-up dark:text-terminal-up-dark' : p < 0 ? 'text-terminal-down' : 'text-terminal-text-muted-light dark:text-terminal-text-muted-dark') : 'text-terminal-text-muted-light dark:text-terminal-text-muted-dark'
                 return (
                   <div key={s} className={`flex items-center gap-1 h-7 px-2 rounded-xl border border-terminal-border-light/30 dark:border-terminal-border-dark bg-terminal-surface-light/40 dark:bg-terminal-surface-dark/40 backdrop-blur-md text-xs text-terminal-text-primary-light dark:text-terminal-text-primary-dark`}>
                     <span className="font-medium">{alias}</span>
@@ -387,9 +387,9 @@ export default function Navbar({ query, onQueryChange, from, to, onDateChange, s
                 const alias = 'BTC'
                 const item = prices?.[s]
                 const d = dir[s] || 'none'
-                const color = d === 'up' ? 'text-terminal-up' : d === 'down' ? 'text-terminal-down' : 'text-terminal-text-muted-light dark:text-terminal-text-muted-dark'
+                const color = d === 'up' ? 'text-terminal-up dark:text-terminal-up-dark' : d === 'down' ? 'text-terminal-down' : 'text-terminal-text-muted-light dark:text-terminal-text-muted-dark'
                 const p = item?.percent
-                const percentColor = (typeof p === 'number' && !isNaN(p)) ? (p > 0 ? 'text-terminal-up' : p < 0 ? 'text-terminal-down' : 'text-terminal-text-muted-light dark:text-terminal-text-muted-dark') : 'text-terminal-text-muted-light dark:text-terminal-text-muted-dark'
+                const percentColor = (typeof p === 'number' && !isNaN(p)) ? (p > 0 ? 'text-terminal-up dark:text-terminal-up-dark' : p < 0 ? 'text-terminal-down' : 'text-terminal-text-muted-light dark:text-terminal-text-muted-dark') : 'text-terminal-text-muted-light dark:text-terminal-text-muted-dark'
                 return (
                   <div className={`flex items-center gap-1 h-7 px-2 rounded-xl border border-terminal-border-light/30 dark:border-terminal-border-dark bg-terminal-surface-light/40 dark:bg-terminal-surface-dark/40 backdrop-blur-md text-xs text-terminal-text-primary-light dark:text-terminal-text-primary-dark`}>
                     <span className="font-medium">{alias}</span>

@@ -37,9 +37,9 @@ module.exports = {
           },
           // 涨（买入）- 霓虹绿
           up: {
-            DEFAULT: '#00ff9f',    // 霓虹绿
+            DEFAULT: '#059669',    // 日间：深绿（更高可读性）
             light: '#5affcd',
-            dark: '#00d981',
+            dark: '#00ff9f',
             glow: 'rgba(0, 255, 159, 0.6)',
           },
           // 跌（卖出）- 霓虹红
