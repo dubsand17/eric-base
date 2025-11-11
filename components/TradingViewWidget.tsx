@@ -14,6 +14,9 @@ function TradingViewWidget({ symbol, interval = '60', theme = 'light' }: Trading
   useEffect(() => {
     if (!container.current) return
 
+    // 清空容器，强制 TradingView 重新初始化
+    container.current.innerHTML = ''
+
     const script = document.createElement('script')
     script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js'
     script.type = 'text/javascript'
@@ -35,7 +38,7 @@ function TradingViewWidget({ symbol, interval = '60', theme = 'light' }: Trading
       hide_legend: false,
       hide_volume: false,
       save_image: true,
-      backgroundColor: theme === 'dark' ? '##181C25' : '#ffffff',
+      backgroundColor: theme === 'dark' ? '#181C25' : '#ffffff',
       gridColor: theme === 'dark' ? 'rgba(46, 46, 46, 0.3)' : 'rgba(46, 46, 46, 0.06)',
       withdateranges: false,
       studies: [],
@@ -44,13 +47,29 @@ function TradingViewWidget({ symbol, interval = '60', theme = 'light' }: Trading
     }
 
     script.innerHTML = JSON.stringify(config)
+    
+    // 重建内部容器结构
+    const widgetDiv = document.createElement('div')
+    widgetDiv.className = 'tradingview-widget-container__widget'
+    widgetDiv.style.cssText = 'height: calc(100% - 32px); width: 100%;'
+
+    const copyrightDiv = document.createElement('div')
+    copyrightDiv.className = 'tradingview-widget-copyright'
+    const symbolForUrlLocal = symbol.replace(':', '-')
+    copyrightDiv.innerHTML = `
+      <a href="https://cn.tradingview.com/symbols/${symbolForUrlLocal}/" rel="noopener nofollow" target="_blank">
+        <span class="blue-text">在 TradingView 查看 ${symbol}</span>
+      </a>
+      <span class="trademark"> · TradingView 提供</span>
+    `
+
+    container.current.appendChild(widgetDiv)
+    container.current.appendChild(copyrightDiv)
     container.current.appendChild(script)
 
     return () => {
-      // 清理脚本
-      if (container.current && script.parentNode === container.current) {
-        container.current.removeChild(script)
-      }
+      // 清理
+      if (container.current) container.current.innerHTML = ''
     }
   }, [symbol, interval, theme])
 
