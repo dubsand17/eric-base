@@ -26,7 +26,7 @@ function TradingViewWidget({ symbol, interval = '60', theme = 'light' }: Trading
       timezone: 'Etc/UTC',
       theme: theme,
       style: '1',
-      locale: 'en',
+      locale: 'zh_CN',
       allow_symbol_change: true,
       calendar: false,
       support_host: 'https://cn.tradingview.com',
@@ -35,7 +35,7 @@ function TradingViewWidget({ symbol, interval = '60', theme = 'light' }: Trading
       hide_legend: false,
       hide_volume: false,
       save_image: true,
-      backgroundColor: theme === 'dark' ? '#0d1117' : '#ffffff',
+      backgroundColor: theme === 'dark' ? '##181C25' : '#ffffff',
       gridColor: theme === 'dark' ? 'rgba(46, 46, 46, 0.3)' : 'rgba(46, 46, 46, 0.06)',
       withdateranges: false,
       studies: [],
@@ -61,10 +61,10 @@ function TradingViewWidget({ symbol, interval = '60', theme = 'light' }: Trading
     <div className="tradingview-widget-container w-full h-full" ref={container} style={{ height: '100%', width: '100%' }}>
       <div className="tradingview-widget-container__widget" style={{ height: 'calc(100% - 32px)', width: '100%' }}></div>
       <div className="tradingview-widget-copyright">
-        <a href={`https://www.tradingview.com/symbols/${symbolForUrl}/`} rel="noopener nofollow" target="_blank">
-          <span className="blue-text">{symbol} chart</span>
+        <a href={`https://cn.tradingview.com/symbols/${symbolForUrl}/`} rel="noopener nofollow" target="_blank">
+          <span className="blue-text">在 TradingView 查看 {symbol}</span>
         </a>
-        <span className="trademark"> by TradingView</span>
+        <span className="trademark"> · TradingView 提供</span>
       </div>
     </div>
   )
