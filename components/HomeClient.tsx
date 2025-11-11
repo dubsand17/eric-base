@@ -130,9 +130,11 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
       return
     }
 
-    // 宽屏时切换显示的符号
-    if (selectedSymbol === symbol) {
-      setSelectedSymbol(null) // 点击相同符号时关闭
+    // 宽屏时：点击相同符号则收起；不同符号则切换；未展开则打开
+    if (!selectedSymbol) {
+      setSelectedSymbol(symbol)
+    } else if (selectedSymbol === symbol) {
+      setSelectedSymbol(null)
     } else {
       setSelectedSymbol(symbol)
     }
