@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState, useRef } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useState, useRef } from 'react'
 import TwitterCard from './TwitterCard'
 import SkeletonCard from './SkeletonCard'
 import { TwitterPost } from '@/lib/supabase'
@@ -32,25 +32,47 @@ function getColumnCount(width: number | undefined): number {
 
 export default function MasonryGrid({ posts, loadingMore = false, showAbsoluteTime = false, onToggleTimeFormat, containerWidth }: MasonryGridProps) {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [colCount, setColCount] = useState<number>(1)
-
-  useEffect(() => {
+  // 初始化时使用更合理的默认值，避免闪烁
+  // 客户端：立即使用窗口宽度计算（避免 SSR/hydration 不匹配）
+  // 服务端：使用中等屏幕的3列作为保守默认值（适合大多数屏幕）
+  const [colCount, setColCount] = useState<number>(() => {
+    if (typeof window !== 'undefined') {
+      // 客户端：立即使用窗口宽度计算，确保初始值正确
+      return getColumnCount(window.innerWidth)
+    }
+    // 服务端：使用3列作为保守默认值（适合 1024px-1920px 的屏幕）
+    return 4
+  })
+  
+  // 使用 useLayoutEffect 在 DOM 更新之前同步执行，减少闪烁
+  useLayoutEffect(() => {
     const updateColumnCount = () => {
+      let newCount: number | null = null
+      
       if (containerWidth !== undefined && containerWidth > 0) {
         // 如果提供了容器宽度，使用它
-        setColCount(getColumnCount(containerWidth))
+        newCount = getColumnCount(containerWidth)
       } else if (containerRef.current) {
         // 否则使用容器的实际宽度
         const width = containerRef.current.offsetWidth
         if (width > 0) {
-          setColCount(getColumnCount(width))
+          newCount = getColumnCount(width)
         }
-      } else {
+      } else if (typeof window !== 'undefined') {
         // 最后回退到窗口宽度
-        setColCount(getColumnCount(undefined))
+        newCount = getColumnCount(window.innerWidth)
+      }
+      
+      // 使用函数式更新，确保总是获取最新的 colCount 值
+      if (newCount !== null) {
+        setColCount((prevCount) => {
+          // 只有在新值不同时才更新，避免不必要的重新渲染
+          return newCount !== prevCount ? newCount! : prevCount
+        })
       }
     }
 
+    // 立即更新一次（在 DOM 更新之前）
     updateColumnCount()
     
     if (containerWidth !== undefined) {
@@ -75,21 +97,23 @@ export default function MasonryGrid({ posts, loadingMore = false, showAbsoluteTi
     return () => window.removeEventListener('resize', onResize)
   }, [containerWidth])
 
-  // 按“横向阅读顺序”分配到列：index % colCount
+  // 按"横向阅读顺序"分配到列：index % colCount
+  const effectiveColCount = colCount
+  
   const columns = useMemo(() => {
-    const cols: TwitterPost[][] = Array.from({ length: colCount }, () => [])
+    const cols: TwitterPost[][] = Array.from({ length: effectiveColCount }, () => [])
     posts.forEach((post, i) => {
-      const c = i % colCount
+      const c = i % effectiveColCount
       cols[c].push(post)
     })
     return cols
-  }, [posts, colCount])
+  }, [posts, effectiveColCount])
 
   return (
     <div ref={containerRef} className="w-full px-4 py-4 md:py-6">
       <div
         className="grid gap-4"
-        style={{ gridTemplateColumns: `repeat(${colCount}, 1fr)` }}
+        style={{ gridTemplateColumns: `repeat(${effectiveColCount}, 1fr)` }}
       >
         {(() => {
           // 计算最短列索引（以条目数量近似列高度）
