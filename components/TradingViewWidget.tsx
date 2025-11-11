@@ -29,7 +29,7 @@ function TradingViewWidget({ symbol, interval = '60', theme = 'light' }: Trading
       locale: 'en',
       allow_symbol_change: true,
       calendar: false,
-      support_host: 'https://www.tradingview.com',
+      support_host: 'https://cn.tradingview.com',
       hide_side_toolbar: true,
       hide_top_toolbar: false,
       hide_legend: false,
