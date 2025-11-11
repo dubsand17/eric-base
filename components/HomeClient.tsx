@@ -3,10 +3,12 @@
 import { useEffect, useRef, useState } from 'react'
 import Navbar from '@/components/Navbar'
 import BackToTop from '@/components/BackToTop'
-import MasonryGrid from '@/components/MasonryGrid'
+import PostsList from '@/components/PostsList'
 import LoadingGrid from '@/components/LoadingGrid'
 import ErrorState from '@/components/ErrorState'
 import EmptyState from '@/components/EmptyState'
+import TradingViewWidget from '@/components/TradingViewWidget'
+import ResizablePanel from '@/components/ResizablePanel'
 import type { TwitterPost } from '@/lib/supabase'
 
 interface PaginationData {
@@ -26,6 +28,16 @@ interface HomeClientProps {
   initialPagination: PaginationData
 }
 
+// 将交易对符号转换为 TradingView 符号格式
+function getTradingViewSymbol(symbol: string): string {
+  const symbolMap: Record<string, string> = {
+    'BTCUSDT': 'BINANCE:BTCUSDT',
+    'ETHUSDT': 'BINANCE:ETHUSDT',
+    'SOLUSDT': 'BINANCE:SOLUSDT',
+  }
+  return symbolMap[symbol] || `BINANCE:${symbol}`
+}
+
 export default function HomeClient({ initialPosts, initialPagination }: HomeClientProps) {
   const [posts, setPosts] = useState<TwitterPost[]>(initialPosts)
   const [pagination, setPagination] = useState<PaginationData>(initialPagination)
@@ -38,6 +50,12 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
   const [to, setTo] = useState<string | undefined>(undefined)
   const [debouncedQuery, setDebouncedQuery] = useState('')
   const [showAbsoluteTime, setShowAbsoluteTime] = useState(false)
+  
+  // K 线图相关状态
+  const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null)
+  const [isWideScreen, setIsWideScreen] = useState(false)
+  const [theme, setTheme] = useState<'light' | 'dark'>('light')
+  const [leftContainerWidth, setLeftContainerWidth] = useState<number | undefined>(undefined)
 
   const sentinelRef = useRef<HTMLDivElement | null>(null)
   const cacheRef = useRef<Map<string, { ts: number; data: PostsResponse }>>(new Map())
@@ -46,10 +64,79 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
   const [hasSearched, setHasSearched] = useState(false)
   const [fetchingInitial, setFetchingInitial] = useState(false)
 
+  // 检测屏幕宽度和主题
+  useEffect(() => {
+    const checkScreenWidth = () => {
+      // 使用 1024px 作为宽屏阈值 (lg breakpoint)
+      const wide = window.innerWidth >= 1024
+      setIsWideScreen((prev) => {
+        // 如果从宽屏变为窄屏,清除选中的符号
+        if (prev && !wide) {
+          setSelectedSymbol(null)
+        }
+        return wide
+      })
+    }
+    
+    const checkTheme = () => {
+      // 检测系统主题或 document 上的 class
+      const isDark = document.documentElement.classList.contains('dark') || 
+                     window.matchMedia('(prefers-color-scheme: dark)').matches
+      setTheme(isDark ? 'dark' : 'light')
+    }
+
+    checkScreenWidth()
+    checkTheme()
+    
+    window.addEventListener('resize', checkScreenWidth)
+    
+    // 监听主题变化
+    const observer = new MutationObserver(checkTheme)
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class']
+    })
+
+    return () => {
+      window.removeEventListener('resize', checkScreenWidth)
+      observer.disconnect()
+    }
+  }, [])
+
   useEffect(() => {
     const t = setTimeout(() => setDebouncedQuery(query.trim()), 300)
     return () => clearTimeout(t)
   }, [query])
+
+  // ESC 键盘快捷键关闭 K 线图
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && selectedSymbol) {
+        setSelectedSymbol(null)
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [selectedSymbol])
+
+  // 处理加密货币符号点击
+  const handleSymbolClick = (symbol: string) => {
+    if (!isWideScreen) {
+      // 窄屏时跳转到 TradingView
+      const tradingViewSymbol = getTradingViewSymbol(symbol)
+      const symbolName = symbol.replace('USDT', '')
+      window.open(`https://www.tradingview.com/chart/?symbol=${encodeURIComponent(tradingViewSymbol)}`, '_blank')
+      return
+    }
+
+    // 宽屏时切换显示的符号
+    if (selectedSymbol === symbol) {
+      setSelectedSymbol(null) // 点击相同符号时关闭
+    } else {
+      setSelectedSymbol(symbol)
+    }
+  }
 
   async function fetchPosts(page = 1, signal?: AbortSignal) {
     const reqId = ++requestIdRef.current
@@ -125,21 +212,70 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedQuery, from, to])
 
-  // 底部哨兵自动加载更多
-  useEffect(() => {
-    if (!sentinelRef.current) return
-    if (pagination.page >= pagination.totalPages) return
+  const handleLoadMore = () => {
+    fetchPosts(pagination.page + 1)
+  }
 
-    const observer = new IntersectionObserver((entries) => {
-      const entry = entries[0]
-      if (entry.isIntersecting && !loadingMore) {
-        fetchPosts(pagination.page + 1)
-      }
-    }, { root: null, rootMargin: '600px', threshold: 0 })
+  // 渲染主要内容区域
+  const renderMainContent = () => {
+    // 宽屏且选中了符号时，使用 ResizablePanel
+    if (isWideScreen && selectedSymbol) {
+      const tradingViewSymbol = getTradingViewSymbol(selectedSymbol)
+      
+      return (
+        <ResizablePanel
+          left={
+            <div className="h-full overflow-y-auto no-scrollbar">
+              <PostsList
+                posts={posts}
+                pagination={pagination}
+                loadingMore={loadingMore}
+                showAbsoluteTime={showAbsoluteTime}
+                onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)}
+                onLoadMore={handleLoadMore}
+                containerWidth={leftContainerWidth}
+              />
+            </div>
+          }
+          right={
+            <div className="h-full flex flex-col px-4 py-4 md:py-6 relative overflow-hidden">
+              {/* K 线图容器 - 固定高度，不滚动 */}
+              <div className="flex-1 min-h-0 bg-terminal-surface-light dark:bg-terminal-surface-dark rounded-lg border border-terminal-border-light dark:border-terminal-border-dark mb-4 overflow-hidden">
+                <div className="h-full w-full p-2">
+                  <TradingViewWidget 
+                    symbol={tradingViewSymbol} 
+                    interval="60"
+                    theme={theme}
+                  />
+                </div>
+              </div>
+            </div>
+          }
+          defaultWidth={50}
+          minWidth={30}
+          maxWidth={70}
+          onLeftWidthChange={(percent, pixelWidth) => {
+            setLeftContainerWidth(pixelWidth)
+          }}
+          onClose={() => setSelectedSymbol(null)}
+        />
+      )
+    }
 
-    observer.observe(sentinelRef.current)
-    return () => observer.disconnect()
-  }, [pagination.page, pagination.totalPages, loadingMore])
+    // 默认情况：只显示帖子列表
+    return (
+      <div className="h-full overflow-y-auto no-scrollbar">
+        <PostsList
+          posts={posts}
+          pagination={pagination}
+          loadingMore={loadingMore}
+          showAbsoluteTime={showAbsoluteTime}
+          onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)}
+          onLoadMore={handleLoadMore}
+        />
+      </div>
+    )
+  }
 
   if (fetchingInitial && posts.length === 0) {
     return (
@@ -152,6 +288,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
           onDateChange={({ from: f, to: t }) => { setFrom(f); setTo(t) }}
           showAbsoluteTime={showAbsoluteTime}
           onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)}
+          onSymbolClick={handleSymbolClick}
         />
         <LoadingGrid />
         <BackToTop />
@@ -170,6 +307,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
           onDateChange={({ from: f, to: t }) => { setFrom(f); setTo(t) }}
           showAbsoluteTime={showAbsoluteTime}
           onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)}
+          onSymbolClick={handleSymbolClick}
         />
         <ErrorState error={error} />
         <BackToTop />
@@ -188,6 +326,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
           onDateChange={({ from: f, to: t }) => { setFrom(f); setTo(t) }}
           showAbsoluteTime={showAbsoluteTime}
           onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)}
+          onSymbolClick={handleSymbolClick}
         />
         <div className="container mx-auto py-6">
           <EmptyState
@@ -201,8 +340,14 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
     )
   }
 
+  // 根据是否显示 K 线图决定布局方式
+  const useFixedLayout = isWideScreen && selectedSymbol
+
   return (
-    <div className="min-h-screen bg-[#fafbfc] dark:bg-[#0d1117]">
+    <div 
+      className="min-h-screen bg-[#fafbfc] dark:bg-[#0d1117] flex flex-col" 
+      style={useFixedLayout ? { height: '100vh', overflow: 'hidden' } : {}}
+    >
       <Navbar
         query={query}
         onQueryChange={setQuery}
@@ -211,28 +356,11 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
         onDateChange={({ from: f, to: t }) => { setFrom(f); setTo(t) }}
         showAbsoluteTime={showAbsoluteTime}
         onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)}
+        onSymbolClick={handleSymbolClick}
       />
-      <MasonryGrid posts={posts} loadingMore={loadingMore} showAbsoluteTime={showAbsoluteTime} onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)} />
-
-      <div ref={sentinelRef} className="h-1" />
-
-      {pagination.page < pagination.totalPages && !loadingMore && (
-        <div className="w-full flex justify-center py-6">
-          <button
-            onClick={() => fetchPosts(pagination.page + 1)}
-            className="px-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 text-sm hover:bg-gray-50 dark:hover:bg-gray-900"
-          >
-            加载更多
-          </button>
-        </div>
-      )}
-
-      {pagination.page >= pagination.totalPages && posts.length > 0 && (
-        <div className="w-full flex justify-center py-8 text-sm text-gray-500 dark:text-gray-400">
-          已加载完毕 · 共 {pagination.total} 条知识点
-        </div>
-      )}
-
+      <div className={useFixedLayout ? "flex-1 min-h-0 overflow-hidden" : "flex-1"}>
+        {renderMainContent()}
+      </div>
       <BackToTop />
     </div>
   )

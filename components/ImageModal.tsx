@@ -218,10 +218,10 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
           {/* 中心容器 - 交易终端风格 */}
           <div className="w-[95%] md:w-[90%] h-[95%] md:h-[90%] rounded-2xl overflow-hidden border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-surface-light dark:bg-terminal-surface-dark shadow-[0_20px_60px_rgba(0,0,0,0.5)] dark:shadow-[0_20px_60px_rgba(6,182,212,0.2)] flex flex-col md:flex-row" role="dialog" aria-modal="true">
         {/* 左侧内容区域 - 在移动端变为顶部区域 */}
-        <div className="w-full md:w-1/3 h-auto md:h-full p-3 md:p-5 overflow-y-auto border-b md:border-b-0 md:border-r border-terminal-border-light dark:border-terminal-border-dark max-h-[30vh] md:max-h-none bg-terminal-bg-light dark:bg-terminal-bg-dark">
-          <div className="max-w-md mx-auto">
-            {/* 关闭按钮 + ESC 提示 */}
-            <div className="mb-5 flex items-center gap-2">
+        <div className="w-full md:w-1/3 h-auto md:h-full flex flex-col border-b md:border-b-0 md:border-r border-terminal-border-light dark:border-terminal-border-dark max-h-[30vh] md:max-h-none bg-terminal-bg-light dark:bg-terminal-bg-dark">
+          {/* 关闭按钮 + ESC 提示 - 固定在顶部，不跟随滚动 */}
+          <div className="flex-shrink-0 p-3 md:p-5 pb-3 md:pb-3 border-b border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark">
+            <div className="flex items-center gap-2">
               <Dialog.Close asChild>
                 <button
                   className="h-9 w-9 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-surface-light dark:bg-terminal-surface-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition flex items-center justify-center"
@@ -233,6 +233,11 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
               </Dialog.Close>
               <span className="text-[11px] text-terminal-text-muted-light dark:text-terminal-text-muted-dark select-none">ESC</span>
             </div>
+          </div>
+          
+          {/* 可滚动内容区域 */}
+          <div className="flex-1 overflow-y-auto p-3 md:p-5 pt-3 md:pt-3">
+            <div className="max-w-md mx-auto">
 
             {/* 推文内容 */}
             {content && (
@@ -297,7 +302,7 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
               </div>
             )}
 
-
+            </div>
           </div>
         </div>
 

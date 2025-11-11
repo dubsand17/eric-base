@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useRef } from 'react'
 import TwitterCard from './TwitterCard'
 import SkeletonCard from './SkeletonCard'
 import { TwitterPost } from '@/lib/supabase'
@@ -10,27 +10,70 @@ interface MasonryGridProps {
   loadingMore?: boolean
   showAbsoluteTime?: boolean
   onToggleTimeFormat?: () => void
+  containerWidth?: number // 可选的容器宽度，用于动态计算列数
 }
 
-function getColumnCount(width: number): number {
+// 根据容器宽度计算列数，最少1列
+// 假设每个卡片最小宽度约为320px（包括gap）
+function getColumnCount(width: number | undefined): number {
+  if (!width) {
+    // 如果没有提供宽度，使用窗口宽度
+    if (typeof window === 'undefined') return 1
+    width = window.innerWidth
+  }
+  
+  // 最少1列
   if (width < 640) return 1 // sm-
-  if (width < 1024) return 2 // md
-  if (width < 1536) return 3 // lg (matches lg:grid-cols-3)
-  return 4 // 2xl+ (matches 2xl:grid-cols-4)
+  if (width < 960) return 2 // md
+  if (width < 1280) return 3 // lg
+  if (width < 1920) return 4 // xl
+  return Math.min(6, Math.floor(width / 320)) // 最多6列，每个卡片约320px
 }
 
-export default function MasonryGrid({ posts, loadingMore = false, showAbsoluteTime = false, onToggleTimeFormat }: MasonryGridProps) {
-  // 为了避免 SSR 不一致，同时在大屏首帧尽量占满，初始列数设为 4
-  const [colCount, setColCount] = useState<number>(4)
+export default function MasonryGrid({ posts, loadingMore = false, showAbsoluteTime = false, onToggleTimeFormat, containerWidth }: MasonryGridProps) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [colCount, setColCount] = useState<number>(1)
 
   useEffect(() => {
-    // 初始化时设置正确的列数
-    setColCount(getColumnCount(window.innerWidth))
+    const updateColumnCount = () => {
+      if (containerWidth !== undefined && containerWidth > 0) {
+        // 如果提供了容器宽度，使用它
+        setColCount(getColumnCount(containerWidth))
+      } else if (containerRef.current) {
+        // 否则使用容器的实际宽度
+        const width = containerRef.current.offsetWidth
+        if (width > 0) {
+          setColCount(getColumnCount(width))
+        }
+      } else {
+        // 最后回退到窗口宽度
+        setColCount(getColumnCount(undefined))
+      }
+    }
+
+    updateColumnCount()
     
-    const onResize = () => setColCount(getColumnCount(window.innerWidth))
+    if (containerWidth !== undefined) {
+      // 如果提供了容器宽度，直接使用它，不监听窗口resize
+      return
+    }
+    
+    // 只有在没有提供容器宽度时才监听窗口resize和容器resize
+    const onResize = () => updateColumnCount()
     window.addEventListener('resize', onResize)
+    
+    // 使用 ResizeObserver 监听容器大小变化
+    if (containerRef.current) {
+      const resizeObserver = new ResizeObserver(updateColumnCount)
+      resizeObserver.observe(containerRef.current)
+      return () => {
+        window.removeEventListener('resize', onResize)
+        resizeObserver.disconnect()
+      }
+    }
+    
     return () => window.removeEventListener('resize', onResize)
-  }, [])
+  }, [containerWidth])
 
   // 按“横向阅读顺序”分配到列：index % colCount
   const columns = useMemo(() => {
@@ -43,13 +86,10 @@ export default function MasonryGrid({ posts, loadingMore = false, showAbsoluteTi
   }, [posts, colCount])
 
   return (
-    <div className="w-full px-4 py-4 md:py-6">
+    <div ref={containerRef} className="w-full px-4 py-4 md:py-6">
       <div
-        className={
-          // 仅用于列容器，不用网格行，避免强制对齐导致的空隙
-          'grid gap-4 ' +
-          'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4'
-        }
+        className="grid gap-4"
+        style={{ gridTemplateColumns: `repeat(${colCount}, 1fr)` }}
       >
         {(() => {
           // 计算最短列索引（以条目数量近似列高度）
