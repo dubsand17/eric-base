@@ -15,6 +15,7 @@ interface PyramidParams {
   totalInvestment: number | string
   currentPrice: number | string
   maxLossPercent: number | string
+  lowestPrice: number | string
 }
 
 // DCA建仓参数
@@ -25,6 +26,7 @@ interface DCAParams {
   maxLossPercent: number | string
   entryPrice: number | string
   currentPrice: number | string
+  lowestPrice: number | string
 }
 
 interface OrderResult {
@@ -34,6 +36,7 @@ interface OrderResult {
   orderValue: number
   cumulativeInvestment: number
   averagePrice: number
+  isExecutable: boolean // 是否可以成交（当前价格已达到或低于该订单价格）
 }
 
 export default function PositionBuilder() {
@@ -47,7 +50,8 @@ export default function PositionBuilder() {
     orderCount: 5,
     totalInvestment: 1000,
     currentPrice: 2.5,
-    maxLossPercent: 10
+    maxLossPercent: 10,
+    lowestPrice: ""
   })
   
   // DCA参数
@@ -57,17 +61,19 @@ export default function PositionBuilder() {
     triggerInterval: 1,
     maxLossPercent: 10,
     entryPrice: 268,
-    currentPrice: 270
+    currentPrice: 270,
+    lowestPrice: ""
   })
   
   // 计算金字塔建仓结果
-  const calculatePyramid = (): { orders: OrderResult[], pnl: number, lossPercent: number, exceeded: boolean, totalQuantity: number, totalInvestment: number } => {
+  const calculatePyramid = (): { orders: OrderResult[], pnl: number, lossPercent: number, exceeded: boolean, totalQuantity: number, totalInvestment: number, averagePrice: number } => {
     const maxPrice = Number(pyramidParams.maxPrice) || 0
     const minPrice = Number(pyramidParams.minPrice) || 0
     const orderCount = Number(pyramidParams.orderCount) || 1
     const totalInvestment = Number(pyramidParams.totalInvestment) || 0
     const currentPrice = Number(pyramidParams.currentPrice) || 0
     const maxLossPercent = Number(pyramidParams.maxLossPercent) || 0
+    const lowestPrice = Number(pyramidParams.lowestPrice) || 0
     const orders: OrderResult[] = []
     const priceStep = (maxPrice - minPrice) / (orderCount - 1)
     
@@ -89,30 +95,40 @@ export default function PositionBuilder() {
       totalQuantity += orderSize
       const averagePrice = cumulativeInvestment / totalQuantity
       
+      // 判断是否可以成交：只与最低价格有关，只要订单价格 >= 最低价格就可以成交（与当前价格无关）
+      const isExecutable = lowestPrice === 0 || entryPrice >= lowestPrice
+      
       orders.push({
         order: i + 1,
         entryPrice: Number(entryPrice.toFixed(2)),
         orderSize: Number(orderSize.toFixed(8)),
         orderValue: Number(orderValue.toFixed(2)),
         cumulativeInvestment: Number(cumulativeInvestment.toFixed(2)),
-        averagePrice: Number(averagePrice.toFixed(8))
+        averagePrice: Number(averagePrice.toFixed(8)),
+        isExecutable
       })
     }
     
-    const pnl = (currentPrice * totalQuantity) - totalInvestment
-    const lossPercent = totalInvestment === 0 ? 0 : (pnl / totalInvestment) * 100
+    // 只统计可成交订单的 PNL 和盈亏比例
+    const executableOrders = orders.filter(o => o.isExecutable)
+    const executableInvestment = executableOrders.reduce((sum, o) => sum + o.orderValue, 0)
+    const executableQuantity = executableOrders.reduce((sum, o) => sum + o.orderSize, 0)
+    const averagePrice = executableQuantity > 0 ? executableInvestment / executableQuantity : 0
+    const pnl = executableQuantity > 0 ? (currentPrice * executableQuantity) - executableInvestment : 0
+    const lossPercent = executableInvestment === 0 ? 0 : (pnl / executableInvestment) * 100
     const exceeded = lossPercent < 0 && Math.abs(lossPercent) > maxLossPercent
-    return { orders, pnl, lossPercent, exceeded, totalQuantity, totalInvestment }
+    return { orders, pnl, lossPercent, exceeded, totalQuantity: executableQuantity, totalInvestment: executableInvestment, averagePrice }
   }
   
   // 计算DCA建仓结果
-  const calculateDCA = (): { orders: OrderResult[], pnl: number, lossPercent: number, exceeded: boolean, totalQuantity: number, totalInvestment: number } => {
+  const calculateDCA = (): { orders: OrderResult[], pnl: number, lossPercent: number, exceeded: boolean, totalQuantity: number, totalInvestment: number, averagePrice: number } => {
     const totalInvestment = Number(dcaParams.totalInvestment) || 0
     const buyTimes = Number(dcaParams.buyTimes) || 1
     const triggerInterval = Number(dcaParams.triggerInterval) || 0
     const entryPrice = Number(dcaParams.entryPrice) || 0
     const currentPrice = Number(dcaParams.currentPrice) || 0
     const maxLossPercent = Number(dcaParams.maxLossPercent) || 0
+    const lowestPrice = Number(dcaParams.lowestPrice) || 0
     const orders: OrderResult[] = []
     const orderValue = totalInvestment / buyTimes
     
@@ -127,21 +143,30 @@ export default function PositionBuilder() {
       totalQuantity += orderSize
       const averagePrice = cumulativeInvestment / totalQuantity
       
+      // 判断是否可以成交：只与最低价格有关，只要订单价格 >= 最低价格就可以成交（与当前价格无关）
+      const isExecutable = lowestPrice === 0 || entryPriceForOrder >= lowestPrice
+      
       orders.push({
         order: i + 1,
         entryPrice: Number(entryPriceForOrder.toFixed(4)),
         orderSize: Number(orderSize.toFixed(8)),
         orderValue: Number(orderValue.toFixed(2)),
         cumulativeInvestment: Number(cumulativeInvestment.toFixed(2)),
-        averagePrice: Number(averagePrice.toFixed(6))
+        averagePrice: Number(averagePrice.toFixed(6)),
+        isExecutable
       })
     }
     
-    const pnl = (currentPrice * totalQuantity) - totalInvestment
-    const lossPercent = totalInvestment === 0 ? 0 : (pnl / totalInvestment) * 100
+    // 只统计可成交订单的 PNL 和盈亏比例
+    const executableOrders = orders.filter(o => o.isExecutable)
+    const executableInvestment = executableOrders.reduce((sum, o) => sum + o.orderValue, 0)
+    const executableQuantity = executableOrders.reduce((sum, o) => sum + o.orderSize, 0)
+    const averagePrice = executableQuantity > 0 ? executableInvestment / executableQuantity : 0
+    const pnl = executableQuantity > 0 ? (currentPrice * executableQuantity) - executableInvestment : 0
+    const lossPercent = executableInvestment === 0 ? 0 : (pnl / executableInvestment) * 100
     const exceeded = lossPercent < 0 && Math.abs(lossPercent) > maxLossPercent
     
-    return { orders, pnl, lossPercent, exceeded, totalQuantity, totalInvestment }
+    return { orders, pnl, lossPercent, exceeded, totalQuantity: executableQuantity, totalInvestment: executableInvestment, averagePrice }
   }
   
   const pyramidResults = mode === 'pyramid' ? calculatePyramid() : null
@@ -235,7 +260,7 @@ export default function PositionBuilder() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">
-                      最高价格
+                      建仓最高价
                     </label>
                     <input
                       type="number"
@@ -247,7 +272,7 @@ export default function PositionBuilder() {
                   
                   <div>
                     <label className="block text-sm font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">
-                      最低价格
+                      建仓最低价
                     </label>
                     <input
                       type="number"
@@ -305,6 +330,19 @@ export default function PositionBuilder() {
                     />
                   </div>
                   
+                  <div>
+                    <label className="block text-sm font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">
+                    最低价（建仓后）
+                    </label>
+                    <input
+                      type="number"
+                      value={pyramidParams.lowestPrice}
+                      onChange={(e) => setPyramidParams({ ...pyramidParams, lowestPrice: e.target.value })}
+                      className="w-full h-10 px-3 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
+                      placeholder="建仓后的价格最低点"
+                    />
+                  </div>
+                  
                   <div className="flex items-end gap-3">
                     <div className={`flex-1 h-10 px-3 rounded-lg border flex items-center justify-between ${pyramidResults && pyramidResults.pnl >= 0 ? 'border-emerald-500/30 bg-emerald-50 dark:bg-emerald-950/20' : 'border-rose-500/30 bg-rose-50 dark:bg-rose-950/20'}`}>
                       <span className="text-sm font-medium text-gray-700 dark:text-gray-300">PNL</span>
@@ -312,10 +350,17 @@ export default function PositionBuilder() {
                         {pyramidResults ? pyramidResults.pnl.toFixed(2) : '0.00'}
                       </span>
                     </div>
-                    <div className={`h-10 px-3 rounded-lg border flex items-center gap-2 ${pyramidResults ? (pyramidResults.exceeded ? 'border-rose-500/50 bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300' : 'border-emerald-500/40 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-300') : 'border-terminal-border-light dark:border-terminal-border-dark'}`}>
-                      <span className="text-xs font-medium whitespace-nowrap">亏损</span>
-                      <span className="text-sm font-bold">{pyramidResults ? `${pyramidResults.lossPercent.toFixed(2)}%` : '—'}</span>
-                      <span className="text-xs font-medium whitespace-nowrap">阈值 {Number(pyramidParams.maxLossPercent) || 0}%</span>
+                    <div className={`h-10 px-3 rounded-lg border flex items-center gap-2 ${pyramidResults ? (pyramidResults.lossPercent >= 0 ? 'border-emerald-500/40 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-300' : 'border-rose-500/50 bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300') : 'border-terminal-border-light dark:border-terminal-border-dark'}`}>
+                      <span className="text-xs font-medium whitespace-nowrap">盈亏</span>
+                      <span className={`text-sm font-bold ${pyramidResults ? (pyramidResults.lossPercent >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400') : ''}`}>
+                        {pyramidResults ? `${pyramidResults.lossPercent >= 0 ? '+' : ''}${pyramidResults.lossPercent.toFixed(2)}%` : '—'}
+                      </span>
+                      <span className="text-xs font-medium whitespace-nowrap text-rose-600 dark:text-rose-400">
+                        阈值 -{Number(pyramidParams.maxLossPercent) || 0}%
+                        {pyramidResults && pyramidResults.averagePrice > 0 && (
+                          <span className="ml-1">({(pyramidResults.averagePrice * (1 - (Number(pyramidParams.maxLossPercent) || 0) / 100)).toFixed(2)})</span>
+                        )}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -337,8 +382,22 @@ export default function PositionBuilder() {
                         </thead>
                         <tbody>
                           {pyramidResults.orders.map((order) => (
-                            <tr key={order.order} className="border-b border-terminal-border-light/30 dark:border-terminal-border-dark/50 hover:bg-terminal-accent-light/5 dark:hover:bg-terminal-accent-dark/5">
-                              <td className="py-3 px-2 text-terminal-text-primary-light dark:text-terminal-text-primary-dark">{order.order}</td>
+                            <tr 
+                              key={order.order} 
+                              className={`border-b border-terminal-border-light/30 dark:border-terminal-border-dark/50 hover:bg-terminal-accent-light/5 dark:hover:bg-terminal-accent-dark/5 ${
+                                order.isExecutable ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-l-2 border-l-emerald-500 dark:border-l-emerald-400' : ''
+                              }`}
+                            >
+                              <td className="py-3 px-2 text-terminal-text-primary-light dark:text-terminal-text-primary-dark">
+                                <div className="flex items-center gap-2">
+                                  {order.order}
+                                  {order.isExecutable && (
+                                    <span className="text-xs px-1.5 py-0.5 rounded bg-emerald-500/20 dark:bg-emerald-400/20 text-emerald-700 dark:text-emerald-300 font-medium">
+                                      可成交
+                                    </span>
+                                  )}
+                                </div>
+                              </td>
                               <td className="py-3 px-2 text-right text-terminal-text-primary-light dark:text-terminal-text-primary-dark">{order.entryPrice}</td>
                               <td className="py-3 px-2 text-right text-terminal-text-primary-light dark:text-terminal-text-primary-dark">{order.orderSize}</td>
                               <td className="py-3 px-2 text-right text-terminal-text-primary-light dark:text-terminal-text-primary-dark">{order.orderValue}</td>
@@ -437,47 +496,70 @@ export default function PositionBuilder() {
                     />
                   </div>
                   
-                  <div className="flex items-end">
-                    <div className={`w-full h-10 px-3 rounded-lg border flex items-center justify-between ${dcaResults && dcaResults.pnl >= 0 ? 'border-emerald-500/30 bg-emerald-50 dark:bg-emerald-950/20' : 'border-rose-500/30 bg-rose-50 dark:bg-rose-950/20'}`}>
+                  <div>
+                    <label className="block text-sm font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">
+                    最低价（建仓后）
+                    </label>
+                    <input
+                      type="number"
+                      value={dcaParams.lowestPrice}
+                      onChange={(e) => setDCAParams({ ...dcaParams, lowestPrice: e.target.value })}
+                      className="w-full h-10 px-3 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
+                      placeholder="建仓后的价格最低点"
+                    />
+                  </div>
+                  
+                  <div className="flex items-end gap-3">
+                    <div className={`flex-1 h-10 px-3 rounded-lg border flex items-center justify-between ${dcaResults && dcaResults.pnl >= 0 ? 'border-emerald-500/30 bg-emerald-50 dark:bg-emerald-950/20' : 'border-rose-500/30 bg-rose-50 dark:bg-rose-950/20'}`}>
                       <span className="text-sm font-medium text-gray-700 dark:text-gray-300">PNL</span>
                       <span className={`text-sm font-bold ${dcaResults && dcaResults.pnl >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
                         {dcaResults ? dcaResults.pnl.toFixed(2) : '0.00'}
+                      </span>
+                    </div>
+                    <div className={`h-10 px-3 rounded-lg border flex items-center gap-2 ${dcaResults ? (dcaResults.lossPercent >= 0 ? 'border-emerald-500/40 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-300' : 'border-rose-500/50 bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300') : 'border-terminal-border-light dark:border-terminal-border-dark'}`}>
+                      <span className="text-xs font-medium whitespace-nowrap">盈亏</span>
+                      <span className={`text-sm font-bold ${dcaResults ? (dcaResults.lossPercent >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400') : ''}`}>
+                        {dcaResults ? `${dcaResults.lossPercent >= 0 ? '+' : ''}${dcaResults.lossPercent.toFixed(2)}%` : '—'}
+                      </span>
+                      <span className="text-xs font-medium whitespace-nowrap text-rose-600 dark:text-rose-400">
+                        阈值 -{Number(dcaParams.maxLossPercent) || 0}%
+                        {dcaResults && dcaResults.averagePrice > 0 && (
+                          <span className="ml-1">({(dcaResults.averagePrice * (1 - (Number(dcaParams.maxLossPercent) || 0) / 100)).toFixed(2)})</span>
+                        )}
                       </span>
                     </div>
                   </div>
                 </div>
                 
                 {/* 额外信息 */}
-                {dcaResults && (
-                  <div className="grid grid-cols-2 md:grid-cols-5 gap-3 p-4 rounded-lg bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800/30">
-                    <div>
-                      <div className="text-xs text-gray-600 dark:text-gray-400">最后买入价格</div>
-                      <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">{dcaResults.orders[dcaResults.orders.length - 1]?.entryPrice}</div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-gray-600 dark:text-gray-400">当前价格</div>
-                      <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">{Number(dcaParams.currentPrice).toFixed(2)}</div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-gray-600 dark:text-gray-400">总买入数量</div>
-                      <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                        {dcaResults.orders.reduce((sum, o) => sum + o.orderSize, 0).toFixed(6)}
+                {dcaResults && (() => {
+                  const executableOrders = dcaResults.orders.filter(o => o.isExecutable)
+                  const lastExecutableOrder = executableOrders[executableOrders.length - 1]
+                  return (
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-4 rounded-lg bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800/30">
+                      <div>
+                        <div className="text-xs text-gray-600 dark:text-gray-400">最后买入价格</div>
+                        <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">{lastExecutableOrder?.entryPrice || '—'}</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-600 dark:text-gray-400">当前价格</div>
+                        <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">{Number(dcaParams.currentPrice).toFixed(2)}</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-600 dark:text-gray-400">可成交数量</div>
+                        <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                          {dcaResults.totalQuantity.toFixed(6)}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-600 dark:text-gray-400">平均价格</div>
+                        <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                          {lastExecutableOrder ? (dcaResults.totalInvestment / dcaResults.totalQuantity).toFixed(6) : '—'}
+                        </div>
                       </div>
                     </div>
-                    <div>
-                      <div className="text-xs text-gray-600 dark:text-gray-400">平均价格</div>
-                      <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                        {dcaResults.orders[dcaResults.orders.length - 1]?.averagePrice}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-gray-600 dark:text-gray-400">亏损监控</div>
-                      <div className={`text-sm font-semibold ${dcaResults.exceeded ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
-                        {dcaResults.lossPercent.toFixed(2)}% / 阈值 {Number(dcaParams.maxLossPercent) || 0}%
-                      </div>
-                    </div>
-                  </div>
-                )}
+                  )
+                })()}
                 
                 {/* 结果表格 */}
                 {dcaResults && (
@@ -496,8 +578,22 @@ export default function PositionBuilder() {
                         </thead>
                         <tbody>
                           {dcaResults.orders.map((order) => (
-                            <tr key={order.order} className="border-b border-terminal-border-light/30 dark:border-terminal-border-dark/50 hover:bg-terminal-accent-light/5 dark:hover:bg-terminal-accent-dark/5">
-                              <td className="py-3 px-2 text-terminal-text-primary-light dark:text-terminal-text-primary-dark">{order.order}</td>
+                            <tr 
+                              key={order.order} 
+                              className={`border-b border-terminal-border-light/30 dark:border-terminal-border-dark/50 hover:bg-terminal-accent-light/5 dark:hover:bg-terminal-accent-dark/5 ${
+                                order.isExecutable ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-l-2 border-l-emerald-500 dark:border-l-emerald-400' : ''
+                              }`}
+                            >
+                              <td className="py-3 px-2 text-terminal-text-primary-light dark:text-terminal-text-primary-dark">
+                                <div className="flex items-center gap-2">
+                                  {order.order}
+                                  {order.isExecutable && (
+                                    <span className="text-xs px-1.5 py-0.5 rounded bg-emerald-500/20 dark:bg-emerald-400/20 text-emerald-700 dark:text-emerald-300 font-medium">
+                                      可成交
+                                    </span>
+                                  )}
+                                </div>
+                              </td>
                               <td className="py-3 px-2 text-right text-terminal-text-primary-light dark:text-terminal-text-primary-dark">{order.entryPrice}</td>
                               <td className="py-3 px-2 text-right text-terminal-text-primary-light dark:text-terminal-text-primary-dark">{order.orderSize}</td>
                               <td className="py-3 px-2 text-right text-terminal-text-primary-light dark:text-terminal-text-primary-dark">{order.orderValue}</td>
