@@ -64,7 +64,7 @@ export default function PostsList({
         <div className="w-full flex justify-center py-6">
           <button
             onClick={onLoadMore}
-            className="px-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 text-sm hover:bg-gray-50 dark:hover:bg-gray-900"
+            className="px-6 py-3 rounded-2xl border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:glass-active-light dark:hover:glass-active-dark transition-all duration-200 font-medium"
           >
             加载更多
           </button>
@@ -72,7 +72,7 @@ export default function PostsList({
       )}
 
       {pagination.page >= pagination.totalPages && posts.length > 0 && (
-        <div className="w-full flex justify-center py-8 text-sm text-gray-500 dark:text-gray-400">
+        <div className="w-full flex justify-center py-8 text-sm text-terminal-text-muted-light dark:text-terminal-text-muted-dark">
           已加载完毕 · 共 {pagination.total} 条知识点
         </div>
       )}

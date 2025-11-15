@@ -10,7 +10,7 @@ import DateFilter from '@/components/DateFilter'
 import MobileMenu from '@/components/MobileMenu'
 import * as Toolbar from '@radix-ui/react-toolbar'
 import * as Tooltip from '@radix-ui/react-tooltip'
-import { Calendar, Clock, Youtube, Tv } from 'lucide-react'
+import { CalendarDays, Timer, Youtube, Radio } from 'lucide-react'
 
 interface NavbarProps {
   query: string
@@ -96,9 +96,7 @@ export default function Navbar({
       <div className="sticky top-2 sm:top-3 z-40 bg-transparent">
         <div className="px-4 sm:px-6 lg:px-8">
           {/* Glass container */}
-          <div className="relative mx-auto rounded-2xl border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-surface-light dark:bg-terminal-surface-dark shadow-[0_4px_20px_rgba(0,0,0,0.1)] dark:shadow-[0_4px_24px_rgba(6,182,212,0.2)] py-2">
-            {/* Gentle vertical sheen */}
-            <div className="pointer-events-none absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-terminal-accent-light/30 dark:via-terminal-accent-dark/40 to-transparent" />
+          <div className="relative mx-auto rounded-2xl border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark shadow-lg py-2">
             <Toolbar.Root className="relative h-12 flex items-center gap-3 px-3" aria-label="主工具栏">
               {/* Mobile menu */}
               <MobileMenu showAbsoluteTime={showAbsoluteTime} onToggleTimeFormat={onToggleTimeFormat} />
@@ -134,16 +132,16 @@ export default function Navbar({
                         href="https://space.bilibili.com/40257375"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="h-8 w-8 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-surface-light dark:bg-terminal-surface-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark flex items-center justify-center hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition"
+                        className="h-8 w-8 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark flex items-center justify-center hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition"
                         aria-label="前往 Bilibili 空间"
                         title="Bilibili"
                       >
-                        <Tv className="w-4 h-4" />
+                        <Radio className="w-4 h-4" />
                       </a>
                     </Tooltip.Trigger>
-                    <Tooltip.Content sideOffset={8} className="rounded-md border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-surface-light dark:bg-terminal-surface-dark px-2 py-1 text-xs text-terminal-text-primary-light dark:text-terminal-text-primary-dark shadow-lg">
+                    <Tooltip.Content sideOffset={8} className="rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark px-2 py-1 text-xs text-terminal-text-primary-light dark:text-terminal-text-primary-dark shadow-lg">
                       Bilibili
-                      <Tooltip.Arrow className="fill-terminal-surface-light dark:fill-terminal-surface-dark" />
+                      <Tooltip.Arrow className="fill-white dark:fill-[#161b22]" />
                     </Tooltip.Content>
                   </Tooltip.Root>
                   <Tooltip.Root>
@@ -152,16 +150,16 @@ export default function Navbar({
                         href="https://www.youtube.com/channel/UC0h5WHVgdGyBk5cbB8XiUxw"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="h-8 w-8 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-surface-light dark:bg-terminal-surface-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark flex items-center justify-center hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition"
+                        className="h-8 w-8 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark flex items-center justify-center hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition"
                         aria-label="前往 YouTube 频道"
                         title="YouTube"
                       >
                         <Youtube className="w-5 h-5" />
                       </a>
                     </Tooltip.Trigger>
-                    <Tooltip.Content sideOffset={8} className="rounded-md border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-surface-light dark:bg-terminal-surface-dark px-2 py-1 text-xs text-terminal-text-primary-light dark:text-terminal-text-primary-dark shadow-lg">
+                    <Tooltip.Content sideOffset={8} className="rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark px-2 py-1 text-xs text-terminal-text-primary-light dark:text-terminal-text-primary-dark shadow-lg">
                       YouTube
-                      <Tooltip.Arrow className="fill-terminal-surface-light dark:fill-terminal-surface-dark" />
+                      <Tooltip.Arrow className="fill-white dark:fill-[#161b22]" />
                     </Tooltip.Content>
                   </Tooltip.Root>
                 </div>
@@ -213,17 +211,17 @@ export default function Navbar({
                     <button
                       onClick={() => onToggleTimeFormat?.()}
                       aria-pressed={showAbsoluteTime}
-                      className={`h-9 w-9 rounded-lg border-2 flex items-center justify-center transition ${
+                      className={`h-9 w-9 rounded-lg border flex items-center justify-center transition glass-light dark:glass-dark ${
                       showAbsoluteTime
-                        ? 'border-terminal-accent-light dark:border-terminal-accent-dark bg-terminal-surface-light dark:bg-terminal-surface-dark text-terminal-accent-light dark:text-terminal-accent-dark hover:shadow-[0_0_12px_rgba(6,182,212,0.3)]'
-                        : 'border-terminal-border-light dark:border-terminal-border-dark bg-terminal-surface-light dark:bg-terminal-surface-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark'
+                        ? 'border-terminal-accent-light dark:border-terminal-accent-dark text-terminal-accent-light dark:text-terminal-accent-dark'
+                        : 'border-terminal-border-light dark:border-terminal-border-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark'
                     }`}
                       title="切换时间显示"
                     >
                       {showAbsoluteTime ? (
-                        <Calendar className="w-5 h-5" />
+                        <CalendarDays className="w-5 h-5" />
                       ) : (
-                        <Clock className="w-5 h-5" />
+                        <Timer className="w-5 h-5" />
                       )}
                     </button>
                   </Tooltip.Trigger>

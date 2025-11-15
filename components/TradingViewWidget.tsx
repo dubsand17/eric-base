@@ -51,7 +51,7 @@ function TradingViewWidget({ symbol, interval = '60', theme = 'light' }: Trading
     // 重建内部容器结构
     const widgetDiv = document.createElement('div')
     widgetDiv.className = 'tradingview-widget-container__widget'
-    widgetDiv.style.cssText = 'height: calc(100% - 32px); width: 100%;'
+    widgetDiv.style.cssText = 'height: calc(100% - 18px); width: 100%;'
 
     const copyrightDiv = document.createElement('div')
     copyrightDiv.className = 'tradingview-widget-copyright'
@@ -78,8 +78,8 @@ function TradingViewWidget({ symbol, interval = '60', theme = 'light' }: Trading
 
   return (
     <div className="tradingview-widget-container w-full h-full" ref={container} style={{ height: '100%', width: '100%' }}>
-      <div className="tradingview-widget-container__widget" style={{ height: 'calc(100% - 32px)', width: '100%' }}></div>
-      <div className="tradingview-widget-copyright">
+      <div className="tradingview-widget-container__widget" style={{ height: 'calc(100% - 18px)', width: '100%' }}></div>
+      <div className="tradingview-widget-copyright" style={{ paddingTop: '4px', paddingBottom: '4px' }}>
         <a href={`https://cn.tradingview.com/symbols/${symbolForUrl}/`} rel="noopener nofollow" target="_blank">
           <span className="blue-text">在 TradingView 查看 {symbol}</span>
         </a>

@@ -6,7 +6,7 @@ import { TwitterPost } from '@/lib/supabase'
 import { formatDistanceToNow, format } from 'date-fns'
 import { zhCN } from 'date-fns/locale'
 import ImageModal from './ImageModal'
-import { Clock, Eye } from 'lucide-react'
+import { Timer, ScanLine } from 'lucide-react'
 
 interface TwitterCardProps {
   post: TwitterPost
@@ -59,9 +59,9 @@ export default function TwitterCard({ post, showAbsoluteTime = false, onToggleTi
 
   return (
     <>
-      <div className="bg-terminal-surface-light dark:bg-terminal-surface-dark rounded-lg shadow-sm border border-terminal-border-light/50 dark:border-terminal-border-dark/70 overflow-hidden hover:shadow-[0_8px_24px_rgba(6,182,212,0.15)] dark:hover:shadow-[0_8px_24px_rgba(6,182,212,0.25)] hover:border-terminal-accent-light/30 dark:hover:border-terminal-accent-dark/40 transition-all duration-300">
+      <div className="glass-light dark:glass-dark rounded-3xl border border-terminal-border-light dark:border-terminal-border-dark overflow-hidden hover:shadow-lg transition-all duration-300">
         {/* 内容 */}
-        <div className="p-4">
+        <div className="p-5">
           <p 
             className={`text-terminal-text-primary-light dark:text-terminal-text-primary-dark text-sm leading-relaxed whitespace-pre-wrap mb-3 font-normal image-only-mode:hidden ${
               post.images && post.images.length > 0 ? 'cursor-pointer hover:text-terminal-accent-light dark:hover:text-terminal-accent-dark transition-colors' : ''
@@ -79,7 +79,7 @@ export default function TwitterCard({ post, showAbsoluteTime = false, onToggleTi
               className="flex items-center space-x-1 hover:text-terminal-text-primary-light dark:hover:text-terminal-text-primary-dark transition-colors cursor-pointer"
               title="点击切换时间格式"
             >
-              <Clock className="w-3 h-3" />
+              <Timer className="w-3 h-3" />
               <span className="font-medium">
                 {post.tweet_created_at && (
                   showAbsoluteTime 
@@ -95,7 +95,7 @@ export default function TwitterCard({ post, showAbsoluteTime = false, onToggleTi
               {/* 已读标记和查看次数 */}
               {viewCount > 0 && (
                 <div className="flex items-center space-x-1 text-terminal-text-muted-light dark:text-terminal-text-muted-dark">
-                  <Eye className="w-3 h-3" />
+                  <ScanLine className="w-3 h-3" />
                   <span className="text-xs font-medium">{viewCount}</span>
                 </div>
               )}
@@ -118,7 +118,7 @@ export default function TwitterCard({ post, showAbsoluteTime = false, onToggleTi
 
         {/* 图片 */}
         {post.images && post.images.length > 0 && (
-          <div className="px-4 pb-4">
+          <div className="px-5 pb-5">
             <div className={`flex flex-col gap-2 ${
               post.images.length === 1 ? '' :
               post.images.length === 2 ? 'sm:grid sm:grid-cols-2' :
@@ -128,7 +128,7 @@ export default function TwitterCard({ post, showAbsoluteTime = false, onToggleTi
               {post.images.map((image, index) => (
                 <div
                   key={index}
-                  className={`relative bg-terminal-bg-light dark:bg-[#0a0e14] rounded-md overflow-hidden cursor-pointer hover:opacity-95 transition-opacity ${
+                  className={`relative bg-terminal-bg-light dark:bg-[#0d1117] rounded-lg overflow-hidden cursor-pointer hover:opacity-95 transition-opacity ${
                     post.images.length === 3 && index === 0 ? 'sm:row-span-2' : ''
                   }`}
                   onClick={() => handleImageClick(image)}
@@ -138,13 +138,13 @@ export default function TwitterCard({ post, showAbsoluteTime = false, onToggleTi
                     alt={`图片 ${index + 1}`}
                     width={800}
                     height={600}
-                    className="w-full h-auto object-contain rounded-md"
+                    className="w-full h-auto object-contain rounded-lg"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     style={{
                       maxHeight: post.images.length === 1 ? '320px' : '200px'
                     }}
                   />
-                  <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-5 transition-all duration-200 rounded-md" />
+                  <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-5 transition-all duration-200 rounded-lg" />
                 </div>
               ))}
             </div>

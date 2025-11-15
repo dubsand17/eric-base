@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
-import { X, ZoomIn, ZoomOut, RotateCw, Download, ChevronLeft, ChevronRight } from 'lucide-react'
+import { XCircle, Maximize2, Minimize2, RefreshCw, DownloadCloud, ArrowLeft, ArrowRight } from 'lucide-react'
 import * as Dialog from '@radix-ui/react-dialog'
 import TypewriterText from './TypewriterText'
 
@@ -216,7 +216,7 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
         <Dialog.Overlay className="fixed inset-0 z-50 bg-black/70" />
         <Dialog.Content className="fixed inset-0 z-50 flex items-center justify-center p-2 md:p-6">
           {/* 中心容器 - 交易终端风格 */}
-          <div className="w-[95%] md:w-[90%] h-[95%] md:h-[90%] rounded-2xl overflow-hidden border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-surface-light dark:bg-terminal-surface-dark shadow-[0_20px_60px_rgba(0,0,0,0.5)] dark:shadow-[0_20px_60px_rgba(6,182,212,0.2)] flex flex-col md:flex-row" role="dialog" aria-modal="true">
+          <div className="w-[95%] md:w-[90%] h-[95%] md:h-[90%] rounded-2xl overflow-hidden border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark shadow-lg flex flex-col md:flex-row" role="dialog" aria-modal="true">
         {/* 左侧内容区域 - 在移动端变为顶部区域 */}
         <div className="w-full md:w-1/3 h-auto md:h-full flex flex-col border-b md:border-b-0 md:border-r border-terminal-border-light dark:border-terminal-border-dark max-h-[30vh] md:max-h-none bg-terminal-bg-light dark:bg-terminal-bg-dark">
           {/* 关闭按钮 + ESC 提示 - 固定在顶部，不跟随滚动 */}
@@ -224,11 +224,11 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
             <div className="flex items-center gap-2">
               <Dialog.Close asChild>
                 <button
-                  className="h-9 w-9 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-surface-light dark:bg-terminal-surface-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition flex items-center justify-center"
+                  className="h-9 w-9 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition flex items-center justify-center"
                   title="关闭"
                   aria-label="关闭"
                 >
-                  <X className="w-5 h-5" />
+                  <XCircle className="w-5 h-5" />
                 </button>
               </Dialog.Close>
               <span className="text-[11px] text-terminal-text-muted-light dark:text-terminal-text-muted-dark select-none">ESC</span>
@@ -287,14 +287,14 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
                   <button
                     onClick={handlePrevImage}
                     disabled={currentImageIndex === 0}
-                    className="px-3 py-1.5 rounded-xl border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-surface-light dark:bg-terminal-surface-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark disabled:opacity-50 disabled:cursor-not-allowed hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition text-xs font-medium"
+                    className="px-3 py-1.5 rounded-xl border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark disabled:opacity-50 disabled:cursor-not-allowed hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition text-xs font-medium"
                   >
                     上一张
                   </button>
                   <button
                     onClick={handleNextImage}
                     disabled={currentImageIndex === imageList.length - 1}
-                    className="px-3 py-1.5 rounded-xl border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-surface-light dark:bg-terminal-surface-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark disabled:opacity-50 disabled:cursor-not-allowed hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition text-xs font-medium"
+                    className="px-3 py-1.5 rounded-xl border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark disabled:opacity-50 disabled:cursor-not-allowed hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition text-xs font-medium"
                   >
                     下一张
                   </button>
@@ -321,16 +321,16 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
                 <button
                   onClick={handlePrevImage}
                   disabled={currentImageIndex === 0}
-                  className="absolute left-4 z-20 p-3 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-surface-light dark:bg-terminal-surface-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="absolute left-4 z-20 p-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition-all disabled:opacity-30 disabled:cursor-not-allowed"
                 >
-                  <ChevronLeft className="w-6 h-6" />
+                  <ArrowLeft className="w-6 h-6" />
                 </button>
                 <button
                   onClick={handleNextImage}
                   disabled={currentImageIndex === imageList.length - 1}
-                  className="absolute right-4 z-20 p-3 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-surface-light dark:bg-terminal-surface-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="absolute right-4 z-20 p-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition-all disabled:opacity-30 disabled:cursor-not-allowed"
                 >
-                  <ChevronRight className="w-6 h-6" />
+                  <ArrowRight className="w-6 h-6" />
                 </button>
               </>
             )}
@@ -377,37 +377,37 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
 
             {/* 浮动操作工具条（底部居中） */}
             <div className="pointer-events-auto absolute bottom-6 left-1/2 -translate-x-1/2 z-20">
-              <div className="flex items-center justify-center gap-3 px-3 py-1.5 rounded-full border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-surface-light dark:bg-terminal-surface-dark shadow-[0_8px_24px_rgba(0,0,0,0.3)] dark:shadow-[0_8px_24px_rgba(6,182,212,0.3)]">
+              <div className="flex items-center justify-center gap-3 px-3 py-1.5 rounded-full border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark shadow-lg">
                 <button
                   onClick={handleZoomOut}
-                  className="p-2 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition"
+                  className="p-2 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition"
                   title="缩小"
                 >
-                  <ZoomOut className="w-4 h-4" />
+                  <Minimize2 className="w-4 h-4" />
                 </button>
-                <span className="text-terminal-text-primary-light dark:text-terminal-text-primary-dark text-xs px-3 min-w-[50px] text-center bg-terminal-bg-light dark:bg-terminal-bg-dark rounded-full py-1.5 font-medium border-2 border-terminal-border-light dark:border-terminal-border-dark">
+                <span className="text-terminal-text-primary-light dark:text-terminal-text-primary-dark text-xs px-3 min-w-[50px] text-center glass-light dark:glass-dark rounded-full py-1.5 font-medium border border-terminal-border-light dark:border-terminal-border-dark">
                   {Math.round(scale * 100)}%
                 </span>
                 <button
                   onClick={handleZoomIn}
-                  className="p-2 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition"
+                  className="p-2 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition"
                   title="放大"
                 >
-                  <ZoomIn className="w-4 h-4" />
+                  <Maximize2 className="w-4 h-4" />
                 </button>
                 <button
                   onClick={handleRotate}
-                  className="p-2 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition"
+                  className="p-2 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition"
                   title="旋转"
                 >
-                  <RotateCw className="w-4 h-4" />
+                  <RefreshCw className="w-4 h-4" />
                 </button>
                 <button
                   onClick={handleDownload}
                   className="p-2 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark text-terminal-accent-light dark:text-terminal-accent-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition"
                   title="下载"
                 >
-                  <Download className="w-4 h-4" />
+                  <DownloadCloud className="w-4 h-4" />
                 </button>
               </div>
             </div>

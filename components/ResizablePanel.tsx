@@ -121,7 +121,7 @@ export default function ResizablePanel({ left, right, defaultWidth = 50, minWidt
               e.stopPropagation()
               e.preventDefault()
             }}
-            className="absolute top-4 left-1/2 -translate-x-1/2 w-7 h-7 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-surface-light dark:bg-terminal-surface-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition-all duration-200 z-20 shadow-[0_4px_12px_rgba(0,0,0,0.2)] dark:shadow-[0_4px_16px_rgba(6,182,212,0.15)] pointer-events-auto cursor-pointer flex items-center justify-center"
+            className="absolute top-4 left-1/2 -translate-x-1/2 w-7 h-7 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition-all duration-200 z-20 shadow-lg pointer-events-auto cursor-pointer flex items-center justify-center"
             aria-label="收起 K 线图"
             title="收起 K 线图"
           >

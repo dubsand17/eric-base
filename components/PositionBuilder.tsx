@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import * as Tooltip from '@radix-ui/react-tooltip'
-import { TrendingUp, X } from 'lucide-react'
+import { BarChart3, XCircle } from 'lucide-react'
 
 type PositionMode = 'pyramid' | 'dca' | null
 
@@ -178,33 +178,33 @@ export default function PositionBuilder() {
         <Tooltip.Trigger asChild>
           <Dialog.Trigger asChild>
             <button
-              className="h-9 px-3 rounded-xl border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-surface-light dark:bg-terminal-surface-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark flex items-center gap-2 transition"
+              className="h-9 px-3 rounded-xl border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark flex items-center gap-2 transition"
               aria-label="建仓计算器"
             >
-              <TrendingUp className="w-4 h-4" />
+              <BarChart3 className="w-4 h-4" />
               <span className="hidden md:inline">建仓</span>
             </button>
           </Dialog.Trigger>
         </Tooltip.Trigger>
-        <Tooltip.Content sideOffset={8} className="rounded-md border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-surface-light dark:bg-terminal-surface-dark px-2 py-1 text-xs text-terminal-text-primary-light dark:text-terminal-text-primary-dark shadow-lg">
+        <Tooltip.Content sideOffset={8} className="rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark px-2 py-1 text-xs text-terminal-text-primary-light dark:text-terminal-text-primary-dark shadow-lg">
           建仓计算器
-          <Tooltip.Arrow className="fill-terminal-surface-light dark:fill-terminal-surface-dark" />
+          <Tooltip.Arrow className="fill-white dark:fill-[#161b22]" />
         </Tooltip.Content>
       </Tooltip.Root>
       
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/70 data-[state=open]:animate-in data-[state=closed]:animate-out z-50" />
-        <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[95vw] max-w-4xl max-h-[90vh] border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-surface-light dark:bg-terminal-surface-dark shadow-[0_10px_50px_rgba(0,0,0,0.5)] dark:shadow-[0_10px_50px_rgba(6,182,212,0.3)] rounded-2xl data-[state=open]:animate-in data-[state=closed]:animate-out z-50 flex flex-col overflow-hidden">
-          <div className="sticky top-0 flex items-center justify-between px-6 py-4 border-b-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark">
+        <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[95vw] max-w-4xl max-h-[90vh] border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark shadow-lg rounded-2xl data-[state=open]:animate-in data-[state=closed]:animate-out z-50 flex flex-col overflow-hidden">
+          <div className="sticky top-0 flex items-center justify-between px-6 py-4 border-b border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark">
             <Dialog.Title className="text-lg font-semibold text-terminal-text-primary-light dark:text-terminal-text-primary-dark">
               建仓计算器
             </Dialog.Title>
             <Dialog.Close asChild>
               <button
                 aria-label="关闭"
-                className="h-8 w-8 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-surface-light dark:bg-terminal-surface-dark flex items-center justify-center text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition"
+                className="h-8 w-8 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark flex items-center justify-center text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition"
               >
-                <X className="w-4 h-4" />
+                <XCircle className="w-4 h-4" />
               </button>
             </Dialog.Close>
           </div>
@@ -215,7 +215,7 @@ export default function PositionBuilder() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <button
                   onClick={() => setMode('pyramid')}
-                  className="relative p-8 rounded-2xl border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-surface-light dark:bg-terminal-surface-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition-all group overflow-hidden shadow-lg"
+                  className="relative p-8 rounded-2xl border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition-all group overflow-hidden shadow-lg"
                 >
                   {/* Accent line */}
                   <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-terminal-accent-light to-terminal-accent-light/50 dark:from-terminal-accent-dark dark:to-terminal-accent-dark/50 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -231,7 +231,7 @@ export default function PositionBuilder() {
                 
                 <button
                   onClick={() => setMode('dca')}
-                  className="relative p-8 rounded-2xl border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-surface-light dark:bg-terminal-surface-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition-all group overflow-hidden shadow-lg"
+                  className="relative p-8 rounded-2xl border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition-all group overflow-hidden shadow-lg"
                 >
                   {/* Accent line */}
                   <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-terminal-accent-light to-terminal-accent-light/50 dark:from-terminal-accent-dark dark:to-terminal-accent-dark/50 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -266,7 +266,7 @@ export default function PositionBuilder() {
                       type="number"
                       value={pyramidParams.maxPrice}
                       onChange={(e) => setPyramidParams({ ...pyramidParams, maxPrice: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
+                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                     />
                   </div>
                   
@@ -278,7 +278,7 @@ export default function PositionBuilder() {
                       type="number"
                       value={pyramidParams.minPrice}
                       onChange={(e) => setPyramidParams({ ...pyramidParams, minPrice: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
+                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                     />
                   </div>
                   
@@ -290,7 +290,7 @@ export default function PositionBuilder() {
                       type="number"
                       value={pyramidParams.orderCount}
                       onChange={(e) => setPyramidParams({ ...pyramidParams, orderCount: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
+                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                     />
                   </div>
                   
@@ -302,7 +302,7 @@ export default function PositionBuilder() {
                       type="number"
                       value={pyramidParams.totalInvestment}
                       onChange={(e) => setPyramidParams({ ...pyramidParams, totalInvestment: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
+                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                     />
                   </div>
                   
@@ -314,7 +314,7 @@ export default function PositionBuilder() {
                       type="number"
                       value={pyramidParams.maxLossPercent}
                       onChange={(e) => setPyramidParams({ ...pyramidParams, maxLossPercent: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
+                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                     />
                   </div>
                   
@@ -326,7 +326,7 @@ export default function PositionBuilder() {
                       type="number"
                       value={pyramidParams.currentPrice}
                       onChange={(e) => setPyramidParams({ ...pyramidParams, currentPrice: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
+                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                     />
                   </div>
                   
@@ -338,7 +338,7 @@ export default function PositionBuilder() {
                       type="number"
                       value={pyramidParams.lowestPrice}
                       onChange={(e) => setPyramidParams({ ...pyramidParams, lowestPrice: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
+                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                       placeholder="建仓后的价格最低点"
                     />
                   </div>
@@ -370,14 +370,14 @@ export default function PositionBuilder() {
                   <div className="mt-6 -mx-6 px-6 overflow-x-auto">
                     <div className="min-w-[600px]">
                       <table className="w-full text-sm">
-                        <thead className="sticky top-0 bg-terminal-surface-light dark:bg-terminal-surface-dark z-10">
-                          <tr className="border-b-2 border-terminal-border-light dark:border-terminal-border-dark">
-                            <th className="text-left py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-terminal-surface-light dark:bg-terminal-surface-dark">订单顺序</th>
-                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-terminal-surface-light dark:bg-terminal-surface-dark">开仓价格</th>
-                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-terminal-surface-light dark:bg-terminal-surface-dark">订单大小</th>
-                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-terminal-surface-light dark:bg-terminal-surface-dark">订单价值</th>
-                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-terminal-surface-light dark:bg-terminal-surface-dark">累计投资</th>
-                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-terminal-surface-light dark:bg-terminal-surface-dark">平均价格</th>
+                        <thead className="sticky top-0 glass-light dark:glass-dark z-10">
+                          <tr className="border-b border-terminal-border-light dark:border-terminal-border-dark">
+                            <th className="text-left py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark glass-light dark:glass-dark">订单顺序</th>
+                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark glass-light dark:glass-dark">开仓价格</th>
+                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark glass-light dark:glass-dark">订单大小</th>
+                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark glass-light dark:glass-dark">订单价值</th>
+                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark glass-light dark:glass-dark">累计投资</th>
+                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark glass-light dark:glass-dark">平均价格</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -432,7 +432,7 @@ export default function PositionBuilder() {
                       type="number"
                       value={dcaParams.totalInvestment}
                       onChange={(e) => setDCAParams({ ...dcaParams, totalInvestment: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
+                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                     />
                   </div>
                   
@@ -444,7 +444,7 @@ export default function PositionBuilder() {
                       type="number"
                       value={dcaParams.buyTimes}
                       onChange={(e) => setDCAParams({ ...dcaParams, buyTimes: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
+                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                     />
                   </div>
                   
@@ -456,7 +456,7 @@ export default function PositionBuilder() {
                       type="number"
                       value={dcaParams.triggerInterval}
                       onChange={(e) => setDCAParams({ ...dcaParams, triggerInterval: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
+                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                     />
                   </div>
                   
@@ -468,7 +468,7 @@ export default function PositionBuilder() {
                       type="number"
                       value={dcaParams.maxLossPercent}
                       onChange={(e) => setDCAParams({ ...dcaParams, maxLossPercent: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
+                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                     />
                   </div>
                   
@@ -480,7 +480,7 @@ export default function PositionBuilder() {
                       type="number"
                       value={dcaParams.entryPrice}
                       onChange={(e) => setDCAParams({ ...dcaParams, entryPrice: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
+                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                     />
                   </div>
                   
@@ -492,7 +492,7 @@ export default function PositionBuilder() {
                       type="number"
                       value={dcaParams.currentPrice}
                       onChange={(e) => setDCAParams({ ...dcaParams, currentPrice: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
+                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                     />
                   </div>
                   
@@ -504,7 +504,7 @@ export default function PositionBuilder() {
                       type="number"
                       value={dcaParams.lowestPrice}
                       onChange={(e) => setDCAParams({ ...dcaParams, lowestPrice: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
+                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                       placeholder="建仓后的价格最低点"
                     />
                   </div>
@@ -566,14 +566,14 @@ export default function PositionBuilder() {
                   <div className="mt-6 -mx-6 px-6 overflow-x-auto">
                     <div className="min-w-[600px]">
                       <table className="w-full text-sm">
-                        <thead className="sticky top-0 bg-terminal-surface-light dark:bg-terminal-surface-dark z-10">
-                          <tr className="border-b-2 border-terminal-border-light dark:border-terminal-border-dark">
-                            <th className="text-left py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-terminal-surface-light dark:bg-terminal-surface-dark">订单顺序</th>
-                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-terminal-surface-light dark:bg-terminal-surface-dark">开仓价格</th>
-                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-terminal-surface-light dark:bg-terminal-surface-dark">订单大小</th>
-                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-terminal-surface-light dark:bg-terminal-surface-dark">订单价值</th>
-                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-terminal-surface-light dark:bg-terminal-surface-dark">累计投资</th>
-                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-terminal-surface-light dark:bg-terminal-surface-dark">平均价格</th>
+                        <thead className="sticky top-0 glass-light dark:glass-dark z-10">
+                          <tr className="border-b border-terminal-border-light dark:border-terminal-border-dark">
+                            <th className="text-left py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark glass-light dark:glass-dark">订单顺序</th>
+                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark glass-light dark:glass-dark">开仓价格</th>
+                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark glass-light dark:glass-dark">订单大小</th>
+                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark glass-light dark:glass-dark">订单价值</th>
+                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark glass-light dark:glass-dark">累计投资</th>
+                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark glass-light dark:glass-dark">平均价格</th>
                           </tr>
                         </thead>
                         <tbody>

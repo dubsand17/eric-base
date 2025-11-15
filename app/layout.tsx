@@ -23,7 +23,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${inter.className} bg-gray-50 dark:bg-[#0d1117] transition-colors duration-200`}>
+      <body className={`${inter.className} bg-[#f5f5f5] dark:bg-[#363636] transition-colors duration-200`}>
         <main className="min-h-screen">
           {children}
         </main>

@@ -37,7 +37,7 @@ export default function CryptoPriceTickers({ prices, dir, onSymbolClick, variant
     
     return (
       <div 
-        className={`flex items-center gap-1 h-7 px-2 rounded-xl border border-terminal-border-light/30 dark:border-terminal-border-dark bg-terminal-surface-light/40 dark:bg-terminal-surface-dark/40 backdrop-blur-md text-xs text-terminal-text-primary-light dark:text-terminal-text-primary-dark ${onSymbolClick ? 'cursor-pointer hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition-colors' : ''}`}
+        className={`flex items-center gap-1 h-7 px-2 rounded-xl border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-xs text-terminal-text-primary-light dark:text-terminal-text-primary-dark ${onSymbolClick ? 'cursor-pointer hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition-colors' : ''}`}
         onClick={() => onSymbolClick?.(s)}
       >
         <span className="font-medium">{alias}</span>
@@ -85,7 +85,7 @@ export default function CryptoPriceTickers({ prices, dir, onSymbolClick, variant
         return (
           <div 
             key={s} 
-            className={`flex items-center gap-1 h-7 px-2 rounded-xl border border-terminal-border-light/30 dark:border-terminal-border-dark bg-terminal-surface-light/40 dark:bg-terminal-surface-dark/40 backdrop-blur-md text-xs text-terminal-text-primary-light dark:text-terminal-text-primary-dark ${onSymbolClick ? 'cursor-pointer hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition-colors' : ''}`}
+            className={`flex items-center gap-1 h-7 px-2 rounded-xl border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-xs text-terminal-text-primary-light dark:text-terminal-text-primary-dark ${onSymbolClick ? 'cursor-pointer hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition-colors' : ''}`}
             onClick={() => onSymbolClick?.(s)}
           >
             <span className="font-medium">{alias}</span>

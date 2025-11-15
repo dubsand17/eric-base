@@ -242,7 +242,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
           right={
             <div className="h-full flex flex-col px-4 py-4 md:py-6 relative overflow-hidden">
               {/* K 线图容器 - 固定高度，不滚动 */}
-              <div className="flex-1 min-h-0 bg-terminal-surface-light dark:bg-terminal-surface-dark rounded-lg border border-terminal-border-light dark:border-terminal-border-dark mb-4 overflow-hidden">
+              <div className="flex-1 min-h-0 glass-light dark:glass-dark rounded-2xl border border-terminal-border-light dark:border-terminal-border-dark mb-1 overflow-hidden">
                 <div className="h-full w-full p-2">
                   <TradingViewWidget 
                     symbol={tradingViewSymbol} 
@@ -281,7 +281,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
 
   if (fetchingInitial && posts.length === 0) {
     return (
-      <div className="min-h-screen bg-[#fafbfc] dark:bg-[#0d1117]">
+      <div className="min-h-screen bg-[#f5f5f5] dark:bg-[#363636]">
         <Navbar
           query={query}
           onQueryChange={setQuery}
@@ -300,7 +300,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[#fafbfc] dark:bg-[#0d1117]">
+      <div className="min-h-screen bg-[#f5f5f5] dark:bg-[#363636]">
         <Navbar
           query={query}
           onQueryChange={setQuery}
@@ -319,7 +319,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
 
   if (!fetchingInitial && posts.length === 0) {
     return (
-      <div className="min-h-screen bg-[#fafbfc] dark:bg-[#0d1117]">
+      <div className="min-h-screen bg-[#f5f5f5] dark:bg-[#363636]">
         <Navbar
           query={query}
           onQueryChange={setQuery}
@@ -347,7 +347,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
 
   return (
     <div 
-      className="min-h-screen bg-[#fafbfc] dark:bg-[#0d1117] flex flex-col" 
+      className="min-h-screen bg-[#f5f5f5] dark:bg-[#363636] flex flex-col" 
       style={useFixedLayout ? { height: '100vh', overflow: 'hidden' } : {}}
     >
       <Navbar
