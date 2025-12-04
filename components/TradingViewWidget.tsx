@@ -16,12 +16,11 @@ function TradingViewWidget({ symbol, interval = '60', theme = 'light' }: Trading
 
     // 清空容器，强制 TradingView 重新初始化
     container.current.innerHTML = ''
-
     const script = document.createElement('script')
     script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js'
     script.type = 'text/javascript'
     script.async = true
-    
+
     const config = {
       autosize: true,
       symbol: symbol,
@@ -47,7 +46,7 @@ function TradingViewWidget({ symbol, interval = '60', theme = 'light' }: Trading
     }
 
     script.innerHTML = JSON.stringify(config)
-    
+
     // 重建内部容器结构
     const widgetDiv = document.createElement('div')
     widgetDiv.className = 'tradingview-widget-container__widget'
