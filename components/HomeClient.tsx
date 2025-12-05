@@ -50,7 +50,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
   const [to, setTo] = useState<string | undefined>(undefined)
   const [debouncedQuery, setDebouncedQuery] = useState('')
   const [showAbsoluteTime, setShowAbsoluteTime] = useState(false)
-  
+
   // K 线图相关状态
   const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null)
   const [isWideScreen, setIsWideScreen] = useState(false)
@@ -77,19 +77,19 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
         return wide
       })
     }
-    
+
     const checkTheme = () => {
       // 检测系统主题或 document 上的 class
-      const isDark = document.documentElement.classList.contains('dark') || 
-                     window.matchMedia('(prefers-color-scheme: dark)').matches
+      const isDark = document.documentElement.classList.contains('dark') ||
+        window.matchMedia('(prefers-color-scheme: dark)').matches
       setTheme(isDark ? 'dark' : 'light')
     }
 
     checkScreenWidth()
     checkTheme()
-    
+
     window.addEventListener('resize', checkScreenWidth)
-    
+
     // 监听主题变化
     const observer = new MutationObserver(checkTheme)
     observer.observe(document.documentElement, {
@@ -200,6 +200,12 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
     // 跳过首次运行，保留 SSR 首屏数据，避免初始就清空/触发请求
     if (skipFirstFiltersRunRef.current) {
       skipFirstFiltersRunRef.current = false
+      // 但如果初始数据为空，仍然需要加载数据
+      if (initialPosts.length === 0 && !loading) {
+        const controller = new AbortController()
+        fetchPosts(1, controller.signal)
+        return () => controller.abort()
+      }
       return
     }
     const controller = new AbortController()
@@ -223,7 +229,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
     // 宽屏且选中了符号时，使用 ResizablePanel
     if (isWideScreen && selectedSymbol) {
       const tradingViewSymbol = getTradingViewSymbol(selectedSymbol)
-      
+
       return (
         <ResizablePanel
           left={
@@ -244,8 +250,8 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
               {/* K 线图容器 - 固定高度，不滚动 */}
               <div className="flex-1 min-h-0 glass-light dark:glass-dark rounded-2xl border border-terminal-border-light dark:border-terminal-border-dark mb-1 overflow-hidden">
                 <div className="h-full w-full p-2">
-                  <TradingViewWidget 
-                    symbol={tradingViewSymbol} 
+                  <TradingViewWidget
+                    symbol={tradingViewSymbol}
                     interval="60"
                     theme={theme}
                   />
@@ -346,8 +352,8 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
   const useFixedLayout = isWideScreen && selectedSymbol
 
   return (
-    <div 
-      className="min-h-screen bg-[#f5f5f5] dark:bg-[#363636] flex flex-col" 
+    <div
+      className="min-h-screen bg-[#f5f5f5] dark:bg-[#363636] flex flex-col"
       style={useFixedLayout ? { height: '100vh', overflow: 'hidden' } : {}}
     >
       <Navbar
