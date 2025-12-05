@@ -34,6 +34,7 @@ export async function POST(request: NextRequest) {
       .from('twitter_posts')
       .insert([
         {
+          id: crypto.randomUUID(),
           content,
           images,
           tweet_created_at,
@@ -63,26 +64,26 @@ export async function GET(request: NextRequest) {
     const q = searchParams.get('q')?.trim() || ''
     const from = searchParams.get('from') || ''
     const to = searchParams.get('to') || ''
-    
+
     // 计算偏移量
     const offset = (page - 1) * pageSize
-    
+
     if (!supabase) {
       return NextResponse.json({ error: 'Supabase 未配置，请设置 NEXT_PUBLIC_SUPABASE_URL 与 NEXT_PUBLIC_SUPABASE_ANON_KEY' }, { status: 500, headers: corsHeaders })
     }
     // 使用 Supabase 数据库
-      // 获取总数
+    // 获取总数
     let baseCount = supabase.from('twitter_posts').select('*', { count: 'exact', head: true })
     if (q) baseCount = baseCount.ilike('content', `%${q}%`)
     if (from) baseCount = baseCount.gte('tweet_created_at', from)
     if (to) baseCount = baseCount.lte('tweet_created_at', to)
     const { count, error: countError } = await baseCount
-      
+
     if (countError) {
       return NextResponse.json({ error: countError.message }, { status: 400, headers: { ...corsHeaders, ...cacheHeaders } })
     }
-      
-      // 获取分页数据
+
+    // 获取分页数据
     let baseQuery = supabase
       .from('twitter_posts')
       .select('*')

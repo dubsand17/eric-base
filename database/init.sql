@@ -1,6 +1,9 @@
+-- 启用 UUID 扩展
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 -- 创建Twitter帖子表
 CREATE TABLE IF NOT EXISTS twitter_posts (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   content TEXT NOT NULL,
   images TEXT[] DEFAULT '{}',
   tweet_created_at TIMESTAMP WITH TIME ZONE,

@@ -26,7 +26,7 @@ export default function TwitterCard({ post, showAbsoluteTime = false, onToggleTi
 
   const handleImageClick = (imageUrl: string) => {
     setSelectedImage(imageUrl)
-    
+
     // 记录点击查看大图的次数
     const key = `view_count_${post.id}`
     const currentCount = parseInt(localStorage.getItem(key) || '0')
@@ -39,7 +39,7 @@ export default function TwitterCard({ post, showAbsoluteTime = false, onToggleTi
     // 如果有图片，点击文字内容时打开第一张图片
     if (post.images && post.images.length > 0) {
       setSelectedImage(post.images[0])
-      
+
       // 记录点击查看大图的次数
       const key = `view_count_${post.id}`
       const currentCount = parseInt(localStorage.getItem(key) || '0')
@@ -62,16 +62,15 @@ export default function TwitterCard({ post, showAbsoluteTime = false, onToggleTi
       <div className="glass-light dark:glass-dark rounded-3xl border border-terminal-border-light dark:border-terminal-border-dark overflow-hidden hover:shadow-lg transition-all duration-300">
         {/* 内容 */}
         <div className="p-5">
-          <p 
-            className={`text-terminal-text-primary-light dark:text-terminal-text-primary-dark text-sm leading-relaxed whitespace-pre-wrap mb-3 font-normal image-only-mode:hidden ${
-              post.images && post.images.length > 0 ? 'cursor-pointer hover:text-terminal-accent-light dark:hover:text-terminal-accent-dark transition-colors' : ''
-            }`}
+          <p
+            className={`text-terminal-text-primary-light dark:text-terminal-text-primary-dark text-sm leading-relaxed whitespace-pre-wrap mb-3 font-normal image-only-mode:hidden ${post.images && post.images.length > 0 ? 'cursor-pointer hover:text-terminal-accent-light dark:hover:text-terminal-accent-dark transition-colors' : ''
+              }`}
             onClick={handleContentClick}
             title={post.images && post.images.length > 0 ? '点击查看图片' : ''}
           >
             {post.content}
           </p>
-          
+
           {/* 发布时间和原链接 */}
           <div className="flex items-center justify-between text-xs text-terminal-text-secondary-light dark:text-terminal-text-secondary-dark">
             <button
@@ -82,12 +81,12 @@ export default function TwitterCard({ post, showAbsoluteTime = false, onToggleTi
               <Timer className="w-3 h-3" />
               <span className="font-medium">
                 {post.tweet_created_at && (
-                  showAbsoluteTime 
+                  showAbsoluteTime
                     ? format(new Date(post.tweet_created_at), 'yyyy年MM月dd日 HH:mm', { locale: zhCN })
                     : formatDistanceToNow(new Date(post.tweet_created_at), {
-                        addSuffix: true,
-                        locale: zhCN
-                      })
+                      addSuffix: true,
+                      locale: zhCN
+                    })
                 )}
               </span>
             </button>
@@ -119,18 +118,16 @@ export default function TwitterCard({ post, showAbsoluteTime = false, onToggleTi
         {/* 图片 */}
         {post.images && post.images.length > 0 && (
           <div className="px-5 pb-5">
-            <div className={`flex flex-col gap-2 ${
-              post.images.length === 1 ? '' :
-              post.images.length === 2 ? 'sm:grid sm:grid-cols-2' :
-              post.images.length === 3 ? 'sm:grid sm:grid-cols-2' :
-              'sm:grid sm:grid-cols-2'
-            }`}>
+            <div className={`flex flex-col gap-2 ${post.images.length === 1 ? '' :
+                post.images.length === 2 ? 'sm:grid sm:grid-cols-2' :
+                  post.images.length === 3 ? 'sm:grid sm:grid-cols-2' :
+                    'sm:grid sm:grid-cols-2'
+              }`}>
               {post.images.map((image, index) => (
                 <div
                   key={index}
-                  className={`relative bg-terminal-bg-light dark:bg-[#0d1117] rounded-lg overflow-hidden cursor-pointer hover:opacity-95 transition-opacity ${
-                    post.images.length === 3 && index === 0 ? 'sm:row-span-2' : ''
-                  }`}
+                  className={`relative rounded-lg overflow-hidden cursor-pointer hover:opacity-95 transition-opacity ${post.images.length === 3 && index === 0 ? 'sm:row-span-2' : ''
+                    }`}
                   onClick={() => handleImageClick(image)}
                 >
                   <Image
