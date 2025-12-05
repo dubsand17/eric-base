@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import * as Toggle from '@radix-ui/react-toggle'
-import { Sparkles, Zap } from 'lucide-react'
+import { Sparkle, Lightning } from 'phosphor-react'
 
 interface ThemeToggleProps {
   className?: string
@@ -20,10 +20,10 @@ export default function ThemeToggle({ className = '' }: ThemeToggleProps) {
     setIsDark(pressed)
     if (pressed) {
       document.documentElement.classList.add('dark')
-      try { localStorage.setItem('theme', 'dark') } catch {}
+      try { localStorage.setItem('theme', 'dark') } catch { }
     } else {
       document.documentElement.classList.remove('dark')
-      try { localStorage.setItem('theme', 'light') } catch {}
+      try { localStorage.setItem('theme', 'light') } catch { }
     }
   }
 
@@ -35,11 +35,10 @@ export default function ThemeToggle({ className = '' }: ThemeToggleProps) {
       aria-label="切换主题"
     >
       {isDark ? (
-        <Zap className="w-5 h-5 text-gray-300" />
+        <Lightning className="w-5 h-5 text-gray-300" />
       ) : (
-        <Sparkles className="w-5 h-5 text-yellow-500" />
+        <Sparkle className="w-5 h-5 text-yellow-500" />
       )}
     </Toggle.Root>
   )
 }
- 

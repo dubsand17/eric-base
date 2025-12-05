@@ -10,7 +10,7 @@ import DateFilter from '@/components/DateFilter'
 import MobileMenu from '@/components/MobileMenu'
 import * as Toolbar from '@radix-ui/react-toolbar'
 import * as Tooltip from '@radix-ui/react-tooltip'
-import { CalendarDays, Timer, Youtube, Radio } from 'lucide-react'
+import { CalendarBlank, Clock, YoutubeLogo, Broadcast } from 'phosphor-react'
 
 interface NavbarProps {
   query: string
@@ -23,15 +23,15 @@ interface NavbarProps {
   onSymbolClick?: (symbol: string) => void
 }
 
-export default function Navbar({ 
-  query, 
-  onQueryChange, 
-  from, 
-  to, 
-  onDateChange, 
-  showAbsoluteTime = false, 
+export default function Navbar({
+  query,
+  onQueryChange,
+  from,
+  to,
+  onDateChange,
+  showAbsoluteTime = false,
   onToggleTimeFormat,
-  onSymbolClick 
+  onSymbolClick
 }: NavbarProps) {
   const [prices, setPrices] = useState<Record<string, { price: number; percent: number }> | null>(null)
   const prevRef = useRef<Record<string, { price: number; percent: number }> | null>(null)
@@ -136,7 +136,7 @@ export default function Navbar({
                         aria-label="前往 Bilibili 空间"
                         title="Bilibili"
                       >
-                        <Radio className="w-4 h-4" />
+                        <Broadcast className="w-4 h-4" />
                       </a>
                     </Tooltip.Trigger>
                     <Tooltip.Content sideOffset={8} className="rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark px-2 py-1 text-xs text-terminal-text-primary-light dark:text-terminal-text-primary-dark shadow-lg">
@@ -154,7 +154,7 @@ export default function Navbar({
                         aria-label="前往 YouTube 频道"
                         title="YouTube"
                       >
-                        <Youtube className="w-5 h-5" />
+                        <YoutubeLogo className="w-5 h-5" />
                       </a>
                     </Tooltip.Trigger>
                     <Tooltip.Content sideOffset={8} className="rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark px-2 py-1 text-xs text-terminal-text-primary-light dark:text-terminal-text-primary-dark shadow-lg">
@@ -178,27 +178,27 @@ export default function Navbar({
               <div className="hidden sm:block flex-1" />
 
               {/* Crypto tickers - full list only on xl and up */}
-              <CryptoPriceTickers 
-                prices={prices} 
-                dir={dir} 
+              <CryptoPriceTickers
+                prices={prices}
+                dir={dir}
                 onSymbolClick={onSymbolClick}
                 variant="full"
               />
 
               {/* Single BTC ticker for md–lg only (hidden on xl and up, hidden on sm and below) */}
               <div className="hidden md:flex xl:hidden items-center gap-2">
-                <CryptoPriceTickers 
-                  prices={prices} 
-                  dir={dir} 
+                <CryptoPriceTickers
+                  prices={prices}
+                  dir={dir}
                   onSymbolClick={onSymbolClick}
                   variant="single"
                 />
               </div>
 
               {/* Mobile compressed tickers - hidden on all screens (not used) */}
-              <CryptoPriceTickers 
-                prices={prices} 
-                dir={dir} 
+              <CryptoPriceTickers
+                prices={prices}
+                dir={dir}
                 onSymbolClick={onSymbolClick}
                 variant="mobile"
               />
@@ -211,17 +211,16 @@ export default function Navbar({
                     <button
                       onClick={() => onToggleTimeFormat?.()}
                       aria-pressed={showAbsoluteTime}
-                      className={`h-9 w-9 rounded-lg border flex items-center justify-center transition glass-light dark:glass-dark ${
-                      showAbsoluteTime
+                      className={`h-9 w-9 rounded-lg border flex items-center justify-center transition glass-light dark:glass-dark ${showAbsoluteTime
                         ? 'border-terminal-accent-light dark:border-terminal-accent-dark text-terminal-accent-light dark:text-terminal-accent-dark'
                         : 'border-terminal-border-light dark:border-terminal-border-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark'
-                    }`}
+                        }`}
                       title="切换时间显示"
                     >
                       {showAbsoluteTime ? (
-                        <CalendarDays className="w-5 h-5" />
+                        <CalendarBlank className="w-5 h-5" />
                       ) : (
-                        <Timer className="w-5 h-5" />
+                        <Clock className="w-5 h-5" />
                       )}
                     </button>
                   </Tooltip.Trigger>

@@ -6,7 +6,7 @@ import { TwitterPost } from '@/lib/supabase'
 import { formatDistanceToNow, format } from 'date-fns'
 import { zhCN } from 'date-fns/locale'
 import ImageModal from './ImageModal'
-import { Timer, ScanLine } from 'lucide-react'
+import { Clock, Eye, CalendarBlank } from 'phosphor-react'
 
 interface TwitterCardProps {
   post: TwitterPost
@@ -78,7 +78,11 @@ export default function TwitterCard({ post, showAbsoluteTime = false, onToggleTi
               className="flex items-center space-x-1 hover:text-terminal-text-primary-light dark:hover:text-terminal-text-primary-dark transition-colors cursor-pointer"
               title="点击切换时间格式"
             >
-              <Timer className="w-3 h-3" />
+              {showAbsoluteTime ? (
+                <CalendarBlank className="w-3 h-3" />
+              ) : (
+                <Clock className="w-3 h-3" />
+              )}
               <span className="font-medium">
                 {post.tweet_created_at && (
                   showAbsoluteTime
@@ -94,7 +98,7 @@ export default function TwitterCard({ post, showAbsoluteTime = false, onToggleTi
               {/* 已读标记和查看次数 */}
               {viewCount > 0 && (
                 <div className="flex items-center space-x-1 text-terminal-text-muted-light dark:text-terminal-text-muted-dark">
-                  <ScanLine className="w-3 h-3" />
+                  <Eye className="w-3 h-3" />
                   <span className="text-xs font-medium">{viewCount}</span>
                 </div>
               )}
@@ -119,9 +123,9 @@ export default function TwitterCard({ post, showAbsoluteTime = false, onToggleTi
         {post.images && post.images.length > 0 && (
           <div className="px-5 pb-5">
             <div className={`flex flex-col gap-2 ${post.images.length === 1 ? '' :
-                post.images.length === 2 ? 'sm:grid sm:grid-cols-2' :
-                  post.images.length === 3 ? 'sm:grid sm:grid-cols-2' :
-                    'sm:grid sm:grid-cols-2'
+              post.images.length === 2 ? 'sm:grid sm:grid-cols-2' :
+                post.images.length === 3 ? 'sm:grid sm:grid-cols-2' :
+                  'sm:grid sm:grid-cols-2'
               }`}>
               {post.images.map((image, index) => (
                 <div

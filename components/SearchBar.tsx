@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { ScanSearch } from 'lucide-react'
+import { MagnifyingGlass } from 'phosphor-react'
 
 interface SearchBarProps {
   query: string
@@ -28,7 +28,7 @@ export default function SearchBar({ query, onQueryChange }: SearchBarProps) {
           placeholder="搜索内容关键词..."
         />
         <div className="absolute left-2 top-1/2 -translate-y-1/2 text-terminal-text-muted-light dark:text-terminal-text-muted-dark">
-          <ScanSearch className="w-4 h-4" />
+          <MagnifyingGlass className="w-4 h-4" />
         </div>
       </div>
     </div>

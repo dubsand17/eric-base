@@ -1,7 +1,7 @@
 'use client'
 
 import * as Dialog from '@radix-ui/react-dialog'
-import { LayoutGrid, XCircle, ArrowUpRight, Radio, Youtube } from 'lucide-react'
+import { GridFour, X, ArrowUpRight, Broadcast, YoutubeLogo } from 'phosphor-react'
 import ThemeToggle from '@/components/ThemeToggle'
 import DisplayModeToggle from '@/components/DisplayModeToggle'
 
@@ -18,7 +18,7 @@ export default function MobileMenu({ showAbsoluteTime = false, onToggleTimeForma
           className="sm:hidden h-9 w-9 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark flex items-center justify-center hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition"
           aria-label="打开菜单"
         >
-          <LayoutGrid className="w-5 h-5" />
+          <GridFour className="w-5 h-5" />
         </button>
       </Dialog.Trigger>
       <Dialog.Portal>
@@ -38,7 +38,7 @@ export default function MobileMenu({ showAbsoluteTime = false, onToggleTimeForma
             </a>
             <Dialog.Close asChild>
               <button aria-label="关闭" className="h-8 w-8 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark flex items-center justify-center text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition">
-                <XCircle className="w-4 h-4" />
+                <X className="w-4 h-4" />
               </button>
             </Dialog.Close>
           </div>
@@ -74,7 +74,7 @@ export default function MobileMenu({ showAbsoluteTime = false, onToggleTimeForma
                     className="flex-1 inline-flex items-center justify-center gap-2 h-9 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark"
                     aria-label="Bilibili 空间"
                   >
-                    <Radio className="w-4 h-4" />
+                    <Broadcast className="w-4 h-4" />
                     <span className="text-xs sm:text-[13px]">Bilibili</span>
                   </a>
                   <a
@@ -84,7 +84,7 @@ export default function MobileMenu({ showAbsoluteTime = false, onToggleTimeForma
                     className="flex-1 inline-flex items-center justify-center gap-2 h-9 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark"
                     aria-label="YouTube 频道"
                   >
-                    <Youtube className="w-5 h-5" />
+                    <YoutubeLogo className="w-5 h-5" />
                     <span className="text-xs sm:text-[13px]">YouTube</span>
                   </a>
                 </div>

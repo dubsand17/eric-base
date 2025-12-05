@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { ScanSearch, ScanEye } from 'lucide-react'
+import { MagnifyingGlass, EyeSlash } from 'phosphor-react'
 import * as Toggle from '@radix-ui/react-toggle'
 
 interface DisplayModeToggleProps {
@@ -49,9 +49,9 @@ export default function DisplayModeToggle({ className = '' }: DisplayModeToggleP
       title={isTextHidden ? "显示文字内容" : "仅显示图片"}
     >
       {isTextHidden ? (
-        <ScanEye className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+        <EyeSlash className="w-5 h-5 text-gray-700 dark:text-gray-300" />
       ) : (
-        <ScanSearch className="w-5 h-5 text-violet-500" />
+        <MagnifyingGlass className="w-5 h-5 text-violet-500" />
       )}
     </Toggle.Root>
   )

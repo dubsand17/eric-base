@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import * as Tooltip from '@radix-ui/react-tooltip'
-import { BarChart3, XCircle } from 'lucide-react'
+import { ChartBar, X } from 'phosphor-react'
 
 type PositionMode = 'pyramid' | 'dca' | null
 
@@ -42,7 +42,7 @@ interface OrderResult {
 export default function PositionBuilder() {
   const [open, setOpen] = useState(false)
   const [mode, setMode] = useState<PositionMode>(null)
-  
+
   // 金字塔参数
   const [pyramidParams, setPyramidParams] = useState<PyramidParams>({
     maxPrice: 3.3,
@@ -53,7 +53,7 @@ export default function PositionBuilder() {
     maxLossPercent: 10,
     lowestPrice: ""
   })
-  
+
   // DCA参数
   const [dcaParams, setDCAParams] = useState<DCAParams>({
     totalInvestment: 5000,
@@ -64,7 +64,7 @@ export default function PositionBuilder() {
     currentPrice: 270,
     lowestPrice: ""
   })
-  
+
   // 计算金字塔建仓结果
   const calculatePyramid = (): { orders: OrderResult[], pnl: number, lossPercent: number, exceeded: boolean, totalQuantity: number, totalInvestment: number, averagePrice: number } => {
     const maxPrice = Number(pyramidParams.maxPrice) || 0
@@ -76,17 +76,17 @@ export default function PositionBuilder() {
     const lowestPrice = Number(pyramidParams.lowestPrice) || 0
     const orders: OrderResult[] = []
     const priceStep = (maxPrice - minPrice) / (orderCount - 1)
-    
+
     // 计算每层投资额比例（金字塔从上到下递增）
     const weights: number[] = []
     for (let i = 0; i < orderCount; i++) {
       weights.push(i + 1)
     }
     const totalWeight = weights.reduce((sum, w) => sum + w, 0)
-    
+
     let cumulativeInvestment = 0
     let totalQuantity = 0
-    
+
     for (let i = 0; i < orderCount; i++) {
       const entryPrice = maxPrice - (i * priceStep)
       const orderValue = (weights[i] / totalWeight) * totalInvestment
@@ -94,10 +94,10 @@ export default function PositionBuilder() {
       cumulativeInvestment += orderValue
       totalQuantity += orderSize
       const averagePrice = cumulativeInvestment / totalQuantity
-      
+
       // 判断是否可以成交：只与最低价格有关，只要订单价格 >= 最低价格就可以成交（与当前价格无关）
       const isExecutable = lowestPrice === 0 || entryPrice >= lowestPrice
-      
+
       orders.push({
         order: i + 1,
         entryPrice: Number(entryPrice.toFixed(2)),
@@ -108,7 +108,7 @@ export default function PositionBuilder() {
         isExecutable
       })
     }
-    
+
     // 只统计可成交订单的 PNL 和盈亏比例
     const executableOrders = orders.filter(o => o.isExecutable)
     const executableInvestment = executableOrders.reduce((sum, o) => sum + o.orderValue, 0)
@@ -119,7 +119,7 @@ export default function PositionBuilder() {
     const exceeded = lossPercent < 0 && Math.abs(lossPercent) > maxLossPercent
     return { orders, pnl, lossPercent, exceeded, totalQuantity: executableQuantity, totalInvestment: executableInvestment, averagePrice }
   }
-  
+
   // 计算DCA建仓结果
   const calculateDCA = (): { orders: OrderResult[], pnl: number, lossPercent: number, exceeded: boolean, totalQuantity: number, totalInvestment: number, averagePrice: number } => {
     const totalInvestment = Number(dcaParams.totalInvestment) || 0
@@ -131,10 +131,10 @@ export default function PositionBuilder() {
     const lowestPrice = Number(dcaParams.lowestPrice) || 0
     const orders: OrderResult[] = []
     const orderValue = totalInvestment / buyTimes
-    
+
     let cumulativeInvestment = 0
     let totalQuantity = 0
-    
+
     for (let i = 0; i < buyTimes; i++) {
       const priceDropPercent = i * triggerInterval
       const entryPriceForOrder = entryPrice * (1 - priceDropPercent / 100)
@@ -142,10 +142,10 @@ export default function PositionBuilder() {
       cumulativeInvestment += orderValue
       totalQuantity += orderSize
       const averagePrice = cumulativeInvestment / totalQuantity
-      
+
       // 判断是否可以成交：只与最低价格有关，只要订单价格 >= 最低价格就可以成交（与当前价格无关）
       const isExecutable = lowestPrice === 0 || entryPriceForOrder >= lowestPrice
-      
+
       orders.push({
         order: i + 1,
         entryPrice: Number(entryPriceForOrder.toFixed(4)),
@@ -156,7 +156,7 @@ export default function PositionBuilder() {
         isExecutable
       })
     }
-    
+
     // 只统计可成交订单的 PNL 和盈亏比例
     const executableOrders = orders.filter(o => o.isExecutable)
     const executableInvestment = executableOrders.reduce((sum, o) => sum + o.orderValue, 0)
@@ -165,13 +165,13 @@ export default function PositionBuilder() {
     const pnl = executableQuantity > 0 ? (currentPrice * executableQuantity) - executableInvestment : 0
     const lossPercent = executableInvestment === 0 ? 0 : (pnl / executableInvestment) * 100
     const exceeded = lossPercent < 0 && Math.abs(lossPercent) > maxLossPercent
-    
+
     return { orders, pnl, lossPercent, exceeded, totalQuantity: executableQuantity, totalInvestment: executableInvestment, averagePrice }
   }
-  
+
   const pyramidResults = mode === 'pyramid' ? calculatePyramid() : null
   const dcaResults = mode === 'dca' ? calculateDCA() : null
-  
+
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Tooltip.Root>
@@ -181,7 +181,7 @@ export default function PositionBuilder() {
               className="h-9 px-3 rounded-xl border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark flex items-center gap-2 transition"
               aria-label="建仓计算器"
             >
-              <BarChart3 className="w-4 h-4" />
+              <ChartBar className="w-4 h-4" />
               <span className="hidden md:inline">建仓</span>
             </button>
           </Dialog.Trigger>
@@ -191,7 +191,7 @@ export default function PositionBuilder() {
           <Tooltip.Arrow className="fill-white dark:fill-[#161b22]" />
         </Tooltip.Content>
       </Tooltip.Root>
-      
+
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/70 data-[state=open]:animate-in data-[state=closed]:animate-out z-50" />
         <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[95vw] max-w-4xl max-h-[90vh] border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark shadow-lg rounded-2xl data-[state=open]:animate-in data-[state=closed]:animate-out z-50 flex flex-col overflow-hidden">
@@ -204,11 +204,11 @@ export default function PositionBuilder() {
                 aria-label="关闭"
                 className="h-8 w-8 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark flex items-center justify-center text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition"
               >
-                <XCircle className="w-4 h-4" />
+                <X className="w-4 h-4" />
               </button>
             </Dialog.Close>
           </div>
-          
+
           <div className="flex-1 overflow-y-auto p-6">
             {/* 模式选择 */}
             {!mode && (
@@ -219,7 +219,7 @@ export default function PositionBuilder() {
                 >
                   {/* Accent line */}
                   <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-terminal-accent-light to-terminal-accent-light/50 dark:from-terminal-accent-dark dark:to-terminal-accent-dark/50 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  
+
                   <div className="relative">
                     <div className="text-3xl mb-3">📊</div>
                     <h3 className="text-lg font-semibold text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">金字塔建仓</h3>
@@ -228,14 +228,14 @@ export default function PositionBuilder() {
                     </p>
                   </div>
                 </button>
-                
+
                 <button
                   onClick={() => setMode('dca')}
                   className="relative p-8 rounded-2xl border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition-all group overflow-hidden shadow-lg"
                 >
                   {/* Accent line */}
                   <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-terminal-accent-light to-terminal-accent-light/50 dark:from-terminal-accent-dark dark:to-terminal-accent-dark/50 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  
+
                   <div className="relative">
                     <div className="text-3xl mb-3">💰</div>
                     <h3 className="text-lg font-semibold text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">DCA 建仓</h3>
@@ -246,7 +246,7 @@ export default function PositionBuilder() {
                 </button>
               </div>
             )}
-            
+
             {/* 金字塔建仓 */}
             {mode === 'pyramid' && (
               <div className="space-y-6">
@@ -256,7 +256,7 @@ export default function PositionBuilder() {
                 >
                   ← 返回选择
                 </button>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">
@@ -269,7 +269,7 @@ export default function PositionBuilder() {
                       className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                     />
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">
                       建仓最低价
@@ -281,7 +281,7 @@ export default function PositionBuilder() {
                       className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                     />
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">
                       订单数量
@@ -293,7 +293,7 @@ export default function PositionBuilder() {
                       className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                     />
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">
                       总投资额
@@ -305,7 +305,7 @@ export default function PositionBuilder() {
                       className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                     />
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">
                       最大亏损比例(%)
@@ -317,7 +317,7 @@ export default function PositionBuilder() {
                       className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                     />
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">
                       当前价格
@@ -329,10 +329,10 @@ export default function PositionBuilder() {
                       className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                     />
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">
-                    最低价（建仓后）
+                      最低价（建仓后）
                     </label>
                     <input
                       type="number"
@@ -342,7 +342,7 @@ export default function PositionBuilder() {
                       placeholder="建仓后的价格最低点"
                     />
                   </div>
-                  
+
                   <div className="flex items-end gap-3">
                     <div className={`flex-1 h-10 px-3 rounded-lg border flex items-center justify-between ${pyramidResults && pyramidResults.pnl >= 0 ? 'border-emerald-500/30 bg-emerald-50 dark:bg-emerald-950/20' : 'border-rose-500/30 bg-rose-50 dark:bg-rose-950/20'}`}>
                       <span className="text-sm font-medium text-gray-700 dark:text-gray-300">PNL</span>
@@ -364,7 +364,7 @@ export default function PositionBuilder() {
                     </div>
                   </div>
                 </div>
-                
+
                 {/* 结果表格 */}
                 {pyramidResults && (
                   <div className="mt-6 -mx-6 px-6 overflow-x-auto">
@@ -382,11 +382,10 @@ export default function PositionBuilder() {
                         </thead>
                         <tbody>
                           {pyramidResults.orders.map((order) => (
-                            <tr 
-                              key={order.order} 
-                              className={`border-b border-terminal-border-light/30 dark:border-terminal-border-dark/50 hover:bg-terminal-accent-light/5 dark:hover:bg-terminal-accent-dark/5 ${
-                                order.isExecutable ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-l-2 border-l-emerald-500 dark:border-l-emerald-400' : ''
-                              }`}
+                            <tr
+                              key={order.order}
+                              className={`border-b border-terminal-border-light/30 dark:border-terminal-border-dark/50 hover:bg-terminal-accent-light/5 dark:hover:bg-terminal-accent-dark/5 ${order.isExecutable ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-l-2 border-l-emerald-500 dark:border-l-emerald-400' : ''
+                                }`}
                             >
                               <td className="py-3 px-2 text-terminal-text-primary-light dark:text-terminal-text-primary-dark">
                                 <div className="flex items-center gap-2">
@@ -412,7 +411,7 @@ export default function PositionBuilder() {
                 )}
               </div>
             )}
-            
+
             {/* DCA建仓 */}
             {mode === 'dca' && (
               <div className="space-y-6">
@@ -422,7 +421,7 @@ export default function PositionBuilder() {
                 >
                   ← 返回选择
                 </button>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">
@@ -435,7 +434,7 @@ export default function PositionBuilder() {
                       className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                     />
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">
                       总加仓次数
@@ -447,7 +446,7 @@ export default function PositionBuilder() {
                       className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                     />
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">
                       触发间隔(%)
@@ -459,7 +458,7 @@ export default function PositionBuilder() {
                       className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                     />
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">
                       最大亏损比例(%)
@@ -471,7 +470,7 @@ export default function PositionBuilder() {
                       className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                     />
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">
                       入场价格
@@ -483,7 +482,7 @@ export default function PositionBuilder() {
                       className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                     />
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">
                       当前价格
@@ -495,10 +494,10 @@ export default function PositionBuilder() {
                       className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
                     />
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">
-                    最低价（建仓后）
+                      最低价（建仓后）
                     </label>
                     <input
                       type="number"
@@ -508,7 +507,7 @@ export default function PositionBuilder() {
                       placeholder="建仓后的价格最低点"
                     />
                   </div>
-                  
+
                   <div className="flex items-end gap-3">
                     <div className={`flex-1 h-10 px-3 rounded-lg border flex items-center justify-between ${dcaResults && dcaResults.pnl >= 0 ? 'border-emerald-500/30 bg-emerald-50 dark:bg-emerald-950/20' : 'border-rose-500/30 bg-rose-50 dark:bg-rose-950/20'}`}>
                       <span className="text-sm font-medium text-gray-700 dark:text-gray-300">PNL</span>
@@ -530,7 +529,7 @@ export default function PositionBuilder() {
                     </div>
                   </div>
                 </div>
-                
+
                 {/* 额外信息 */}
                 {dcaResults && (() => {
                   const executableOrders = dcaResults.orders.filter(o => o.isExecutable)
@@ -560,7 +559,7 @@ export default function PositionBuilder() {
                     </div>
                   )
                 })()}
-                
+
                 {/* 结果表格 */}
                 {dcaResults && (
                   <div className="mt-6 -mx-6 px-6 overflow-x-auto">
@@ -578,11 +577,10 @@ export default function PositionBuilder() {
                         </thead>
                         <tbody>
                           {dcaResults.orders.map((order) => (
-                            <tr 
-                              key={order.order} 
-                              className={`border-b border-terminal-border-light/30 dark:border-terminal-border-dark/50 hover:bg-terminal-accent-light/5 dark:hover:bg-terminal-accent-dark/5 ${
-                                order.isExecutable ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-l-2 border-l-emerald-500 dark:border-l-emerald-400' : ''
-                              }`}
+                            <tr
+                              key={order.order}
+                              className={`border-b border-terminal-border-light/30 dark:border-terminal-border-dark/50 hover:bg-terminal-accent-light/5 dark:hover:bg-terminal-accent-dark/5 ${order.isExecutable ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-l-2 border-l-emerald-500 dark:border-l-emerald-400' : ''
+                                }`}
                             >
                               <td className="py-3 px-2 text-terminal-text-primary-light dark:text-terminal-text-primary-dark">
                                 <div className="flex items-center gap-2">
