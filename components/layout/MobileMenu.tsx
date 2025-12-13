@@ -2,8 +2,8 @@
 
 import * as Dialog from '@radix-ui/react-dialog'
 import { GridFour, X, ArrowUpRight, VideoCamera, Play } from 'phosphor-react'
-import ThemeToggle from '@/components/ThemeToggle'
-import DisplayModeToggle from '@/components/DisplayModeToggle'
+import ThemeToggle from '@/components/ui/ThemeToggle'
+import DisplayModeToggle from '@/components/ui/DisplayModeToggle'
 
 interface MobileMenuProps {
   showAbsoluteTime?: boolean

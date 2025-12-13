@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { X, MagnifyingGlassPlus, MagnifyingGlassMinus, ArrowClockwise, Download, CaretLeft, CaretRight, ArrowSquareOut } from 'phosphor-react'
 import * as Dialog from '@radix-ui/react-dialog'
-import TypewriterText from './TypewriterText'
+import TypewriterText from '@/components/ui/TypewriterText'
 
 interface ImageModalProps {
   isOpen: boolean

@@ -1,9 +1,9 @@
 'use client'
 
-import ThemeToggle from '@/components/ThemeToggle'
-import DisplayModeToggle from '@/components/DisplayModeToggle'
-import TimeFormatToggle from '@/components/TimeFormatToggle'
-import PositionBuilder from '@/components/PositionBuilder'
+import ThemeToggle from '@/components/ui/ThemeToggle'
+import DisplayModeToggle from '@/components/ui/DisplayModeToggle'
+import TimeFormatToggle from '@/components/ui/TimeFormatToggle'
+import PositionBuilder from '@/components/features/trading/PositionBuilder'
 
 interface ToolsPillProps {
     showAbsoluteTime?: boolean

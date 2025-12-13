@@ -1,15 +1,15 @@
 "use client"
 
 import { useEffect, useRef, useState } from 'react'
-import TopOverlay from '@/components/TopOverlay'
-import CryptoFloatingTicker from '@/components/CryptoFloatingTicker'
-import PostsList from '@/components/PostsList'
-import LoadingGrid from '@/components/LoadingGrid'
-import ErrorState from '@/components/ErrorState'
-import EmptyState from '@/components/EmptyState'
-import TradingViewWidget from '@/components/TradingViewWidget'
-import ResizablePanel from '@/components/ResizablePanel'
-import MobileMenu from '@/components/MobileMenu'
+import TopOverlay from '@/components/layout/TopOverlay'
+import CryptoFloatingTicker from '@/components/features/crypto/CryptoFloatingTicker'
+import PostsList from '@/components/posts/PostsList'
+import LoadingGrid from '@/components/shared/LoadingGrid'
+import ErrorState from '@/components/shared/ErrorState'
+import EmptyState from '@/components/shared/EmptyState'
+import TradingViewWidget from '@/components/features/trading/TradingViewWidget'
+import ResizablePanel from '@/components/features/trading/ResizablePanel'
+import MobileMenu from '@/components/layout/MobileMenu'
 import type { TwitterPost } from '@/lib/supabase'
 
 interface PaginationData {

@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { TwitterPost } from '@/lib/supabase'
 import { formatDistanceToNow, format } from 'date-fns'
 import { zhCN } from 'date-fns/locale'
-import ImageModal from './ImageModal'
+import ImageModal from '@/components/features/image/ImageModal'
 import { Timer, Eye, Calendar, ArrowSquareOut } from 'phosphor-react'
 
 interface TwitterCardProps {

@@ -1,8 +1,8 @@
 'use client'
 
-import BrandPill from '@/components/BrandPill'
-import ToolsPill from '@/components/ToolsPill'
-import SearchBarWithFilter from '@/components/SearchBarWithFilter'
+import BrandPill from '@/components/layout/BrandPill'
+import ToolsPill from '@/components/layout/ToolsPill'
+import SearchBarWithFilter from '@/components/layout/SearchBarWithFilter'
 
 interface TopOverlayProps {
     query: string

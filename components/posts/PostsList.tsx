@@ -1,8 +1,8 @@
 'use client'
 
 import { useRef, useEffect } from 'react'
-import MasonryGrid from '@/components/MasonryGrid'
-import type { TwitterPost } from '@/lib/supabase'
+import MasonryGrid from '@/components/posts/MasonryGrid'
+import { TwitterPost } from '@/lib/supabase'
 
 interface PaginationData {
   total: number

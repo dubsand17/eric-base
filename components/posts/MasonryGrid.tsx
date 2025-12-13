@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useLayoutEffect, useMemo, useState, useRef } from 'react'
-import TwitterCard from './TwitterCard'
-import SkeletonCard from './SkeletonCard'
+import TwitterCard from '@/components/posts/TwitterCard'
+import SkeletonCard from '@/components/posts/SkeletonCard'
 import { TwitterPost } from '@/lib/supabase'
 
 interface MasonryGridProps {

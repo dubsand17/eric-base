@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import SkeletonCard from './SkeletonCard'
+import SkeletonCard from '@/components/posts/SkeletonCard'
 
 interface LoadingGridProps {
   count?: number
