@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
-import * as Tooltip from '@radix-ui/react-tooltip'
 import { Calculator, X } from 'phosphor-react'
 
 type PositionMode = 'pyramid' | 'dca' | null
@@ -174,23 +173,15 @@ export default function PositionBuilder() {
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Tooltip.Root>
-        <Tooltip.Trigger asChild>
-          <Dialog.Trigger asChild>
-            <button
-              className="h-9 px-3 rounded-xl border border-terminal-border-light dark:border-terminal-border-dark bg-white dark:bg-[#16181d] text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-borderHover-light dark:hover:border-terminal-borderHover-dark hover:shadow-soft flex items-center gap-2 transition-all-gentle active:scale-95"
-              aria-label="建仓计算器"
-            >
-              <Calculator className="w-4 h-4" weight="duotone" />
-              <span className="hidden md:inline">建仓</span>
-            </button>
-          </Dialog.Trigger>
-        </Tooltip.Trigger>
-        <Tooltip.Content sideOffset={8} className="rounded-lg border border-terminal-border-light dark:border-terminal-border-dark bg-white dark:bg-[#16181d] px-2 py-1 text-xs text-terminal-text-primary-light dark:text-terminal-text-primary-dark shadow-soft-lg animate-scale-in">
-          建仓计算器
-          <Tooltip.Arrow className="fill-white dark:fill-[#161b22]" />
-        </Tooltip.Content>
-      </Tooltip.Root>
+      <Dialog.Trigger asChild>
+        <button
+          className="h-9 w-9 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark bg-white dark:bg-[#16181d] text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-borderHover-light dark:hover:border-terminal-borderHover-dark hover:shadow-soft flex items-center justify-center transition-all-gentle active:scale-95"
+          aria-label="建仓计算器"
+          title="建仓计算器"
+        >
+          <Calculator className="w-4 h-4" weight="duotone" />
+        </button>
+      </Dialog.Trigger>
 
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/60 data-[state=open]:animate-in data-[state=closed]:animate-out z-50" />

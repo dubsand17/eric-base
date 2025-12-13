@@ -1,14 +1,15 @@
 "use client"
 
 import { useEffect, useRef, useState } from 'react'
-import Navbar from '@/components/Navbar'
-import BackToTop from '@/components/BackToTop'
+import TopOverlay from '@/components/TopOverlay'
+import CryptoFloatingTicker from '@/components/CryptoFloatingTicker'
 import PostsList from '@/components/PostsList'
 import LoadingGrid from '@/components/LoadingGrid'
 import ErrorState from '@/components/ErrorState'
 import EmptyState from '@/components/EmptyState'
 import TradingViewWidget from '@/components/TradingViewWidget'
 import ResizablePanel from '@/components/ResizablePanel'
+import MobileMenu from '@/components/MobileMenu'
 import type { TwitterPost } from '@/lib/supabase'
 
 interface PaginationData {
@@ -28,7 +29,6 @@ interface HomeClientProps {
   initialPagination: PaginationData
 }
 
-// 将交易对符号转换为 TradingView 符号格式
 function getTradingViewSymbol(symbol: string): string {
   const symbolMap: Record<string, string> = {
     'BTCUSDT': 'BINANCE:BTCUSDT',
@@ -51,11 +51,17 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
   const [debouncedQuery, setDebouncedQuery] = useState('')
   const [showAbsoluteTime, setShowAbsoluteTime] = useState(false)
 
-  // K 线图相关状态
+  // K线图和加密货币相关
   const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null)
   const [isWideScreen, setIsWideScreen] = useState(false)
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
   const [leftContainerWidth, setLeftContainerWidth] = useState<number | undefined>(undefined)
+
+  // 加密货币价格数据
+  const [prices, setPrices] = useState<Record<string, { price: number; percent: number }> | null>(null)
+  const prevRef = useRef<Record<string, { price: number; percent: number }> | null>(null)
+  const [pulse, setPulse] = useState<Record<string, 'up' | 'down' | undefined>>({})
+  const [dir, setDir] = useState<Record<string, 'up' | 'down' | 'none'>>({})
 
   const sentinelRef = useRef<HTMLDivElement | null>(null)
   const cacheRef = useRef<Map<string, { ts: number; data: PostsResponse }>>(new Map())
@@ -64,13 +70,62 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
   const [hasSearched, setHasSearched] = useState(false)
   const [fetchingInitial, setFetchingInitial] = useState(false)
 
+  // 获取加密货币价格
+  useEffect(() => {
+    let timer: number | undefined
+    const load = async () => {
+      try {
+        const res = await fetch('/api/crypto?fresh=1', { cache: 'no-store' })
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        const json = await res.json()
+        const map: Record<string, { price: number; percent: number }> = {}
+        for (const item of json.data as Array<{ symbol: string; price: number; percent: number }>) {
+          map[item.symbol] = { price: item.price, percent: item.percent }
+        }
+
+        const prev = prevRef.current
+        const toPulse: Record<string, 'up' | 'down'> = {}
+        const toDir: Record<string, 'up' | 'down' | 'none'> = {}
+        for (const s of Object.keys(map)) {
+          const oldP = prev?.[s]?.price
+          const newP = map[s]?.price
+          if (typeof oldP === 'number' && typeof newP === 'number') {
+            if (newP > oldP) { toPulse[s] = 'up'; toDir[s] = 'up' }
+            else if (newP < oldP) { toPulse[s] = 'down'; toDir[s] = 'down' }
+            else { toDir[s] = 'none' }
+          } else {
+            toDir[s] = 'none'
+          }
+        }
+
+        if (Object.keys(toPulse).length) {
+          setPulse((p) => ({ ...p, ...toPulse }))
+          window.setTimeout(() => {
+            setPulse((p) => {
+              const next = { ...p }
+              for (const s of Object.keys(toPulse)) next[s] = undefined
+              return next
+            })
+          }, 1200)
+        }
+
+        setDir(toDir)
+        setPrices(map)
+        prevRef.current = map
+      } catch (e) {
+        console.warn('Fetch /api/crypto failed:', e)
+      }
+    }
+    load()
+    timer = window.setInterval(load, 5000)
+    return () => { if (timer) window.clearInterval(timer) }
+  }, [])
+
   // 检测屏幕宽度和主题
   useEffect(() => {
     const checkScreenWidth = () => {
-      // 使用 1024px 作为宽屏阈值 (lg breakpoint)
       const wide = window.innerWidth >= 1024
       setIsWideScreen((prev) => {
-        // 如果从宽屏变为窄屏,清除选中的符号
         if (prev && !wide) {
           setSelectedSymbol(null)
         }
@@ -79,7 +134,6 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
     }
 
     const checkTheme = () => {
-      // 检测系统主题或 document 上的 class
       const isDark = document.documentElement.classList.contains('dark') ||
         window.matchMedia('(prefers-color-scheme: dark)').matches
       setTheme(isDark ? 'dark' : 'light')
@@ -90,7 +144,6 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
 
     window.addEventListener('resize', checkScreenWidth)
 
-    // 监听主题变化
     const observer = new MutationObserver(checkTheme)
     observer.observe(document.documentElement, {
       attributes: true,
@@ -108,7 +161,6 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
     return () => clearTimeout(t)
   }, [query])
 
-  // ESC 键盘快捷键关闭 K 线图
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && selectedSymbol) {
@@ -120,17 +172,13 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [selectedSymbol])
 
-  // 处理加密货币符号点击
   const handleSymbolClick = (symbol: string) => {
     if (!isWideScreen) {
-      // 窄屏时跳转到 TradingView
       const tradingViewSymbol = getTradingViewSymbol(symbol)
-      const symbolName = symbol.replace('USDT', '')
       window.open(`https://www.tradingview.com/chart/?symbol=${encodeURIComponent(tradingViewSymbol)}`, '_blank')
       return
     }
 
-    // 宽屏时：点击相同符号则收起；不同符号则切换；未展开则打开
     if (!selectedSymbol) {
       setSelectedSymbol(symbol)
     } else if (selectedSymbol === symbol) {
@@ -178,15 +226,12 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
       return result.data
     } catch (err: any) {
       if (err?.name === 'AbortError' || err?.message?.includes('aborted')) {
-        // 静默忽略取消
         return null
       }
       console.error('Error fetching posts:', err)
       setError(err instanceof Error ? err.message : '获取数据失败')
       return null
     } finally {
-      // 仅对最后一次请求生效，避免被取消/过期请求将 loading 错误地置为 false
-      // 从而导致 posts 仍为空时短暂落入 EmptyState 分支
       const isLatest = requestIdRef.current === reqId
       if (isLatest) {
         setLoading(false)
@@ -195,12 +240,9 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
     }
   }
 
-  // 条件变化：重置并加载第一页（带取消未完成请求）
   useEffect(() => {
-    // 跳过首次运行，保留 SSR 首屏数据，避免初始就清空/触发请求
     if (skipFirstFiltersRunRef.current) {
       skipFirstFiltersRunRef.current = false
-      // 但如果初始数据为空，仍然需要加载数据
       if (initialPosts.length === 0 && !loading) {
         const controller = new AbortController()
         fetchPosts(1, controller.signal)
@@ -209,7 +251,6 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
       return
     }
     const controller = new AbortController()
-    // 先标记为加载中，再清空列表，避免一帧内出现 EmptyState 闪烁
     setHasSearched(true)
     setLoading(true)
     setFetchingInitial(true)
@@ -224,9 +265,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
     fetchPosts(pagination.page + 1)
   }
 
-  // 渲染主要内容区域
   const renderMainContent = () => {
-    // 宽屏且选中了符号时，使用 ResizablePanel
     if (isWideScreen && selectedSymbol) {
       const tradingViewSymbol = getTradingViewSymbol(selectedSymbol)
 
@@ -247,7 +286,6 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
           }
           right={
             <div className="h-full flex flex-col px-4 py-4 md:py-6 relative overflow-hidden">
-              {/* K 线图容器 - 固定高度，不滚动 */}
               <div className="flex-1 min-h-0 glass-light dark:glass-dark rounded-2xl border border-terminal-border-light dark:border-terminal-border-dark mb-1 overflow-hidden">
                 <div className="h-full w-full p-2">
                   <TradingViewWidget
@@ -270,7 +308,6 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
       )
     }
 
-    // 默认情况：只显示帖子列表
     return (
       <div className="h-full overflow-y-auto no-scrollbar">
         <PostsList
@@ -287,8 +324,8 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
 
   if (fetchingInitial && posts.length === 0) {
     return (
-      <div className="min-h-screen bg-[#f5f5f5] dark:bg-[#363636]">
-        <Navbar
+      <div className="min-h-screen bg-terminal-bg-light dark:bg-terminal-bg-dark">
+        <TopOverlay
           query={query}
           onQueryChange={setQuery}
           from={from}
@@ -296,18 +333,22 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
           onDateChange={({ from: f, to: t }) => { setFrom(f); setTo(t) }}
           showAbsoluteTime={showAbsoluteTime}
           onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)}
-          onSymbolClick={handleSymbolClick}
         />
-        <LoadingGrid />
-        <BackToTop />
+        <div className="md:hidden fixed top-4 left-4 z-40">
+          <MobileMenu showAbsoluteTime={showAbsoluteTime} onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)} />
+        </div>
+        <div className="pt-20">
+          <LoadingGrid />
+        </div>
+        <CryptoFloatingTicker prices={prices} dir={dir} onSymbolClick={handleSymbolClick} />
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[#f5f5f5] dark:bg-[#363636]">
-        <Navbar
+      <div className="min-h-screen bg-terminal-bg-light dark:bg-terminal-bg-dark">
+        <TopOverlay
           query={query}
           onQueryChange={setQuery}
           from={from}
@@ -315,18 +356,20 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
           onDateChange={({ from: f, to: t }) => { setFrom(f); setTo(t) }}
           showAbsoluteTime={showAbsoluteTime}
           onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)}
-          onSymbolClick={handleSymbolClick}
         />
+        <div className="md:hidden fixed top-4 left-4 z-40">
+          <MobileMenu showAbsoluteTime={showAbsoluteTime} onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)} />
+        </div>
         <ErrorState error={error} />
-        <BackToTop />
+        <CryptoFloatingTicker prices={prices} dir={dir} onSymbolClick={handleSymbolClick} />
       </div>
     )
   }
 
   if (!fetchingInitial && posts.length === 0) {
     return (
-      <div className="min-h-screen bg-[#f5f5f5] dark:bg-[#363636]">
-        <Navbar
+      <div className="min-h-screen bg-terminal-bg-light dark:bg-terminal-bg-dark">
+        <TopOverlay
           query={query}
           onQueryChange={setQuery}
           from={from}
@@ -334,8 +377,10 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
           onDateChange={({ from: f, to: t }) => { setFrom(f); setTo(t) }}
           showAbsoluteTime={showAbsoluteTime}
           onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)}
-          onSymbolClick={handleSymbolClick}
         />
+        <div className="md:hidden fixed top-4 left-4 z-40">
+          <MobileMenu showAbsoluteTime={showAbsoluteTime} onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)} />
+        </div>
         <div className="container mx-auto py-6">
           <EmptyState
             state={hasSearched ? 'no_results' : 'idle'}
@@ -343,20 +388,19 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
             onClear={() => { setQuery(''); setFrom(undefined); setTo(undefined) }}
           />
         </div>
-        <BackToTop />
+        <CryptoFloatingTicker prices={prices} dir={dir} onSymbolClick={handleSymbolClick} />
       </div>
     )
   }
 
-  // 根据是否显示 K 线图决定布局方式
   const useFixedLayout = isWideScreen && selectedSymbol
 
   return (
     <div
-      className="min-h-screen bg-[#f5f5f5] dark:bg-[#363636] flex flex-col"
+      className="min-h-screen bg-terminal-bg-light dark:bg-terminal-bg-dark flex flex-col"
       style={useFixedLayout ? { height: '100vh', overflow: 'hidden' } : {}}
     >
-      <Navbar
+      <TopOverlay
         query={query}
         onQueryChange={setQuery}
         from={from}
@@ -364,12 +408,14 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
         onDateChange={({ from: f, to: t }) => { setFrom(f); setTo(t) }}
         showAbsoluteTime={showAbsoluteTime}
         onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)}
-        onSymbolClick={handleSymbolClick}
       />
-      <div className={useFixedLayout ? "flex-1 min-h-0 overflow-hidden" : "flex-1"}>
+      <div className="md:hidden fixed top-4 left-4 z-40">
+        <MobileMenu showAbsoluteTime={showAbsoluteTime} onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)} />
+      </div>
+      <div className={useFixedLayout ? "flex-1 min-h-0 overflow-hidden pt-20" : "flex-1 pt-20"}>
         {renderMainContent()}
       </div>
-      <BackToTop />
+      <CryptoFloatingTicker prices={prices} dir={dir} onSymbolClick={handleSymbolClick} />
     </div>
   )
 }

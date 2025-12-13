@@ -21,7 +21,7 @@ function getColumnCount(width: number | undefined): number {
     if (typeof window === 'undefined') return 1
     width = window.innerWidth
   }
-  
+
   // 最少1列
   if (width < 640) return 1 // sm-
   if (width < 960) return 2 // md
@@ -43,12 +43,12 @@ export default function MasonryGrid({ posts, loadingMore = false, showAbsoluteTi
     // 服务端：使用3列作为保守默认值（适合 1024px-1920px 的屏幕）
     return 4
   })
-  
+
   // 使用 useLayoutEffect 在 DOM 更新之前同步执行，减少闪烁
   useLayoutEffect(() => {
     const updateColumnCount = () => {
       let newCount: number | null = null
-      
+
       if (containerWidth !== undefined && containerWidth > 0) {
         // 如果提供了容器宽度，使用它
         newCount = getColumnCount(containerWidth)
@@ -62,7 +62,7 @@ export default function MasonryGrid({ posts, loadingMore = false, showAbsoluteTi
         // 最后回退到窗口宽度
         newCount = getColumnCount(window.innerWidth)
       }
-      
+
       // 使用函数式更新，确保总是获取最新的 colCount 值
       if (newCount !== null) {
         setColCount((prevCount) => {
@@ -74,16 +74,16 @@ export default function MasonryGrid({ posts, loadingMore = false, showAbsoluteTi
 
     // 立即更新一次（在 DOM 更新之前）
     updateColumnCount()
-    
+
     if (containerWidth !== undefined) {
       // 如果提供了容器宽度，直接使用它，不监听窗口resize
       return
     }
-    
+
     // 只有在没有提供容器宽度时才监听窗口resize和容器resize
     const onResize = () => updateColumnCount()
     window.addEventListener('resize', onResize)
-    
+
     // 使用 ResizeObserver 监听容器大小变化
     if (containerRef.current) {
       const resizeObserver = new ResizeObserver(updateColumnCount)
@@ -93,13 +93,13 @@ export default function MasonryGrid({ posts, loadingMore = false, showAbsoluteTi
         resizeObserver.disconnect()
       }
     }
-    
+
     return () => window.removeEventListener('resize', onResize)
   }, [containerWidth])
 
   // 按"横向阅读顺序"分配到列：index % colCount
   const effectiveColCount = colCount
-  
+
   const columns = useMemo(() => {
     const cols: TwitterPost[][] = Array.from({ length: effectiveColCount }, () => [])
     posts.forEach((post, i) => {
@@ -110,7 +110,7 @@ export default function MasonryGrid({ posts, loadingMore = false, showAbsoluteTi
   }, [posts, effectiveColCount])
 
   return (
-    <div ref={containerRef} className="w-full px-4 py-4 md:py-6">
+    <div ref={containerRef} className="w-full px-4 py-2 md:py-3">
       <div
         className="grid gap-4"
         style={{ gridTemplateColumns: `repeat(${effectiveColCount}, 1fr)` }}

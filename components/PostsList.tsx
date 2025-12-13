@@ -21,12 +21,12 @@ interface PostsListProps {
   containerWidth?: number
 }
 
-export default function PostsList({ 
-  posts, 
-  pagination, 
-  loadingMore, 
-  showAbsoluteTime, 
-  onToggleTimeFormat, 
+export default function PostsList({
+  posts,
+  pagination,
+  loadingMore,
+  showAbsoluteTime,
+  onToggleTimeFormat,
   onLoadMore,
   containerWidth
 }: PostsListProps) {
@@ -50,10 +50,10 @@ export default function PostsList({
 
   return (
     <>
-      <MasonryGrid 
-        posts={posts} 
-        loadingMore={loadingMore} 
-        showAbsoluteTime={showAbsoluteTime} 
+      <MasonryGrid
+        posts={posts}
+        loadingMore={loadingMore}
+        showAbsoluteTime={showAbsoluteTime}
         onToggleTimeFormat={onToggleTimeFormat}
         containerWidth={containerWidth}
       />
@@ -73,7 +73,7 @@ export default function PostsList({
 
       {pagination.page >= pagination.totalPages && posts.length > 0 && (
         <div className="w-full flex justify-center py-8 text-sm text-terminal-text-muted-light dark:text-terminal-text-muted-dark">
-          已加载完毕 · 共 {pagination.total} 条知识点
+
         </div>
       )}
     </>
