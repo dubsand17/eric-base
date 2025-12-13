@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
-import { Calculator, X } from 'phosphor-react'
+import { X, Calculator, Triangle, TrendUp } from 'phosphor-react'
 
 type PositionMode = 'pyramid' | 'dca' | null
 
@@ -186,18 +186,44 @@ export default function PositionBuilder() {
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/60 data-[state=open]:animate-in data-[state=closed]:animate-out z-50" />
         <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[95vw] max-w-4xl max-h-[90vh] border border-terminal-border-light dark:border-terminal-border-dark bg-white dark:bg-[#16181d] shadow-soft-xl rounded-2xl z-50 flex flex-col overflow-hidden">
-          <div className="sticky top-0 flex items-center justify-between px-6 py-4 border-b border-terminal-border-light dark:border-terminal-border-dark bg-white dark:bg-[#16181d]">
-            <Dialog.Title className="text-lg font-semibold text-terminal-text-primary-light dark:text-terminal-text-primary-dark">
-              建仓计算器
-            </Dialog.Title>
-            <Dialog.Close asChild>
-              <button
-                aria-label="关闭"
-                className="h-8 w-8 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark bg-white dark:bg-[#16181d] flex items-center justify-center text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-borderHover-light dark:hover:border-terminal-borderHover-dark hover:shadow-soft transition-all-gentle active:scale-95"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </Dialog.Close>
+
+
+          {/* Sticky Top Bar with Tabs and Close Button */}
+          <div className="sticky top-0 px-4 pt-4 pb-3 bg-white dark:bg-[#16181d] border-b border-terminal-border-light dark:border-terminal-border-dark z-10">
+            <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3">
+              {/* Close Button - Left */}
+              <Dialog.Close asChild>
+                <button
+                  aria-label="关闭"
+                  className="h-11 w-11 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark bg-white dark:bg-[#16181d] shadow-soft-md flex items-center justify-center text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-borderHover-light dark:hover:border-terminal-borderHover-dark hover:shadow-soft transition-all-gentle active:scale-95"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </Dialog.Close>
+
+              {/* Tab Navigation - Center */}
+              <div className="flex justify-center">
+                <div className="flex gap-2 p-1 bg-terminal-surface-light dark:bg-terminal-surface-dark rounded-lg border border-terminal-border-light dark:border-terminal-border-dark shadow-soft-md max-w-md">
+                  <button
+                    onClick={() => setMode('pyramid')}
+                    className="px-4 py-2 rounded-md text-sm font-medium text-terminal-text-secondary-light dark:text-terminal-text-secondary-dark hover:bg-terminal-state-hover-light dark:hover:bg-terminal-state-hover-dark transition-all-gentle"
+                  >
+                    <Triangle className="w-4 h-4 inline-block mr-1.5" weight="duotone" />
+                    金字塔建仓
+                  </button>
+                  <button
+                    onClick={() => setMode('dca')}
+                    className="px-4 py-2 rounded-md text-sm font-medium text-terminal-text-secondary-light dark:text-terminal-text-secondary-dark hover:bg-terminal-state-hover-light dark:hover:bg-terminal-state-hover-dark transition-all-gentle"
+                  >
+                    <TrendUp className="w-4 h-4 inline-block mr-1.5" weight="duotone" />
+                    DCA建仓
+                  </button>
+                </div>
+              </div>
+
+              {/* Empty space for balance - Right */}
+              <div className="w-11"></div>
+            </div>
           </div>
 
           <div className="flex-1 overflow-y-auto p-6">
@@ -207,20 +233,6 @@ export default function PositionBuilder() {
             {mode === 'pyramid' && (
               <div className="space-y-6">
                 {/* Tab Navigation */}
-                <div className="flex gap-2 p-1 bg-terminal-surface-light dark:bg-terminal-surface-dark rounded-lg border border-terminal-border-light dark:border-terminal-border-dark">
-                  <button
-                    className="flex-1 px-4 py-2 rounded-md bg-terminal-accent-muted-light dark:bg-terminal-accent-muted-dark text-terminal-accent-light dark:text-terminal-accent-dark text-sm font-medium"
-                  >
-                    📊 金字塔建仓
-                  </button>
-                  <button
-                    onClick={() => setMode('dca')}
-                    className="flex-1 px-4 py-2 rounded-md text-terminal-text-secondary-light dark:text-terminal-text-secondary-dark hover:bg-terminal-state-hover-light dark:hover:bg-terminal-state-hover-dark text-sm font-medium transition-all-gentle"
-                  >
-                    💰 DCA建仓
-                  </button>
-                </div>
-
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">
@@ -379,20 +391,6 @@ export default function PositionBuilder() {
             {/* DCA建仓 */}
             {mode === 'dca' && (
               <div className="space-y-6">
-                {/* Tab Navigation */}
-                <div className="flex gap-2 p-1 bg-terminal-surface-light dark:bg-terminal-surface-dark rounded-lg border border-terminal-border-light dark:border-terminal-border-dark">
-                  <button
-                    onClick={() => setMode('pyramid')}
-                    className="flex-1 px-4 py-2 rounded-md text-terminal-text-secondary-light dark:text-terminal-text-secondary-dark hover:bg-terminal-state-hover-light dark:hover:bg-terminal-state-hover-dark text-sm font-medium transition-all-gentle"
-                  >
-                    📊 金字塔建仓
-                  </button>
-                  <button
-                    className="flex-1 px-4 py-2 rounded-md bg-terminal-accent-muted-light dark:bg-terminal-accent-muted-dark text-terminal-accent-light dark:text-terminal-accent-dark text-sm font-medium"
-                  >
-                    💰 DCA建仓
-                  </button>
-                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
@@ -580,7 +578,7 @@ export default function PositionBuilder() {
             )}
           </div>
         </Dialog.Content>
-      </Dialog.Portal>
+      </Dialog.Portal >
     </Dialog.Root >
   )
 }

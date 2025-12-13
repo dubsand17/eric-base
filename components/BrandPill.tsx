@@ -18,7 +18,7 @@ export default function BrandPill() {
                         weight="duotone"
                     />
                     <span className="hidden xl:block text-sm font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark whitespace-nowrap">
-                        百万Eric
+                        百萬Eric
                     </span>
                 </a>
 

@@ -15,10 +15,10 @@ export default function MobileMenu({ showAbsoluteTime = false, onToggleTimeForma
     <Dialog.Root>
       <Dialog.Trigger asChild>
         <button
-          className="sm:hidden h-9 w-9 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark flex items-center justify-center hover:border-terminal-borderHover-light dark:hover:border-terminal-borderHover-dark hover:shadow-soft transition-all-gentle active:scale-95"
+          className="sm:hidden h-[46px] w-[46px] rounded-lg border border-terminal-border-light dark:border-terminal-border-dark bg-white dark:bg-[#16181d] shadow-soft-md text-terminal-text-primary-light dark:text-terminal-text-primary-dark flex items-center justify-center hover:border-terminal-borderHover-light dark:hover:border-terminal-borderHover-dark hover:shadow-soft transition-all-gentle active:scale-95"
           aria-label="打开菜单"
         >
-          <GridFour className="w-5 h-5" />
+          <GridFour className="w-5 h-5" weight="duotone" />
         </button>
       </Dialog.Trigger>
       <Dialog.Portal>

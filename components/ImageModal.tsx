@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
-import { X, MagnifyingGlassPlus, MagnifyingGlassMinus, ArrowClockwise, Download, CaretLeft, CaretRight } from 'phosphor-react'
+import { X, MagnifyingGlassPlus, MagnifyingGlassMinus, ArrowClockwise, Download, CaretLeft, CaretRight, ArrowSquareOut } from 'phosphor-react'
 import * as Dialog from '@radix-ui/react-dialog'
 import TypewriterText from './TypewriterText'
 
@@ -218,7 +218,7 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
           {/* 中心容器 - 交易终端风格 */}
           <div className="w-[95%] md:w-[90%] h-[95%] md:h-[90%] rounded-2xl overflow-hidden border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark shadow-soft-xl flex flex-col md:flex-row animate-scale-in" role="dialog" aria-modal="true">
             {/* 左侧内容区域 - 在移动端变为顶部区域 */}
-            <div className="w-full md:w-1/3 h-auto md:h-full flex flex-col border-b md:border-b-0 md:border-r border-terminal-border-light dark:border-terminal-border-dark max-h-[30vh] md:max-h-none glass-light dark:glass-dark">
+            <div className="w-full md:w-1/3 flex-[3] md:flex-initial md:h-full flex flex-col border-b md:border-b-0 md:border-r border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark min-h-0">
               {/* 关闭按钮 + ESC 提示 - 固定在顶部，不跟随滚动 */}
               <div className="flex-shrink-0 p-3 md:p-5 pb-3 md:pb-3 border-b border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark">
                 <div className="flex items-center gap-2">
@@ -270,9 +270,7 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
                         className="inline-flex items-center space-x-1.5 text-terminal-accent-light dark:text-terminal-accent-dark hover:text-terminal-accent-light/80 dark:hover:text-terminal-accent-dark/80 transition-colors-gentle text-xs font-medium"
                       >
                         <span>查看原文</span>
-                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                        </svg>
+                        <ArrowSquareOut className="w-3.5 h-3.5" weight="duotone" />
                       </a>
                     </div>
                   )}
@@ -308,7 +306,7 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
 
             {/* 右侧图片区域 - 在移动端变为底部区域 */}
             <div
-              className="flex-1 flex flex-col glass-light dark:glass-dark min-h-0"
+              className="flex-[2] md:flex-1 flex flex-col glass-light dark:glass-dark min-h-0"
               onMouseMove={handleMouseMove}
               onMouseUp={handleMouseUp}
               onMouseLeave={handleMouseUp}
