@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { CaretUp } from "phosphor-react"
+import { CaretCircleUp } from "phosphor-react"
 
 export default function BackToTop() {
   const [visible, setVisible] = useState(false)
@@ -29,9 +29,9 @@ export default function BackToTop() {
       onClick={scrollToTop}
       aria-label="回到顶部"
       title="回到顶部"
-      className={`fixed right-6 bottom-6 sm:right-6 sm:bottom-6 z-40 h-10 w-10 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark shadow-lg transition-all duration-200 hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark hover:glass-active-light dark:hover:glass-active-dark ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3 pointer-events-none'}`}
+      className={`fixed right-6 bottom-6 sm:right-6 sm:bottom-6 z-40 h-10 w-10 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark shadow-soft-md transition-all-gentle hover:border-terminal-borderHover-light dark:hover:border-terminal-borderHover-dark hover:shadow-soft-lg hover:-translate-y-0.5 active:scale-95 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3 pointer-events-none'}`}
     >
-      <CaretUp className="w-5 h-5 mx-auto" />
+      <CaretCircleUp className="w-5 h-5 mx-auto" weight="duotone" />
     </button>
   )
 }

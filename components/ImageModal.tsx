@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
-import { X, ArrowsOutSimple, ArrowsInSimple, ArrowsClockwise, DownloadSimple, CaretLeft, CaretRight } from 'phosphor-react'
+import { X, MagnifyingGlassPlus, MagnifyingGlassMinus, ArrowClockwise, Download, CaretLeft, CaretRight } from 'phosphor-react'
 import * as Dialog from '@radix-ui/react-dialog'
 import TypewriterText from './TypewriterText'
 
@@ -213,25 +213,25 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
   return (
     <Dialog.Root open={isOpen} onOpenChange={(open) => { if (!open) onClose() }}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-50 bg-black/70" />
+        <Dialog.Overlay className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm" />
         <Dialog.Content className="fixed inset-0 z-50 flex items-center justify-center p-2 md:p-6">
           {/* 中心容器 - 交易终端风格 */}
-          <div className="w-[95%] md:w-[90%] h-[95%] md:h-[90%] rounded-2xl overflow-hidden border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark shadow-lg flex flex-col md:flex-row" role="dialog" aria-modal="true">
+          <div className="w-[95%] md:w-[90%] h-[95%] md:h-[90%] rounded-2xl overflow-hidden border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark shadow-soft-xl flex flex-col md:flex-row animate-scale-in" role="dialog" aria-modal="true">
             {/* 左侧内容区域 - 在移动端变为顶部区域 */}
-            <div className="w-full md:w-1/3 h-auto md:h-full flex flex-col border-b md:border-b-0 md:border-r border-terminal-border-light dark:border-terminal-border-dark max-h-[30vh] md:max-h-none bg-terminal-bg-light dark:bg-terminal-bg-dark">
+            <div className="w-full md:w-1/3 h-auto md:h-full flex flex-col border-b md:border-b-0 md:border-r border-terminal-border-light dark:border-terminal-border-dark max-h-[30vh] md:max-h-none glass-light dark:glass-dark">
               {/* 关闭按钮 + ESC 提示 - 固定在顶部，不跟随滚动 */}
-              <div className="flex-shrink-0 p-3 md:p-5 pb-3 md:pb-3 border-b border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark">
+              <div className="flex-shrink-0 p-3 md:p-5 pb-3 md:pb-3 border-b border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark">
                 <div className="flex items-center gap-2">
                   <Dialog.Close asChild>
                     <button
-                      className="h-9 w-9 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition flex items-center justify-center"
+                      className="h-9 w-9 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-borderHover-light dark:hover:border-terminal-borderHover-dark hover:shadow-soft transition-all-gentle active:scale-95 flex items-center justify-center"
                       title="关闭"
                       aria-label="关闭"
                     >
                       <X className="w-5 h-5" />
                     </button>
                   </Dialog.Close>
-                  <span className="text-[11px] text-terminal-text-muted-light dark:text-terminal-text-muted-dark select-none">ESC</span>
+                  <span className="px-2 py-1 rounded-md border border-terminal-border-light/50 dark:border-terminal-border-dark/50 glass-light dark:glass-dark text-[10px] text-terminal-text-secondary-light dark:text-terminal-text-secondary-dark select-none font-mono tracking-wide">ESC</span>
                 </div>
               </div>
 
@@ -267,7 +267,7 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
                         href={tweetUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center space-x-1.5 text-terminal-accent-light dark:text-terminal-accent-dark hover:text-terminal-accent-light/80 dark:hover:text-terminal-accent-dark/80 transition-colors text-xs font-medium"
+                        className="inline-flex items-center space-x-1.5 text-terminal-accent-light dark:text-terminal-accent-dark hover:text-terminal-accent-light/80 dark:hover:text-terminal-accent-dark/80 transition-colors-gentle text-xs font-medium"
                       >
                         <span>查看原文</span>
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -287,14 +287,14 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
                         <button
                           onClick={handlePrevImage}
                           disabled={currentImageIndex === 0}
-                          className="px-3 py-1.5 rounded-xl border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark disabled:opacity-50 disabled:cursor-not-allowed hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition text-xs font-medium"
+                          className="px-3 py-1.5 rounded-xl border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark disabled:opacity-40 disabled:cursor-not-allowed hover:enabled:border-terminal-borderHover-light dark:hover:enabled:border-terminal-borderHover-dark hover:enabled:shadow-soft transition-all-gentle active:enabled:scale-95 text-xs font-medium"
                         >
                           上一张
                         </button>
                         <button
                           onClick={handleNextImage}
                           disabled={currentImageIndex === imageList.length - 1}
-                          className="px-3 py-1.5 rounded-xl border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark disabled:opacity-50 disabled:cursor-not-allowed hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition text-xs font-medium"
+                          className="px-3 py-1.5 rounded-xl border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark disabled:opacity-40 disabled:cursor-not-allowed hover:enabled:border-terminal-borderHover-light dark:hover:enabled:border-terminal-borderHover-dark hover:enabled:shadow-soft transition-all-gentle active:enabled:scale-95 text-xs font-medium"
                         >
                           下一张
                         </button>
@@ -308,7 +308,7 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
 
             {/* 右侧图片区域 - 在移动端变为底部区域 */}
             <div
-              className="flex-1 flex flex-col bg-terminal-bg-light dark:bg-terminal-bg-dark min-h-0"
+              className="flex-1 flex flex-col glass-light dark:glass-dark min-h-0"
               onMouseMove={handleMouseMove}
               onMouseUp={handleMouseUp}
               onMouseLeave={handleMouseUp}
@@ -321,14 +321,14 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
                     <button
                       onClick={handlePrevImage}
                       disabled={currentImageIndex === 0}
-                      className="absolute left-4 z-20 p-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                      className="absolute left-4 z-20 p-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:enabled:border-terminal-borderHover-light dark:hover:enabled:border-terminal-borderHover-dark hover:enabled:shadow-soft transition-all-gentle disabled:opacity-30 disabled:cursor-not-allowed active:enabled:scale-95"
                     >
                       <CaretLeft className="w-6 h-6" />
                     </button>
                     <button
                       onClick={handleNextImage}
                       disabled={currentImageIndex === imageList.length - 1}
-                      className="absolute right-4 z-20 p-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                      className="absolute right-4 z-20 p-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:enabled:border-terminal-borderHover-light dark:hover:enabled:border-terminal-borderHover-dark hover:enabled:shadow-soft transition-all-gentle disabled:opacity-30 disabled:cursor-not-allowed active:enabled:scale-95"
                     >
                       <CaretRight className="w-6 h-6" />
                     </button>
@@ -377,37 +377,37 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
 
                 {/* 浮动操作工具条（底部居中） */}
                 <div className="pointer-events-auto absolute bottom-6 left-1/2 -translate-x-1/2 z-20">
-                  <div className="flex items-center justify-center gap-3 px-3 py-1.5 rounded-full border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark shadow-lg">
+                  <div className="flex items-center justify-center gap-3 px-3 py-1.5 rounded-full border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark shadow-soft-lg">
                     <button
                       onClick={handleZoomOut}
-                      className="p-2 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition"
+                      className="p-2 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-borderHover-light dark:hover:border-terminal-borderHover-dark hover:shadow-soft transition-all-gentle active:scale-95"
                       title="缩小"
                     >
-                      <ArrowsInSimple className="w-4 h-4" />
+                      <MagnifyingGlassMinus className="w-4 h-4" weight="duotone" />
                     </button>
                     <span className="text-terminal-text-primary-light dark:text-terminal-text-primary-dark text-xs px-3 min-w-[50px] text-center glass-light dark:glass-dark rounded-full py-1.5 font-medium border border-terminal-border-light dark:border-terminal-border-dark">
                       {Math.round(scale * 100)}%
                     </span>
                     <button
                       onClick={handleZoomIn}
-                      className="p-2 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition"
+                      className="p-2 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-borderHover-light dark:hover:border-terminal-borderHover-dark hover:shadow-soft transition-all-gentle active:scale-95"
                       title="放大"
                     >
-                      <ArrowsOutSimple className="w-4 h-4" />
+                      <MagnifyingGlassPlus className="w-4 h-4" weight="duotone" />
                     </button>
                     <button
                       onClick={handleRotate}
-                      className="p-2 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition"
+                      className="p-2 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-borderHover-light dark:hover:border-terminal-borderHover-dark hover:shadow-soft transition-all-gentle active:scale-95"
                       title="旋转"
                     >
-                      <ArrowsClockwise className="w-4 h-4" />
+                      <ArrowClockwise className="w-4 h-4" weight="duotone" />
                     </button>
                     <button
                       onClick={handleDownload}
-                      className="p-2 rounded-lg border-2 border-terminal-border-light dark:border-terminal-border-dark bg-terminal-bg-light dark:bg-terminal-bg-dark text-terminal-accent-light dark:text-terminal-accent-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition"
+                      className="p-2 rounded-lg border border-terminal-accent-light/30 dark:border-terminal-accent-dark/30 bg-terminal-accent-muted-light dark:bg-terminal-accent-muted-dark text-terminal-accent-light dark:text-terminal-accent-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark hover:shadow-soft transition-all-gentle active:scale-95"
                       title="下载"
                     >
-                      <DownloadSimple className="w-4 h-4" />
+                      <Download className="w-4 h-4" weight="duotone" />
                     </button>
                   </div>
                 </div>

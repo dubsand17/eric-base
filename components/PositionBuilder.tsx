@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import * as Tooltip from '@radix-ui/react-tooltip'
-import { ChartBar, X } from 'phosphor-react'
+import { Calculator, X } from 'phosphor-react'
 
 type PositionMode = 'pyramid' | 'dca' | null
 
@@ -41,7 +41,7 @@ interface OrderResult {
 
 export default function PositionBuilder() {
   const [open, setOpen] = useState(false)
-  const [mode, setMode] = useState<PositionMode>(null)
+  const [mode, setMode] = useState<PositionMode>('pyramid') // 默认进入金字塔模式
 
   // 金字塔参数
   const [pyramidParams, setPyramidParams] = useState<PyramidParams>({
@@ -178,31 +178,31 @@ export default function PositionBuilder() {
         <Tooltip.Trigger asChild>
           <Dialog.Trigger asChild>
             <button
-              className="h-9 px-3 rounded-xl border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark flex items-center gap-2 transition"
+              className="h-9 px-3 rounded-xl border border-terminal-border-light dark:border-terminal-border-dark bg-white dark:bg-[#16181d] text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-borderHover-light dark:hover:border-terminal-borderHover-dark hover:shadow-soft flex items-center gap-2 transition-all-gentle active:scale-95"
               aria-label="建仓计算器"
             >
-              <ChartBar className="w-4 h-4" />
+              <Calculator className="w-4 h-4" weight="duotone" />
               <span className="hidden md:inline">建仓</span>
             </button>
           </Dialog.Trigger>
         </Tooltip.Trigger>
-        <Tooltip.Content sideOffset={8} className="rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark px-2 py-1 text-xs text-terminal-text-primary-light dark:text-terminal-text-primary-dark shadow-lg">
+        <Tooltip.Content sideOffset={8} className="rounded-lg border border-terminal-border-light dark:border-terminal-border-dark bg-white dark:bg-[#16181d] px-2 py-1 text-xs text-terminal-text-primary-light dark:text-terminal-text-primary-dark shadow-soft-lg animate-scale-in">
           建仓计算器
           <Tooltip.Arrow className="fill-white dark:fill-[#161b22]" />
         </Tooltip.Content>
       </Tooltip.Root>
 
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 bg-black/70 data-[state=open]:animate-in data-[state=closed]:animate-out z-50" />
-        <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[95vw] max-w-4xl max-h-[90vh] border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark shadow-lg rounded-2xl data-[state=open]:animate-in data-[state=closed]:animate-out z-50 flex flex-col overflow-hidden">
-          <div className="sticky top-0 flex items-center justify-between px-6 py-4 border-b border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark">
+        <Dialog.Overlay className="fixed inset-0 bg-black/60 data-[state=open]:animate-in data-[state=closed]:animate-out z-50" />
+        <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[95vw] max-w-4xl max-h-[90vh] border border-terminal-border-light dark:border-terminal-border-dark bg-white dark:bg-[#16181d] shadow-soft-xl rounded-2xl z-50 flex flex-col overflow-hidden">
+          <div className="sticky top-0 flex items-center justify-between px-6 py-4 border-b border-terminal-border-light dark:border-terminal-border-dark bg-white dark:bg-[#16181d]">
             <Dialog.Title className="text-lg font-semibold text-terminal-text-primary-light dark:text-terminal-text-primary-dark">
               建仓计算器
             </Dialog.Title>
             <Dialog.Close asChild>
               <button
                 aria-label="关闭"
-                className="h-8 w-8 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark flex items-center justify-center text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition"
+                className="h-8 w-8 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark bg-white dark:bg-[#16181d] flex items-center justify-center text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-borderHover-light dark:hover:border-terminal-borderHover-dark hover:shadow-soft transition-all-gentle active:scale-95"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -210,52 +210,25 @@ export default function PositionBuilder() {
           </div>
 
           <div className="flex-1 overflow-y-auto p-6">
-            {/* 模式选择 */}
-            {!mode && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <button
-                  onClick={() => setMode('pyramid')}
-                  className="relative p-8 rounded-2xl border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition-all group overflow-hidden shadow-lg"
-                >
-                  {/* Accent line */}
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-terminal-accent-light to-terminal-accent-light/50 dark:from-terminal-accent-dark dark:to-terminal-accent-dark/50 opacity-0 group-hover:opacity-100 transition-opacity" />
 
-                  <div className="relative">
-                    <div className="text-3xl mb-3">📊</div>
-                    <h3 className="text-lg font-semibold text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">金字塔建仓</h3>
-                    <p className="text-sm text-terminal-text-secondary-light dark:text-terminal-text-secondary-dark leading-relaxed">
-                      在价格区间内分批建仓，价格越低买入越多
-                    </p>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => setMode('dca')}
-                  className="relative p-8 rounded-2xl border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition-all group overflow-hidden shadow-lg"
-                >
-                  {/* Accent line */}
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-terminal-accent-light to-terminal-accent-light/50 dark:from-terminal-accent-dark dark:to-terminal-accent-dark/50 opacity-0 group-hover:opacity-100 transition-opacity" />
-
-                  <div className="relative">
-                    <div className="text-3xl mb-3">💰</div>
-                    <h3 className="text-lg font-semibold text-terminal-text-primary-light dark:text-terminal-text-primary-dark mb-2">DCA 建仓</h3>
-                    <p className="text-sm text-terminal-text-secondary-light dark:text-terminal-text-secondary-dark leading-relaxed">
-                      定投策略，按触发间隔分批买入固定金额
-                    </p>
-                  </div>
-                </button>
-              </div>
-            )}
 
             {/* 金字塔建仓 */}
             {mode === 'pyramid' && (
               <div className="space-y-6">
-                <button
-                  onClick={() => setMode(null)}
-                  className="text-sm text-terminal-accent-light dark:text-terminal-accent-dark hover:underline"
-                >
-                  ← 返回选择
-                </button>
+                {/* Tab Navigation */}
+                <div className="flex gap-2 p-1 bg-terminal-surface-light dark:bg-terminal-surface-dark rounded-lg border border-terminal-border-light dark:border-terminal-border-dark">
+                  <button
+                    className="flex-1 px-4 py-2 rounded-md bg-terminal-accent-muted-light dark:bg-terminal-accent-muted-dark text-terminal-accent-light dark:text-terminal-accent-dark text-sm font-medium"
+                  >
+                    📊 金字塔建仓
+                  </button>
+                  <button
+                    onClick={() => setMode('dca')}
+                    className="flex-1 px-4 py-2 rounded-md text-terminal-text-secondary-light dark:text-terminal-text-secondary-dark hover:bg-terminal-state-hover-light dark:hover:bg-terminal-state-hover-dark text-sm font-medium transition-all-gentle"
+                  >
+                    💰 DCA建仓
+                  </button>
+                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
@@ -266,7 +239,7 @@ export default function PositionBuilder() {
                       type="number"
                       value={pyramidParams.maxPrice}
                       onChange={(e) => setPyramidParams({ ...pyramidParams, maxPrice: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
+                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark bg-white dark:bg-[#16181d] text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:border-terminal-accent-light dark:focus:border-terminal-accent-dark focus:shadow-glow-accent transition-all-gentle"
                     />
                   </div>
 
@@ -278,7 +251,7 @@ export default function PositionBuilder() {
                       type="number"
                       value={pyramidParams.minPrice}
                       onChange={(e) => setPyramidParams({ ...pyramidParams, minPrice: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
+                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark bg-white dark:bg-[#16181d] text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:border-terminal-accent-light dark:focus:border-terminal-accent-dark focus:shadow-glow-accent transition-all-gentle"
                     />
                   </div>
 
@@ -290,7 +263,7 @@ export default function PositionBuilder() {
                       type="number"
                       value={pyramidParams.orderCount}
                       onChange={(e) => setPyramidParams({ ...pyramidParams, orderCount: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
+                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark bg-white dark:bg-[#16181d] text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:border-terminal-accent-light dark:focus:border-terminal-accent-dark focus:shadow-glow-accent transition-all-gentle"
                     />
                   </div>
 
@@ -302,7 +275,7 @@ export default function PositionBuilder() {
                       type="number"
                       value={pyramidParams.totalInvestment}
                       onChange={(e) => setPyramidParams({ ...pyramidParams, totalInvestment: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
+                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark bg-white dark:bg-[#16181d] text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:border-terminal-accent-light dark:focus:border-terminal-accent-dark focus:shadow-glow-accent transition-all-gentle"
                     />
                   </div>
 
@@ -314,7 +287,7 @@ export default function PositionBuilder() {
                       type="number"
                       value={pyramidParams.maxLossPercent}
                       onChange={(e) => setPyramidParams({ ...pyramidParams, maxLossPercent: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
+                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark bg-white dark:bg-[#16181d] text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:border-terminal-accent-light dark:focus:border-terminal-accent-dark focus:shadow-glow-accent transition-all-gentle"
                     />
                   </div>
 
@@ -326,7 +299,7 @@ export default function PositionBuilder() {
                       type="number"
                       value={pyramidParams.currentPrice}
                       onChange={(e) => setPyramidParams({ ...pyramidParams, currentPrice: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
+                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark bg-white dark:bg-[#16181d] text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:border-terminal-accent-light dark:focus:border-terminal-accent-dark focus:shadow-glow-accent transition-all-gentle"
                     />
                   </div>
 
@@ -338,7 +311,7 @@ export default function PositionBuilder() {
                       type="number"
                       value={pyramidParams.lowestPrice}
                       onChange={(e) => setPyramidParams({ ...pyramidParams, lowestPrice: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
+                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark bg-white dark:bg-[#16181d] text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:border-terminal-accent-light dark:focus:border-terminal-accent-dark focus:shadow-glow-accent transition-all-gentle"
                       placeholder="建仓后的价格最低点"
                     />
                   </div>
@@ -370,14 +343,14 @@ export default function PositionBuilder() {
                   <div className="mt-6 -mx-6 px-6 overflow-x-auto">
                     <div className="min-w-[600px]">
                       <table className="w-full text-sm">
-                        <thead className="sticky top-0 glass-light dark:glass-dark z-10">
+                        <thead className="sticky top-0 bg-white dark:bg-[#16181d] z-10">
                           <tr className="border-b border-terminal-border-light dark:border-terminal-border-dark">
-                            <th className="text-left py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark glass-light dark:glass-dark">订单顺序</th>
-                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark glass-light dark:glass-dark">开仓价格</th>
-                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark glass-light dark:glass-dark">订单大小</th>
-                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark glass-light dark:glass-dark">订单价值</th>
-                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark glass-light dark:glass-dark">累计投资</th>
-                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark glass-light dark:glass-dark">平均价格</th>
+                            <th className="text-left py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-white dark:bg-[#16181d]">订单顺序</th>
+                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-white dark:bg-[#16181d]">开仓价格</th>
+                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-white dark:bg-[#16181d]">订单大小</th>
+                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-white dark:bg-[#16181d]">订单价值</th>
+                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-white dark:bg-[#16181d]">累计投资</th>
+                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-white dark:bg-[#16181d]">平均价格</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -415,12 +388,20 @@ export default function PositionBuilder() {
             {/* DCA建仓 */}
             {mode === 'dca' && (
               <div className="space-y-6">
-                <button
-                  onClick={() => setMode(null)}
-                  className="text-sm text-terminal-accent-light dark:text-terminal-accent-dark hover:underline"
-                >
-                  ← 返回选择
-                </button>
+                {/* Tab Navigation */}
+                <div className="flex gap-2 p-1 bg-terminal-surface-light dark:bg-terminal-surface-dark rounded-lg border border-terminal-border-light dark:border-terminal-border-dark">
+                  <button
+                    onClick={() => setMode('pyramid')}
+                    className="flex-1 px-4 py-2 rounded-md text-terminal-text-secondary-light dark:text-terminal-text-secondary-dark hover:bg-terminal-state-hover-light dark:hover:bg-terminal-state-hover-dark text-sm font-medium transition-all-gentle"
+                  >
+                    📊 金字塔建仓
+                  </button>
+                  <button
+                    className="flex-1 px-4 py-2 rounded-md bg-terminal-accent-muted-light dark:bg-terminal-accent-muted-dark text-terminal-accent-light dark:text-terminal-accent-dark text-sm font-medium"
+                  >
+                    💰 DCA建仓
+                  </button>
+                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
@@ -431,7 +412,7 @@ export default function PositionBuilder() {
                       type="number"
                       value={dcaParams.totalInvestment}
                       onChange={(e) => setDCAParams({ ...dcaParams, totalInvestment: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
+                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark bg-white dark:bg-[#16181d] text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:border-terminal-accent-light dark:focus:border-terminal-accent-dark focus:shadow-glow-accent transition-all-gentle"
                     />
                   </div>
 
@@ -443,7 +424,7 @@ export default function PositionBuilder() {
                       type="number"
                       value={dcaParams.buyTimes}
                       onChange={(e) => setDCAParams({ ...dcaParams, buyTimes: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
+                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark bg-white dark:bg-[#16181d] text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:border-terminal-accent-light dark:focus:border-terminal-accent-dark focus:shadow-glow-accent transition-all-gentle"
                     />
                   </div>
 
@@ -455,7 +436,7 @@ export default function PositionBuilder() {
                       type="number"
                       value={dcaParams.triggerInterval}
                       onChange={(e) => setDCAParams({ ...dcaParams, triggerInterval: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
+                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark bg-white dark:bg-[#16181d] text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:border-terminal-accent-light dark:focus:border-terminal-accent-dark focus:shadow-glow-accent transition-all-gentle"
                     />
                   </div>
 
@@ -467,7 +448,7 @@ export default function PositionBuilder() {
                       type="number"
                       value={dcaParams.maxLossPercent}
                       onChange={(e) => setDCAParams({ ...dcaParams, maxLossPercent: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
+                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark bg-white dark:bg-[#16181d] text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:border-terminal-accent-light dark:focus:border-terminal-accent-dark focus:shadow-glow-accent transition-all-gentle"
                     />
                   </div>
 
@@ -479,7 +460,7 @@ export default function PositionBuilder() {
                       type="number"
                       value={dcaParams.entryPrice}
                       onChange={(e) => setDCAParams({ ...dcaParams, entryPrice: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
+                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark bg-white dark:bg-[#16181d] text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:border-terminal-accent-light dark:focus:border-terminal-accent-dark focus:shadow-glow-accent transition-all-gentle"
                     />
                   </div>
 
@@ -491,7 +472,7 @@ export default function PositionBuilder() {
                       type="number"
                       value={dcaParams.currentPrice}
                       onChange={(e) => setDCAParams({ ...dcaParams, currentPrice: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
+                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark bg-white dark:bg-[#16181d] text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:border-terminal-accent-light dark:focus:border-terminal-accent-dark focus:shadow-glow-accent transition-all-gentle"
                     />
                   </div>
 
@@ -503,7 +484,7 @@ export default function PositionBuilder() {
                       type="number"
                       value={dcaParams.lowestPrice}
                       onChange={(e) => setDCAParams({ ...dcaParams, lowestPrice: e.target.value })}
-                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/50 dark:focus:ring-terminal-accent-dark/50"
+                      className="w-full h-10 px-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark bg-white dark:bg-[#16181d] text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:border-terminal-accent-light dark:focus:border-terminal-accent-dark focus:shadow-glow-accent transition-all-gentle"
                       placeholder="建仓后的价格最低点"
                     />
                   </div>
@@ -565,14 +546,14 @@ export default function PositionBuilder() {
                   <div className="mt-6 -mx-6 px-6 overflow-x-auto">
                     <div className="min-w-[600px]">
                       <table className="w-full text-sm">
-                        <thead className="sticky top-0 glass-light dark:glass-dark z-10">
+                        <thead className="sticky top-0 bg-white dark:bg-[#16181d] z-10">
                           <tr className="border-b border-terminal-border-light dark:border-terminal-border-dark">
-                            <th className="text-left py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark glass-light dark:glass-dark">订单顺序</th>
-                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark glass-light dark:glass-dark">开仓价格</th>
-                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark glass-light dark:glass-dark">订单大小</th>
-                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark glass-light dark:glass-dark">订单价值</th>
-                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark glass-light dark:glass-dark">累计投资</th>
-                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark glass-light dark:glass-dark">平均价格</th>
+                            <th className="text-left py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-white dark:bg-[#16181d]">订单顺序</th>
+                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-white dark:bg-[#16181d]">开仓价格</th>
+                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-white dark:bg-[#16181d]">订单大小</th>
+                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-white dark:bg-[#16181d]">订单价值</th>
+                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-white dark:bg-[#16181d]">累计投资</th>
+                            <th className="text-right py-3 px-2 font-medium text-terminal-text-primary-light dark:text-terminal-text-primary-dark bg-white dark:bg-[#16181d]">平均价格</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -609,6 +590,6 @@ export default function PositionBuilder() {
           </div>
         </Dialog.Content>
       </Dialog.Portal>
-    </Dialog.Root>
+    </Dialog.Root >
   )
 }

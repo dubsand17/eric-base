@@ -6,7 +6,7 @@ import { TwitterPost } from '@/lib/supabase'
 import { formatDistanceToNow, format } from 'date-fns'
 import { zhCN } from 'date-fns/locale'
 import ImageModal from './ImageModal'
-import { Clock, Eye, CalendarBlank } from 'phosphor-react'
+import { Timer, Eye, Calendar, ArrowSquareOut } from 'phosphor-react'
 
 interface TwitterCardProps {
   post: TwitterPost
@@ -59,11 +59,11 @@ export default function TwitterCard({ post, showAbsoluteTime = false, onToggleTi
 
   return (
     <>
-      <div className="glass-light dark:glass-dark rounded-3xl border border-terminal-border-light dark:border-terminal-border-dark overflow-hidden hover:shadow-lg transition-all duration-300">
+      <div className="glass-light dark:glass-dark rounded-2xl border border-terminal-border-light dark:border-terminal-border-dark overflow-hidden hover:shadow-soft-md hover:border-terminal-borderHover-light dark:hover:border-terminal-borderHover-dark transition-all-gentle hover:scale-[1.005] active:scale-[0.998]">
         {/* 内容 */}
         <div className="p-5">
           <p
-            className={`text-terminal-text-primary-light dark:text-terminal-text-primary-dark text-sm leading-relaxed whitespace-pre-wrap mb-3 font-normal image-only-mode:hidden ${post.images && post.images.length > 0 ? 'cursor-pointer hover:text-terminal-accent-light dark:hover:text-terminal-accent-dark transition-colors' : ''
+            className={`text-terminal-text-primary-light dark:text-terminal-text-primary-dark text-sm leading-relaxed whitespace-pre-wrap mb-3 font-normal image-only-mode:hidden ${post.images && post.images.length > 0 ? 'cursor-pointer hover:text-terminal-secondary-light dark:hover:text-terminal-secondary-dark transition-colors-gentle' : ''
               }`}
             onClick={handleContentClick}
             title={post.images && post.images.length > 0 ? '点击查看图片' : ''}
@@ -75,13 +75,13 @@ export default function TwitterCard({ post, showAbsoluteTime = false, onToggleTi
           <div className="flex items-center justify-between text-xs text-terminal-text-secondary-light dark:text-terminal-text-secondary-dark">
             <button
               onClick={toggleTimeFormat}
-              className="flex items-center space-x-1 hover:text-terminal-text-primary-light dark:hover:text-terminal-text-primary-dark transition-colors cursor-pointer"
+              className="flex items-center space-x-1 hover:text-terminal-text-primary-light dark:hover:text-terminal-text-primary-dark transition-colors-gentle cursor-pointer"
               title="点击切换时间格式"
             >
               {showAbsoluteTime ? (
-                <CalendarBlank className="w-3 h-3" />
+                <Calendar className="w-3.5 h-3.5" weight="duotone" />
               ) : (
-                <Clock className="w-3 h-3" />
+                <Timer className="w-3.5 h-3.5" weight="duotone" />
               )}
               <span className="font-medium">
                 {post.tweet_created_at && (
@@ -97,8 +97,8 @@ export default function TwitterCard({ post, showAbsoluteTime = false, onToggleTi
             <div className="flex items-center space-x-2">
               {/* 已读标记和查看次数 */}
               {viewCount > 0 && (
-                <div className="flex items-center space-x-1 text-terminal-text-muted-light dark:text-terminal-text-muted-dark">
-                  <Eye className="w-3 h-3" />
+                <div className="flex items-center space-x-1 text-terminal-text-tertiary-light dark:text-terminal-text-tertiary-dark">
+                  <Eye className="w-3.5 h-3.5" weight="duotone" />
                   <span className="text-xs font-medium">{viewCount}</span>
                 </div>
               )}
@@ -107,12 +107,10 @@ export default function TwitterCard({ post, showAbsoluteTime = false, onToggleTi
                   href={post.tweet_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center space-x-0.5 hover:text-terminal-accent-light dark:hover:text-terminal-accent-dark transition-colors font-medium"
+                  className="flex items-center space-x-0.5 hover:text-terminal-accent-light dark:hover:text-terminal-accent-dark transition-colors-gentle font-medium"
                 >
                   <span>查看原文</span>
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
+                  <ArrowSquareOut className="w-3.5 h-3.5" weight="duotone" />
                 </a>
               )}
             </div>
@@ -139,7 +137,7 @@ export default function TwitterCard({ post, showAbsoluteTime = false, onToggleTi
                     alt={`图片 ${index + 1}`}
                     width={800}
                     height={600}
-                    className="w-full h-auto object-contain rounded-lg"
+                    className="w-full h-auto object-contain rounded-lg animate-fade-in"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     style={{
                       maxHeight: post.images.length === 1 ? '320px' : '200px'

@@ -33,15 +33,15 @@ export default function CryptoPriceTickers({ prices, dir, onSymbolClick, variant
     const alias = 'BTC'
     const item = prices?.[s]
     const d = dir[s] || 'none'
-    const color = d === 'up' ? 'text-terminal-up dark:text-terminal-up-dark' : d === 'down' ? 'text-terminal-down' : 'text-terminal-text-muted-light dark:text-terminal-text-muted-dark'
-    
+    const color = d === 'up' ? 'text-terminal-success-light dark:text-terminal-success-dark' : d === 'down' ? 'text-terminal-error-light dark:text-terminal-error-dark' : 'text-terminal-text-muted-light dark:text-terminal-text-muted-dark'
+
     return (
-      <div 
-        className={`flex items-center gap-1 h-7 px-2 rounded-xl border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-xs text-terminal-text-primary-light dark:text-terminal-text-primary-dark ${onSymbolClick ? 'cursor-pointer hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition-colors' : ''}`}
+      <div
+        className={`flex items-center gap-1 h-7 px-2 rounded-xl border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-xs text-terminal-text-primary-light dark:text-terminal-text-primary-dark ${onSymbolClick ? 'cursor-pointer hover:border-terminal-borderHover-light dark:hover:border-terminal-borderHover-dark hover:shadow-soft transition-all-gentle active:scale-95' : ''}`}
         onClick={() => onSymbolClick?.(s)}
       >
         <span className="font-medium">{alias}</span>
-        <span className={`tabular-nums ${color}`}>{fmtPrice(item?.price)}</span>
+        <span className={`tabular-nums ${color} transition-colors-gentle`}>{fmtPrice(item?.price)}</span>
       </div>
     )
   }
@@ -57,8 +57,8 @@ export default function CryptoPriceTickers({ prices, dir, onSymbolClick, variant
           const p = item?.percent
           const percentColor = (typeof p === 'number' && !isNaN(p)) ? (p > 0 ? 'text-emerald-600' : p < 0 ? 'text-rose-600' : 'text-gray-500') : 'text-gray-500'
           return (
-            <div 
-              key={s} 
+            <div
+              key={s}
               className={`flex items-center gap-1 h-6 px-1.5 rounded-lg border border-black/10 dark:border-white/10 bg-white/15 dark:bg-white/5 backdrop-blur-md text-[10px] text-gray-800 dark:text-gray-100 ${onSymbolClick ? 'cursor-pointer' : ''}`}
               onClick={() => onSymbolClick?.(s)}
             >
@@ -79,18 +79,18 @@ export default function CryptoPriceTickers({ prices, dir, onSymbolClick, variant
         const alias = s.replace('USDT', '')
         const item = prices?.[s]
         const d = dir[s] || 'none'
-        const color = d === 'up' ? 'text-terminal-up dark:text-terminal-up-dark' : d === 'down' ? 'text-terminal-down' : 'text-terminal-text-muted-light dark:text-terminal-text-muted-dark'
+        const color = d === 'up' ? 'text-terminal-success-light dark:text-terminal-success-dark' : d === 'down' ? 'text-terminal-error-light dark:text-terminal-error-dark' : 'text-terminal-text-muted-light dark:text-terminal-text-muted-dark'
         const p = item?.percent
-        const percentColor = (typeof p === 'number' && !isNaN(p)) ? (p > 0 ? 'text-terminal-up dark:text-terminal-up-dark' : p < 0 ? 'text-terminal-down' : 'text-terminal-text-muted-light dark:text-terminal-text-muted-dark') : 'text-terminal-text-muted-light dark:text-terminal-text-muted-dark'
+        const percentColor = (typeof p === 'number' && !isNaN(p)) ? (p > 0 ? 'text-terminal-success-light dark:text-terminal-success-dark' : p < 0 ? 'text-terminal-error-light dark:text-terminal-error-dark' : 'text-terminal-text-muted-light dark:text-terminal-text-muted-dark') : 'text-terminal-text-muted-light dark:text-terminal-text-muted-dark'
         return (
-          <div 
-            key={s} 
-            className={`flex items-center gap-1 h-7 px-2 rounded-xl border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-xs text-terminal-text-primary-light dark:text-terminal-text-primary-dark ${onSymbolClick ? 'cursor-pointer hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition-colors' : ''}`}
+          <div
+            key={s}
+            className={`flex items-center gap-1 h-7 px-2 rounded-xl border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-xs text-terminal-text-primary-light dark:text-terminal-text-primary-dark ${onSymbolClick ? 'cursor-pointer hover:border-terminal-borderHover-light dark:hover:border-terminal-borderHover-dark hover:shadow-soft transition-all-gentle active:scale-95' : ''}`}
             onClick={() => onSymbolClick?.(s)}
           >
             <span className="font-medium">{alias}</span>
-            <span className={`tabular-nums ${color}`}>{fmtPrice(item?.price)}</span>
-            <span className={`tabular-nums ${percentColor}`}>{fmtPct(item?.percent)}</span>
+            <span className={`tabular-nums ${color} transition-colors-gentle`}>{fmtPrice(item?.price)}</span>
+            <span className={`tabular-nums ${percentColor} transition-colors-gentle`}>{fmtPct(item?.percent)}</span>
           </div>
         )
       })}

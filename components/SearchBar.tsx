@@ -24,14 +24,13 @@ export default function SearchBar({ query, onQueryChange }: SearchBarProps) {
             setLocalQuery(e.target.value)
             onQueryChange?.(e.target.value)
           }}
-          className="h-9 w-full pl-10 pr-9 rounded-xl border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm placeholder-terminal-text-muted-light dark:placeholder-terminal-text-muted-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:ring-2 focus:ring-terminal-accent-light/40 dark:focus:ring-terminal-accent-dark/50 focus:border-terminal-accent-light dark:focus:border-terminal-accent-dark"
+          className="h-9 w-full pl-10 pr-9 rounded-xl border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm placeholder-terminal-text-muted-light dark:placeholder-terminal-text-muted-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none focus:border-terminal-accent-light dark:focus:border-terminal-accent-dark focus:shadow-glow-accent transition-all-gentle"
           placeholder="搜索内容关键词..."
         />
-        <div className="absolute left-2 top-1/2 -translate-y-1/2 text-terminal-text-muted-light dark:text-terminal-text-muted-dark">
+        <div className="absolute left-2 top-1/2 -translate-y-1/2 text-terminal-text-muted-light dark:text-terminal-text-muted-dark pointer-events-none">
           <MagnifyingGlass className="w-4 h-4" />
         </div>
       </div>
     </div>
   )
 }
-

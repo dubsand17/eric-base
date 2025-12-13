@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { MagnifyingGlass, EyeSlash } from 'phosphor-react'
+import { Image, TextAa } from 'phosphor-react'
 import * as Toggle from '@radix-ui/react-toggle'
 
 interface DisplayModeToggleProps {
@@ -44,15 +44,30 @@ export default function DisplayModeToggle({ className = '' }: DisplayModeToggleP
     <Toggle.Root
       pressed={isTextHidden}
       onPressedChange={handlePressedChange}
-      className={`h-9 w-9 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark flex items-center justify-center transition-all hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark data-[state=on]:border-terminal-accent-light data-[state=on]:dark:border-terminal-accent-dark ${className}`}
+      className={`h-9 w-9 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark flex items-center justify-center transition-all-gentle hover:border-terminal-borderHover-light dark:hover:border-terminal-borderHover-dark hover:shadow-soft data-[state=on]:border-terminal-accent-light data-[state=on]:dark:border-terminal-accent-dark active:scale-95 ${className}`}
       aria-label="切换显示模式"
       title={isTextHidden ? "显示文字内容" : "仅显示图片"}
     >
-      {isTextHidden ? (
-        <EyeSlash className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-      ) : (
-        <MagnifyingGlass className="w-5 h-5 text-violet-500" />
-      )}
+      <div className="relative w-5 h-5 flex items-center justify-center">
+        {/* Image-only mode icon */}
+        <div
+          className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ${isTextHidden
+              ? 'opacity-100 rotate-0 scale-100'
+              : 'opacity-0 rotate-180 scale-50'
+            }`}
+        >
+          <Image className="w-5 h-5 text-terminal-accent-light dark:text-terminal-accent-dark" weight="duotone" />
+        </div>
+        {/* Full content mode icon */}
+        <div
+          className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ${isTextHidden
+              ? 'opacity-0 -rotate-180 scale-50'
+              : 'opacity-100 rotate-0 scale-100'
+            }`}
+        >
+          <TextAa className="w-5 h-5 text-terminal-accent-light dark:text-terminal-accent-dark" weight="duotone" />
+        </div>
+      </div>
     </Toggle.Root>
   )
 }

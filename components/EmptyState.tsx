@@ -27,9 +27,9 @@ export default function EmptyState({ state = "idle", query, onClear }: EmptyStat
 
   return (
     <div className="min-h-[60vh] flex items-center justify-center px-4">
-      <div className="relative w-full max-w-2xl">
-        <div className="rounded-2xl border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark shadow-lg p-8 text-center">
-          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-xl border border-terminal-accent-light/30 dark:border-terminal-accent-dark/40 glass-light dark:glass-dark text-terminal-accent-light dark:text-terminal-accent-dark">
+      <div className="relative w-full max-w-2xl animate-fade-in-up">
+        <div className="rounded-2xl border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark shadow-soft-lg p-8 text-center">
+          <div className={`mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-xl border border-terminal-accent-light/20 dark:border-terminal-accent-dark/25 glass-light dark:glass-dark text-terminal-accent-light dark:text-terminal-accent-dark ${!isSearching && !isNoResults ? 'animate-subtle-float' : ''}`}>
             {isSearching ? (
               <CircleNotch className="h-7 w-7 animate-spin" />
             ) : isNoResults ? (
@@ -59,7 +59,7 @@ export default function EmptyState({ state = "idle", query, onClear }: EmptyStat
             {isNoResults && (
               <button
                 onClick={onClear}
-                className="inline-flex items-center gap-2 rounded-full border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark px-3 py-1.5 text-xs text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition"
+                className="inline-flex items-center gap-2 rounded-full border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark px-3 py-1.5 text-xs text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-accent-light dark:hover:border-terminal-accent-dark transition-colors-gentle active:scale-95"
               >
                 <ArrowsClockwise className="h-3.5 w-3.5" /> 清空条件再试
               </button>
@@ -73,7 +73,7 @@ export default function EmptyState({ state = "idle", query, onClear }: EmptyStat
 
 function Tip({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) {
   return (
-    <div className="rounded-xl border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark p-3 text-left">
+    <div className="rounded-xl border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark p-3 text-left hover:border-terminal-borderHover-light dark:hover:border-terminal-borderHover-dark transition-colors-gentle">
       <div className="mb-1 flex items-center gap-2 text-terminal-text-primary-light dark:text-terminal-text-primary-dark">
         <span className="text-terminal-accent-light dark:text-terminal-accent-dark">{icon}</span>
         <span className="text-sm font-medium">{title}</span>
