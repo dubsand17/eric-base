@@ -10,8 +10,10 @@ interface DisplayModeToggleProps {
 
 export default function DisplayModeToggle({ className = '' }: DisplayModeToggleProps) {
   const [isTextHidden, setIsTextHidden] = useState(true)
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
     // 从localStorage读取用户偏好设置；无则采用默认：仅图片
     const savedPreference = localStorage.getItem('display-mode')
     if (!savedPreference) {
