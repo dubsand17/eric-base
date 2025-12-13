@@ -28,7 +28,7 @@ export default function SearchBarWithFilter({
     const hasDateFilter = Boolean(from || to)
 
     return (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-40 w-full max-w-md pl-[68px] pr-4 sm:px-0">
+        <div className="fixed top-5 left-1/2 -translate-x-1/2 z-40 w-full max-w-md pl-[68px] pr-4 sm:px-0">
             <div className="relative">
                 {/* Main Search Bar */}
                 <div className="flex items-center gap-0 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark bg-white dark:bg-[#16181d] shadow-soft-md backdrop-blur-sm overflow-hidden">

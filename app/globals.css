@@ -27,6 +27,11 @@
 }
 
 @layer base {
+  html {
+    /* Reserve space for scrollbar to prevent layout shift when modals open */
+    scrollbar-gutter: stable;
+  }
+
   body {
     /* 日间：极浅灰 | 夜间：深蓝灰 - Calm UI 风格 */
     @apply bg-[#f8f9fa] dark:bg-[#1a1d23] text-[#111827] dark:text-[#f9fafb];

@@ -5,7 +5,7 @@ import { ChartLine, VideoCamera, Play } from 'phosphor-react'
 export default function BrandPill() {
     return (
         <div className="fixed top-4 left-4 z-40 hidden md:flex">
-            <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-terminal-border-light dark:border-terminal-border-dark bg-white dark:bg-[#16181d] shadow-soft-md backdrop-blur-sm">
+            <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl backdrop-blur-sm">
                 <a
                     href="https://x.com/CycleStudies"
                     target="_blank"

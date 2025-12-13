@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { X, Calculator, Triangle, TrendUp } from 'phosphor-react'
 
@@ -41,6 +41,41 @@ interface OrderResult {
 export default function PositionBuilder() {
   const [open, setOpen] = useState(false)
   const [mode, setMode] = useState<PositionMode>('pyramid') // 默认进入金字塔模式
+
+  // Prevent layout shift when modal opens by compensating for scrollbar
+  useEffect(() => {
+    if (open) {
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth
+
+      // Apply to body
+      document.body.style.paddingRight = `${scrollbarWidth}px`
+      document.body.style.overflow = 'hidden'
+
+      // Apply to all fixed position elements to prevent shift
+      const fixedElements = document.querySelectorAll('[style*="position: fixed"], [class*="fixed"]')
+      fixedElements.forEach((el) => {
+        if (el instanceof HTMLElement) {
+          el.style.paddingRight = `${scrollbarWidth}px`
+        }
+      })
+    } else {
+      document.body.style.paddingRight = ''
+      document.body.style.overflow = ''
+
+      // Remove padding from fixed elements
+      const fixedElements = document.querySelectorAll('[style*="position: fixed"], [class*="fixed"]')
+      fixedElements.forEach((el) => {
+        if (el instanceof HTMLElement) {
+          el.style.paddingRight = ''
+        }
+      })
+    }
+
+    return () => {
+      document.body.style.paddingRight = ''
+      document.body.style.overflow = ''
+    }
+  }, [open])
 
   // 金字塔参数
   const [pyramidParams, setPyramidParams] = useState<PyramidParams>({
@@ -175,7 +210,7 @@ export default function PositionBuilder() {
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
         <button
-          className="h-9 w-9 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark bg-white dark:bg-[#16181d] text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-borderHover-light dark:hover:border-terminal-borderHover-dark hover:shadow-soft flex items-center justify-center transition-all-gentle active:scale-95"
+          className="h-9 w-9 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-sm text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:border-terminal-borderHover-light dark:hover:border-terminal-borderHover-dark hover:shadow-soft flex items-center justify-center transition-all-gentle active:scale-95"
           aria-label="建仓计算器"
           title="建仓计算器"
         >
