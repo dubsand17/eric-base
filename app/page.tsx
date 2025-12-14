@@ -1,5 +1,5 @@
-import HomeClient from '@/components/HomeClient'
+import HomeView from '@/components/features/home/HomeView'
 
 export default function Home() {
-  return <HomeClient initialPosts={[]} initialPagination={{ total: 0, page: 1, pageSize: 30, totalPages: 0 }} />
+  return <HomeView initialPosts={[]} initialPagination={{ total: 0, page: 1, pageSize: 30, totalPages: 0 }} />
 }
