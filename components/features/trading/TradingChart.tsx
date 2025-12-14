@@ -2,13 +2,13 @@
 
 import React, { useEffect, useRef, memo } from 'react'
 
-interface TradingViewWidgetProps {
+interface TradingChartProps {
   symbol: string
   interval?: string
   theme?: 'light' | 'dark'
 }
 
-function TradingViewWidget({ symbol, interval = '60', theme = 'light' }: TradingViewWidgetProps) {
+function TradingChart({ symbol, interval = '60', theme = 'light' }: TradingChartProps) {
   const container = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -88,5 +88,5 @@ function TradingViewWidget({ symbol, interval = '60', theme = 'light' }: Trading
   )
 }
 
-export default memo(TradingViewWidget)
+export default memo(TradingChart)
 

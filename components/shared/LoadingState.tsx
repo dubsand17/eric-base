@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
-import SkeletonCard from '@/components/posts/SkeletonCard'
+import PostCardSkeleton from '@/components/features/posts/PostCardSkeleton'
 
-interface LoadingGridProps {
+interface LoadingStateProps {
   count?: number
 }
 
@@ -12,7 +12,7 @@ function getColumnCount(width: number): number {
   return 4
 }
 
-export default function LoadingGrid({ count = 12 }: LoadingGridProps) {
+export default function LoadingState({ count = 12 }: LoadingStateProps) {
   // 初始列数设为 4，首帧在大屏占满；挂载后根据窗口更新
   const [colCount, setColCount] = useState<number>(4)
 
@@ -37,7 +37,7 @@ export default function LoadingGrid({ count = 12 }: LoadingGridProps) {
         {columns.map((col, colIndex) => (
           <div key={`sk-col-${colIndex}`} className="flex flex-col gap-4">
             {col.map((i) => (
-              <SkeletonCard key={`sk-${i}`} />
+              <PostCardSkeleton key={`sk-${i}`} />
             ))}
           </div>
         ))}

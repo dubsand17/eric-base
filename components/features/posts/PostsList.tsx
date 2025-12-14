@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useEffect } from 'react'
-import MasonryGrid from '@/components/posts/MasonryGrid'
+import PostsGrid from './PostsGrid'
 import { TwitterPost } from '@/lib/supabase'
 
 interface PaginationData {
@@ -50,7 +50,7 @@ export default function PostsList({
 
   return (
     <>
-      <MasonryGrid
+      <PostsGrid
         posts={posts}
         loadingMore={loadingMore}
         showAbsoluteTime={showAbsoluteTime}

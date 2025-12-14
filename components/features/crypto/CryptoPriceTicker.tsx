@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from 'react'
 
-interface CryptoFloatingTickerProps {
+interface CryptoPriceTickerProps {
     prices: Record<string, { price: number; percent: number }> | null
     dir: Record<string, 'up' | 'down' | 'none'>
     onSymbolClick?: (symbol: string) => void
 }
 
-export default function CryptoFloatingTicker({ prices, dir, onSymbolClick }: CryptoFloatingTickerProps) {
+export default function CryptoPriceTicker({ prices, dir, onSymbolClick }: CryptoPriceTickerProps) {
     const symbols = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT']
     const [currentIndex, setCurrentIndex] = useState(0)
     const [isAnimating, setIsAnimating] = useState(false)

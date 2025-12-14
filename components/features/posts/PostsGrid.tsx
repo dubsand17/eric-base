@@ -1,11 +1,11 @@
 'use client'
 
 import { useEffect, useLayoutEffect, useMemo, useState, useRef } from 'react'
-import TwitterCard from '@/components/posts/TwitterCard'
-import SkeletonCard from '@/components/posts/SkeletonCard'
+import PostCard from './PostCard'
+import PostCardSkeleton from './PostCardSkeleton'
 import { TwitterPost } from '@/lib/supabase'
 
-interface MasonryGridProps {
+interface PostsGridProps {
   posts: TwitterPost[]
   loadingMore?: boolean
   showAbsoluteTime?: boolean
@@ -30,7 +30,7 @@ function getColumnCount(width: number | undefined): number {
   return Math.min(6, Math.floor(width / 320)) // 最多6列，每个卡片约320px
 }
 
-export default function MasonryGrid({ posts, loadingMore = false, showAbsoluteTime = false, onToggleTimeFormat, containerWidth }: MasonryGridProps) {
+export default function PostsGrid({ posts, loadingMore = false, showAbsoluteTime = false, onToggleTimeFormat, containerWidth }: PostsGridProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   // 初始化时使用更合理的默认值，避免闪烁
   // 客户端：立即使用窗口宽度计算（避免 SSR/hydration 不匹配）
@@ -124,10 +124,10 @@ export default function MasonryGrid({ posts, loadingMore = false, showAbsoluteTi
           return columns.map((col, colIndex) => (
             <div key={`col-${colIndex}`} className="flex flex-col gap-4">
               {col.map((post) => (
-                <TwitterCard key={post.id} post={post} showAbsoluteTime={showAbsoluteTime} onToggleTimeFormat={onToggleTimeFormat} />
+                <PostCard key={post.id} post={post} showAbsoluteTime={showAbsoluteTime} onToggleTimeFormat={onToggleTimeFormat} />
               ))}
               {loadingMore && colIndex === minIndex && (
-                <SkeletonCard />
+                <PostCardSkeleton />
               )}
             </div>
           ))

@@ -1,13 +1,13 @@
 "use client"
 
 import { useEffect, useRef, useState } from 'react'
-import TopOverlay from '@/components/layout/TopOverlay'
-import CryptoFloatingTicker from '@/components/features/crypto/CryptoFloatingTicker'
-import PostsList from '@/components/posts/PostsList'
-import LoadingGrid from '@/components/shared/LoadingGrid'
+import AppHeader from '@/components/layout/AppHeader'
+import CryptoPriceTicker from '@/components/features/crypto/CryptoPriceTicker'
+import PostsList from '@/components/features/posts/PostsList'
+import LoadingState from '@/components/shared/LoadingState'
 import ErrorState from '@/components/shared/ErrorState'
 import EmptyState from '@/components/shared/EmptyState'
-import TradingViewWidget from '@/components/features/trading/TradingViewWidget'
+import TradingChart from '@/components/features/trading/TradingChart'
 import ResizablePanel from '@/components/features/trading/ResizablePanel'
 import MobileMenu from '@/components/layout/MobileMenu'
 import type { TwitterPost } from '@/lib/supabase'
@@ -288,7 +288,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
             <div className="h-full flex flex-col px-4 py-4 md:py-6 relative overflow-hidden">
               <div className="flex-1 min-h-0 glass-light dark:glass-dark rounded-2xl border border-terminal-border-light dark:border-terminal-border-dark mb-1 overflow-hidden">
                 <div className="h-full w-full p-2">
-                  <TradingViewWidget
+                  <TradingChart
                     symbol={tradingViewSymbol}
                     interval="60"
                     theme={theme}
@@ -325,7 +325,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
   if (fetchingInitial && posts.length === 0) {
     return (
       <div className="min-h-screen bg-terminal-bg-light dark:bg-terminal-bg-dark">
-        <TopOverlay
+        <AppHeader
           query={query}
           onQueryChange={setQuery}
           from={from}
@@ -338,9 +338,9 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
           <MobileMenu showAbsoluteTime={showAbsoluteTime} onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)} />
         </div>
         <div className="pt-20">
-          <LoadingGrid />
+          <LoadingState />
         </div>
-        <CryptoFloatingTicker prices={prices} dir={dir} onSymbolClick={handleSymbolClick} />
+        <CryptoPriceTicker prices={prices} dir={dir} onSymbolClick={handleSymbolClick} />
       </div>
     )
   }
@@ -348,7 +348,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
   if (error) {
     return (
       <div className="min-h-screen bg-terminal-bg-light dark:bg-terminal-bg-dark">
-        <TopOverlay
+        <AppHeader
           query={query}
           onQueryChange={setQuery}
           from={from}
@@ -361,7 +361,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
           <MobileMenu showAbsoluteTime={showAbsoluteTime} onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)} />
         </div>
         <ErrorState error={error} />
-        <CryptoFloatingTicker prices={prices} dir={dir} onSymbolClick={handleSymbolClick} />
+        <CryptoPriceTicker prices={prices} dir={dir} onSymbolClick={handleSymbolClick} />
       </div>
     )
   }
@@ -369,7 +369,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
   if (!fetchingInitial && posts.length === 0) {
     return (
       <div className="min-h-screen bg-terminal-bg-light dark:bg-terminal-bg-dark">
-        <TopOverlay
+        <AppHeader
           query={query}
           onQueryChange={setQuery}
           from={from}
@@ -388,7 +388,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
             onClear={() => { setQuery(''); setFrom(undefined); setTo(undefined) }}
           />
         </div>
-        <CryptoFloatingTicker prices={prices} dir={dir} onSymbolClick={handleSymbolClick} />
+        <CryptoPriceTicker prices={prices} dir={dir} onSymbolClick={handleSymbolClick} />
       </div>
     )
   }
@@ -400,7 +400,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
       className="min-h-screen bg-terminal-bg-light dark:bg-terminal-bg-dark flex flex-col"
       style={useFixedLayout ? { height: '100vh', overflow: 'hidden' } : {}}
     >
-      <TopOverlay
+      <AppHeader
         query={query}
         onQueryChange={setQuery}
         from={from}
@@ -415,7 +415,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
       <div className={useFixedLayout ? "flex-1 min-h-0 overflow-hidden pt-20" : "flex-1 pt-20"}>
         {renderMainContent()}
       </div>
-      <CryptoFloatingTicker prices={prices} dir={dir} onSymbolClick={handleSymbolClick} />
+      <CryptoPriceTicker prices={prices} dir={dir} onSymbolClick={handleSymbolClick} />
     </div>
   )
 }

@@ -8,13 +8,13 @@ import { zhCN } from 'date-fns/locale'
 import ImageModal from '@/components/features/image/ImageModal'
 import { Timer, Eye, Calendar, ArrowSquareOut } from 'phosphor-react'
 
-interface TwitterCardProps {
+interface PostCardProps {
   post: TwitterPost
   showAbsoluteTime?: boolean
   onToggleTimeFormat?: () => void
 }
 
-export default function TwitterCard({ post, showAbsoluteTime = false, onToggleTimeFormat }: TwitterCardProps) {
+export default function PostCard({ post, showAbsoluteTime = false, onToggleTimeFormat }: PostCardProps) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [viewCount, setViewCount] = useState<number>(0)
 

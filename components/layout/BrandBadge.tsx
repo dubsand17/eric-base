@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { ChartLine, VideoCamera, Play } from 'phosphor-react'
 
-export default function BrandPill() {
+export default function BrandBadge() {
     const [isLive, setIsLive] = useState(false)
     const [liveUrl, setLiveUrl] = useState<string | undefined>()
 

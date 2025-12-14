@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { MagnifyingGlass, FunnelSimple } from 'phosphor-react'
 import * as Popover from '@radix-ui/react-popover'
 
-interface SearchBarWithFilterProps {
+interface SearchBarProps {
     query: string
     onQueryChange: (v: string) => void
     from?: string
@@ -12,13 +12,13 @@ interface SearchBarWithFilterProps {
     onDateChange: (next: { from?: string; to?: string }) => void
 }
 
-export default function SearchBarWithFilter({
+export default function SearchBar({
     query,
     onQueryChange,
     from,
     to,
     onDateChange
-}: SearchBarWithFilterProps) {
+}: SearchBarProps) {
     const [localQuery, setLocalQuery] = useState(query)
 
     useEffect(() => {
