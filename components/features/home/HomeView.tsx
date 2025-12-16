@@ -357,7 +357,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
           showAbsoluteTime={showAbsoluteTime}
           onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)}
         />
-        <div className="md:hidden fixed top-4 left-4 z-40">
+        <div className="md:hidden fixed top-5 left-4 z-40">
           <MobileMenu showAbsoluteTime={showAbsoluteTime} onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)} />
         </div>
         <ErrorState error={error} />
@@ -378,7 +378,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
           showAbsoluteTime={showAbsoluteTime}
           onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)}
         />
-        <div className="md:hidden fixed top-4 left-4 z-40">
+        <div className="md:hidden fixed top-5 left-4 z-40">
           <MobileMenu showAbsoluteTime={showAbsoluteTime} onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)} />
         </div>
         <div className="container mx-auto py-6">
@@ -409,7 +409,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
         showAbsoluteTime={showAbsoluteTime}
         onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)}
       />
-      <div className="md:hidden fixed top-4 left-4 z-40">
+      <div className="md:hidden fixed top-5 left-4 z-40">
         <MobileMenu showAbsoluteTime={showAbsoluteTime} onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)} />
       </div>
       <div className={useFixedLayout ? "flex-1 min-h-0 overflow-hidden pt-20" : "flex-1 pt-20"}>
