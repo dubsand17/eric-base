@@ -86,6 +86,40 @@ export default function WanderView({ initialPosts, totalCount }: WanderViewProps
         checkAndPreload()
     }, [checkAndPreload])
 
+    // 预加载下一批可能显示的图片
+    useEffect(() => {
+        if (posts.length === 0) return
+
+        // 预加载接下来可能显示的 3 张图片
+        const preloadCount = 1
+        const imagesToPreload: string[] = []
+
+        // 随机选择几个未查看的索引
+        const unviewedIndices = posts
+            .map((_, index) => index)
+            .filter(index => !viewedIndices.has(index) && index !== currentIndex)
+
+        // 随机打乱并取前几个
+        const shuffled = unviewedIndices.sort(() => Math.random() - 0.5)
+        const indicesToPreload = shuffled.slice(0, preloadCount)
+
+        // 收集这些索引的图片
+        indicesToPreload.forEach(index => {
+            const post = posts[index]
+            if (post.images && post.images.length > 0) {
+                imagesToPreload.push(post.images[0])
+            }
+        })
+
+        // 预加载图片
+        imagesToPreload.forEach(src => {
+            const img = new Image()
+            img.src = src
+        })
+
+        console.log(`Preloading ${imagesToPreload.length} images`)
+    }, [currentIndex, posts, viewedIndices])
+
     // 上一条
     const handlePrevious = useCallback(() => {
         if (history.length <= 1) return
