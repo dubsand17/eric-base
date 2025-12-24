@@ -64,13 +64,56 @@ export async function GET(request: NextRequest) {
     const q = searchParams.get('q')?.trim() || ''
     const from = searchParams.get('from') || ''
     const to = searchParams.get('to') || ''
-
-    // 计算偏移量
-    const offset = (page - 1) * pageSize
+    const random = searchParams.get('random') === 'true'
+    const limit = parseInt(searchParams.get('limit') || '50')
+    const offsetParam = parseInt(searchParams.get('offset') || '0')
 
     if (!supabase) {
       return NextResponse.json({ error: 'Supabase 未配置，请设置 NEXT_PUBLIC_SUPABASE_URL 与 NEXT_PUBLIC_SUPABASE_ANON_KEY' }, { status: 500, headers: corsHeaders })
     }
+
+    // 随机模式
+    if (random) {
+      // 获取总数
+      const { count, error: countError } = await supabase
+        .from('twitter_posts')
+        .select('*', { count: 'exact', head: true })
+
+      if (countError) {
+        return NextResponse.json({ error: countError.message }, { status: 400, headers: { ...corsHeaders, ...cacheHeaders } })
+      }
+
+      // 使用随机 offset 策略（性能更好）
+      const totalCount = count || 0
+      const maxOffset = Math.max(0, totalCount - limit)
+      const randomOffset = offsetParam > 0 ? offsetParam : Math.floor(Math.random() * (maxOffset + 1))
+
+      const { data, error } = await supabase
+        .from('twitter_posts')
+        .select('*')
+        .range(randomOffset, randomOffset + limit - 1)
+
+      if (error) {
+        return NextResponse.json({ error: error.message }, { status: 400, headers: corsHeaders })
+      }
+
+      // 打乱返回的数据
+      const shuffledData = data?.sort(() => Math.random() - 0.5) || []
+
+      return NextResponse.json({
+        data: shuffledData,
+        pagination: {
+          total: totalCount,
+          page: 1,
+          pageSize: limit,
+          totalPages: 1
+        }
+      }, { headers: { ...corsHeaders, ...cacheHeaders } })
+    }
+
+    // 计算偏移量
+    const offset = (page - 1) * pageSize
+
     // 使用 Supabase 数据库
     // 获取总数
     let baseCount = supabase.from('twitter_posts').select('*', { count: 'exact', head: true })

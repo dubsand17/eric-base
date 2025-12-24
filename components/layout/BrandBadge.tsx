@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { ChartLine, VideoCamera, Play } from 'phosphor-react'
+import ModeToggle from '@/components/ui/ModeToggle'
 
 export default function BrandBadge() {
     const [isLive, setIsLive] = useState(false)
@@ -59,6 +60,10 @@ export default function BrandBadge() {
                 </a>
 
                 <div className="hidden lg:flex items-center gap-1 ml-2 pl-2 border-l border-terminal-border-light dark:border-terminal-border-dark">
+
+                    {/* 模式切换按钮 */}
+                    <ModeToggle />
+
                     <a
                         href="https://space.bilibili.com/40257375"
                         target="_blank"

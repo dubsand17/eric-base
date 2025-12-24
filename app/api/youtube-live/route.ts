@@ -6,15 +6,40 @@ const LIVE_CHANNEL_ID = 'UC3bAlqe4dwupxrJ9xCzYKdA' // 百万Eric直播频道
 
 export const runtime = 'edge'
 
-// 30秒缓存
+// 缓存配置
 let cache: { isLive: boolean; liveUrl?: string; videoTitle?: string; detectionMethod?: string; timestamp: number } | null = null
-const CACHE_DURATION = 30 * 1000 // 30秒
+const CACHE_DURATION = 5 * 60 * 1000 // 5分钟缓存（降低API调用频率）
+const QUOTA_EXCEEDED_CACHE_DURATION = 60 * 60 * 1000 // 配额超限时使用1小时缓存
+
+// 配额超限标记
+let quotaExceeded = false
+let quotaExceededTime: number | null = null
 
 export async function GET(request: Request) {
     try {
         // 解析URL参数
         const { searchParams } = new URL(request.url)
         const specificVideoId = searchParams.get('videoId') // 可选的视频ID参数
+
+        // 如果配额超限且在1小时内，直接返回缓存或默认值
+        if (quotaExceeded && quotaExceededTime && Date.now() - quotaExceededTime < QUOTA_EXCEEDED_CACHE_DURATION) {
+            if (cache) {
+                return NextResponse.json({
+                    isLive: cache.isLive,
+                    liveUrl: cache.liveUrl,
+                    videoTitle: cache.videoTitle,
+                    detectionMethod: cache.detectionMethod,
+                    cached: true,
+                    quotaExceeded: true
+                })
+            }
+            // 如果没有缓存，返回默认值
+            return NextResponse.json({
+                isLive: false,
+                cached: false,
+                quotaExceeded: true
+            })
+        }
 
         // 如果没有指定特定视频ID，检查缓存
         if (!specificVideoId && cache && Date.now() - cache.timestamp < CACHE_DURATION) {
@@ -41,6 +66,13 @@ export async function GET(request: Request) {
             const data = await response.json()
 
             if (!response.ok) {
+                // 检查是否是配额超限错误
+                if (data.error?.code === 403 && data.error?.errors?.[0]?.reason === 'quotaExceeded') {
+                    console.warn(`YouTube API quota exceeded for ${channelId}`)
+                    quotaExceeded = true
+                    quotaExceededTime = Date.now()
+                    return 'QUOTA_EXCEEDED'
+                }
                 console.error(`YouTube API Error for ${channelId}:`, data)
                 return null
             }
@@ -63,6 +95,13 @@ export async function GET(request: Request) {
             const data = await response.json()
 
             if (!response.ok) {
+                // 检查是否是配额超限错误
+                if (data.error?.code === 403 && data.error?.errors?.[0]?.reason === 'quotaExceeded') {
+                    console.warn(`YouTube API quota exceeded for video ${videoId}`)
+                    quotaExceeded = true
+                    quotaExceededTime = Date.now()
+                    return 'QUOTA_EXCEEDED'
+                }
                 console.error(`YouTube API Error for video ${videoId}:`, data)
                 return null
             }
@@ -105,6 +144,25 @@ export async function GET(request: Request) {
         if (specificVideoId) {
             console.log(`Checking specific video ID: ${specificVideoId}`)
             const videoData = await checkVideoById(specificVideoId)
+
+            if (videoData === 'QUOTA_EXCEEDED') {
+                // 配额超限，返回缓存或默认值
+                if (cache) {
+                    return NextResponse.json({
+                        isLive: cache.isLive,
+                        liveUrl: cache.liveUrl,
+                        videoTitle: cache.videoTitle,
+                        detectionMethod: cache.detectionMethod,
+                        cached: true,
+                        quotaExceeded: true
+                    })
+                }
+                return NextResponse.json({
+                    isLive: false,
+                    quotaExceeded: true
+                })
+            }
+
             if (videoData && videoData.isLive) {
                 isLive = true
                 liveUrl = `https://www.youtube.com/watch?v=${videoData.videoId}`
@@ -121,8 +179,45 @@ export async function GET(request: Request) {
 
             // 方法1: 检查直播频道，如果没有则检查主频道
             let data = await checkChannel(LIVE_CHANNEL_ID)
+
+            if (data === 'QUOTA_EXCEEDED') {
+                // 配额超限，返回缓存或默认值
+                if (cache) {
+                    return NextResponse.json({
+                        isLive: cache.isLive,
+                        liveUrl: cache.liveUrl,
+                        videoTitle: cache.videoTitle,
+                        detectionMethod: cache.detectionMethod,
+                        cached: true,
+                        quotaExceeded: true
+                    })
+                }
+                return NextResponse.json({
+                    isLive: false,
+                    quotaExceeded: true
+                })
+            }
+
             if (!data || !data.items || data.items.length === 0) {
                 data = await checkChannel(MAIN_CHANNEL_ID)
+
+                if (data === 'QUOTA_EXCEEDED') {
+                    // 配额超限，返回缓存或默认值
+                    if (cache) {
+                        return NextResponse.json({
+                            isLive: cache.isLive,
+                            liveUrl: cache.liveUrl,
+                            videoTitle: cache.videoTitle,
+                            detectionMethod: cache.detectionMethod,
+                            cached: true,
+                            quotaExceeded: true
+                        })
+                    }
+                    return NextResponse.json({
+                        isLive: false,
+                        quotaExceeded: true
+                    })
+                }
             }
 
             if (data && data.items && data.items.length > 0) {
@@ -146,6 +241,9 @@ export async function GET(request: Request) {
                 detectionMethod,
                 timestamp: Date.now()
             }
+            // 重置配额超限标记（API调用成功）
+            quotaExceeded = false
+            quotaExceededTime = null
         }
 
         return NextResponse.json({
@@ -158,6 +256,17 @@ export async function GET(request: Request) {
 
     } catch (error) {
         console.error('YouTube Live Check Error:', error)
+        // 出错时返回缓存数据
+        if (cache) {
+            return NextResponse.json({
+                isLive: cache.isLive,
+                liveUrl: cache.liveUrl,
+                videoTitle: cache.videoTitle,
+                detectionMethod: cache.detectionMethod,
+                cached: true,
+                error: 'API error, using cached data'
+            })
+        }
         return NextResponse.json({
             isLive: false,
             error: 'Failed to check live status'
