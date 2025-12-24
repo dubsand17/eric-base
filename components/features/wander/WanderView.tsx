@@ -135,6 +135,7 @@ export default function WanderView({ initialPosts, totalCount }: WanderViewProps
                     }`}
             >
                 <WanderCard
+                    key={currentPost.id}
                     post={currentPost}
                     showAbsoluteTime={showAbsoluteTime}
                     onToggleTimeFormat={() => setShowAbsoluteTime(v => !v)}
