@@ -131,10 +131,11 @@ export default function WanderCard({ post, showAbsoluteTime = false, onToggleTim
         {/* 右侧图片区域 - 动态适配宽窄图片 */}
         {firstImage && (
           <div
-            className="relative rounded-xl overflow-hidden"
+            className="relative rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800"
             style={{
-              maxHeight: '50vh',
-              width: 'auto'
+              height: '50vh',
+              width: 'auto',
+              minWidth: '300px'
             }}
           >
             <Image
@@ -146,6 +147,7 @@ export default function WanderCard({ post, showAbsoluteTime = false, onToggleTim
               style={{
                 maxHeight: '50vh'
               }}
+              priority
             />
           </div>
         )}
