@@ -17,8 +17,8 @@ async function getRandomPosts(): Promise<{ posts: TwitterPost[], total: number }
 
         const totalCount = count || 0
 
-        // 获取随机的 50 条数据
-        const limit = 50
+        // 获取随机的 20 条数据（首批）
+        const limit = 20
         const maxOffset = Math.max(0, totalCount - limit)
         const randomOffset = Math.floor(Math.random() * (maxOffset + 1))
 

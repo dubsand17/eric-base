@@ -19,6 +19,7 @@ export default function WanderView({ initialPosts, totalCount }: WanderViewProps
     const [posts, setPosts] = useState<TwitterPost[]>(initialPosts)
     const [currentIndex, setCurrentIndex] = useState(0)
     const [history, setHistory] = useState<number[]>([0])
+    const [viewedIndices, setViewedIndices] = useState<Set<number>>(new Set([0])) // 追踪已查看的索引
     const [isLoading, setIsLoading] = useState(false)
     const [isAnimating, setIsAnimating] = useState(false)
     const [showAbsoluteTime, setShowAbsoluteTime] = useState(false)
@@ -26,16 +27,17 @@ export default function WanderView({ initialPosts, totalCount }: WanderViewProps
     // 当前显示的 Post
     const currentPost = posts[currentIndex]
 
-    // 预加载更多数据
+    // 预加载更多数据（每次加载20条）
     const loadMorePosts = useCallback(async () => {
         if (isLoading || posts.length >= totalCount) return
 
         setIsLoading(true)
         try {
-            const response = await fetch(`/api/posts?random=true&limit=50&offset=${posts.length}`)
+            const response = await fetch(`/api/posts?random=true&limit=20&offset=${posts.length}`)
             const result = await response.json()
             if (result.data && result.data.length > 0) {
                 setPosts(prev => [...prev, ...result.data])
+                console.log(`✓ Loaded ${result.data.length} more posts, total: ${posts.length + result.data.length}`)
             }
         } catch (error) {
             console.error('Failed to load more posts:', error)
@@ -43,6 +45,18 @@ export default function WanderView({ initialPosts, totalCount }: WanderViewProps
             setIsLoading(false)
         }
     }, [isLoading, posts.length, totalCount])
+
+    // 检查是否需要预加载
+    const checkAndPreload = useCallback(() => {
+        const viewedCount = viewedIndices.size
+        const availableCount = posts.length
+
+        // 当已查看数量达到可用数量的80%时，预加载下一批
+        if (viewedCount >= availableCount * 0.8 && !isLoading && availableCount < totalCount) {
+            console.log(`Preloading: viewed ${viewedCount}/${availableCount} posts`)
+            loadMorePosts()
+        }
+    }, [viewedIndices.size, posts.length, totalCount, isLoading, loadMorePosts])
 
     // 随机切换
     const handleShuffle = useCallback(() => {
@@ -58,14 +72,19 @@ export default function WanderView({ initialPosts, totalCount }: WanderViewProps
 
             setCurrentIndex(newIndex)
             setHistory(prev => [...prev, newIndex])
+            setViewedIndices(prev => {
+                const newSet = new Set(prev)
+                newSet.add(newIndex)
+                return newSet
+            })
             setIsAnimating(false)
-
-            // 如果接近末尾，预加载更多
-            if (newIndex > posts.length - 10) {
-                loadMorePosts()
-            }
         }, 300)
-    }, [posts.length, currentIndex, loadMorePosts])
+    }, [posts.length, currentIndex])
+
+    // 监听 viewedIndices 变化，触发预加载检查
+    useEffect(() => {
+        checkAndPreload()
+    }, [checkAndPreload])
 
     // 上一条
     const handlePrevious = useCallback(() => {
