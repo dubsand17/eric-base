@@ -9,11 +9,24 @@ interface ThemeToggleProps {
 }
 
 export default function ThemeToggle({ className = '' }: ThemeToggleProps) {
-  const [isDark, setIsDark] = useState(false)
+  // 从 localStorage 或 DOM 初始化主题状态，避免闪烁
+  const [isDark, setIsDark] = useState(() => {
+    if (typeof window === 'undefined') return true // SSR 默认深色
+    try {
+      const savedTheme = localStorage.getItem('theme')
+      if (savedTheme) {
+        return savedTheme === 'dark'
+      }
+    } catch { }
+    return document.documentElement.classList.contains('dark')
+  })
 
   useEffect(() => {
+    // 确保状态与 DOM 同步
     const isDarkMode = document.documentElement.classList.contains('dark')
-    setIsDark(isDarkMode)
+    if (isDarkMode !== isDark) {
+      setIsDark(isDarkMode)
+    }
   }, [])
 
   const handlePressedChange = (pressed: boolean) => {

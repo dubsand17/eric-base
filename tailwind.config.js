@@ -176,6 +176,26 @@ module.exports = {
         'glow-success': '0 0 0 3px rgba(5, 150, 105, 0.1)',
         'glow-error': '0 0 0 3px rgba(220, 38, 38, 0.1)',
       },
+      // 动画
+      animation: {
+        'fadeIn': 'fadeIn 200ms ease-out',
+        'fadeInUp': 'fadeInUp 300ms ease-out',
+        'scaleIn': 'scaleIn 200ms ease-out',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        fadeInUp: {
+          '0%': { opacity: '0', transform: 'translateY(10px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        scaleIn: {
+          '0%': { opacity: '0', transform: 'scale(0.96)' },
+          '100%': { opacity: '1', transform: 'scale(1)' },
+        },
+      },
     },
   },
   plugins: [],
