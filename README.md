@@ -226,3 +226,48 @@ yarn type-check   # TypeScript类型检查
 ---
 
 **私有项目** | 个人知识管理系统
+## 📚 项目文档
+
+### 核心文档
+- **[scripts/README.md](./scripts/README.md)** - Twitter 互动数据爬虫脚本使用指南
+  - 如何使用 Puppeteer 爬取真实的 Twitter 互动数据
+  - 支持按 ID、时间范围、批量更新等多种模式
+  - 包含完整的使用示例和故障排除
+
+### 数据库相关
+- **[database/init.sql](./database/init.sql)** - 数据库初始化脚本
+  - 创建 `twitter_posts` 表结构
+  - 包含所有必需的字段定义
+- **[database/migration.sql](./database/migration.sql)** - 数据库迁移脚本
+  - 添加互动数据字段（评论、转发、点赞、观看量）
+  - 添加 `metrics_updated_at` 时间戳字段
+
+### 辅助脚本
+- **[scripts/setup.sh](./scripts/setup.sh)** - 项目初始化脚本
+  ```bash
+  chmod +x scripts/setup.sh
+  ./scripts/setup.sh
+  ```
+  自动完成：检查环境、安装依赖、创建配置文件
+
+- **[scripts/deploy.sh](./scripts/deploy.sh)** - 部署辅助脚本
+  ```bash
+  chmod +x scripts/deploy.sh
+  ./scripts/deploy.sh
+  ```
+  自动完成：提交代码、推送到 GitHub、显示部署指引
+
+- **[scripts/scrape-metrics.js](./scripts/scrape-metrics.js)** - Twitter 互动数据爬虫
+  ```bash
+  # 更新单条推文
+  node scripts/scrape-metrics.js --id <推文ID>
+  
+  # 更新最近 7 天的推文
+  node scripts/scrape-metrics.js --recent-days 7
+  
+  # 批量更新前 50 条
+  node scripts/scrape-metrics.js --limit 50
+  ```
+  详细使用说明请查看 [scripts/README.md](./scripts/README.md)
+
+---

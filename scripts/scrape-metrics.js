@@ -10,10 +10,12 @@
  *   node scripts/scrape-metrics.js
  * 
  * Options:
- *   --limit <number>    Limit the number of posts to update
- *   --older-than <days> Only update posts where metrics are older than X days
- *   --dry-run          Show what would be updated without making changes
- *   --headless         Run browser in headless mode (default: true)
+ *   --limit <number>       Limit the number of posts to update
+ *   --older-than <days>    Only update posts where metrics are older than X days
+ *   --recent-days <days>   Only update posts created in the last X days
+ *   --id <post_id>         Update a specific post by ID
+ *   --dry-run              Show what would be updated without making changes
+ *   --headless             Run browser in headless mode (default: true)
  */
 
 import { createClient } from '@supabase/supabase-js'
@@ -39,6 +41,8 @@ const args = process.argv.slice(2)
 const options = {
     limit: null,
     olderThanDays: null,
+    recentDays: null,
+    postId: null,
     dryRun: false,
     headless: true
 }
@@ -49,6 +53,12 @@ for (let i = 0; i < args.length; i++) {
         i++
     } else if (args[i] === '--older-than' && args[i + 1]) {
         options.olderThanDays = parseInt(args[i + 1])
+        i++
+    } else if (args[i] === '--recent-days' && args[i + 1]) {
+        options.recentDays = parseInt(args[i + 1])
+        i++
+    } else if (args[i] === '--id' && args[i + 1]) {
+        options.postId = args[i + 1]
         i++
     } else if (args[i] === '--dry-run') {
         options.dryRun = true
@@ -288,25 +298,42 @@ async function main() {
 
     console.log('✅ Browser ready\n')
 
+
     // Build query
     let query = supabase
         .from('twitter_posts')
         .select('*')
         .not('tweet_url', 'is', null)
-        .order('metrics_updated_at', { ascending: true })
 
-    // Filter by age if specified
-    if (options.olderThanDays) {
-        const cutoffDate = new Date()
-        cutoffDate.setDate(cutoffDate.getDate() - options.olderThanDays)
-        query = query.lt('metrics_updated_at', cutoffDate.toISOString())
-        console.log(`📅 Only updating posts older than ${options.olderThanDays} days`)
-    }
+    // Filter by specific post ID if specified
+    if (options.postId) {
+        query = query.eq('id', options.postId)
+        console.log(`🎯 Updating specific post: ${options.postId}`)
+    } else {
+        // Only apply other filters if not filtering by ID
+        query = query.order('metrics_updated_at', { ascending: true })
 
-    // Apply limit if specified
-    if (options.limit) {
-        query = query.limit(options.limit)
-        console.log(`🔢 Limiting to ${options.limit} posts`)
+        // Filter by recent posts if specified
+        if (options.recentDays) {
+            const cutoffDate = new Date()
+            cutoffDate.setDate(cutoffDate.getDate() - options.recentDays)
+            query = query.gte('tweet_created_at', cutoffDate.toISOString())
+            console.log(`📅 Only updating posts from the last ${options.recentDays} days`)
+        }
+
+        // Filter by age if specified
+        if (options.olderThanDays) {
+            const cutoffDate = new Date()
+            cutoffDate.setDate(cutoffDate.getDate() - options.olderThanDays)
+            query = query.lt('metrics_updated_at', cutoffDate.toISOString())
+            console.log(`📅 Only updating posts older than ${options.olderThanDays} days`)
+        }
+
+        // Apply limit if specified
+        if (options.limit) {
+            query = query.limit(options.limit)
+            console.log(`🔢 Limiting to ${options.limit} posts`)
+        }
     }
 
     // Fetch posts

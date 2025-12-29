@@ -95,7 +95,7 @@ export default function PostCard({ post, showAbsoluteTime = false, onToggleTimeF
                 <span className="font-medium">
                   {post.tweet_created_at && (
                     showAbsoluteTime
-                      ? format(new Date(post.tweet_created_at), 'yyyy年MM月dd日 HH:mm', { locale: zhCN })
+                      ? format(new Date(post.tweet_created_at), 'yy/MM/dd HH:mm', { locale: zhCN })
                       : formatDistanceToNow(new Date(post.tweet_created_at), {
                         addSuffix: true,
                         locale: zhCN

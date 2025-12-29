@@ -41,7 +41,7 @@ export default function WanderCard({ post, showAbsoluteTime = false, onToggleTim
           className="flex flex-col overflow-hidden rounded-xl p-4 pt-4"
           style={{
             background: 'var(--wander-card-bg)',
-            width: '400px',
+            width: '420px',
             maxHeight: '50vh'
           }}
         >
@@ -99,7 +99,7 @@ export default function WanderCard({ post, showAbsoluteTime = false, onToggleTim
                 <span className="font-medium">
                   {post.tweet_created_at && (
                     showAbsoluteTime
-                      ? format(new Date(post.tweet_created_at), 'yyyy年MM月dd日 HH:mm', { locale: zhCN })
+                      ? format(new Date(post.tweet_created_at), 'yy/MM/dd HH:mm', { locale: zhCN })
                       : formatDistanceToNow(new Date(post.tweet_created_at), {
                         addSuffix: true,
                         locale: zhCN
