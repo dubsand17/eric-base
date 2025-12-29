@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { MagnifyingGlass, FunnelSimple } from 'phosphor-react'
 import * as Popover from '@radix-ui/react-popover'
+import FilterControls, { SortField, SortOrder } from '@/components/features/wander/FilterControls'
 
 interface SearchBarProps {
     query: string
@@ -10,6 +11,9 @@ interface SearchBarProps {
     from?: string
     to?: string
     onDateChange: (next: { from?: string; to?: string }) => void
+    sortBy?: SortField
+    sortOrder?: SortOrder
+    onSortChange?: (sortBy: SortField, sortOrder: SortOrder) => void
 }
 
 export default function SearchBar({
@@ -17,7 +21,10 @@ export default function SearchBar({
     onQueryChange,
     from,
     to,
-    onDateChange
+    onDateChange,
+    sortBy,
+    sortOrder,
+    onSortChange
 }: SearchBarProps) {
     const [localQuery, setLocalQuery] = useState(query)
 
@@ -30,9 +37,9 @@ export default function SearchBar({
     return (
         <div className="fixed top-5 left-1/2 -translate-x-1/2 z-40 w-full max-w-md pl-[68px] pr-4 sm:px-0">
             <div className="relative">
-                {/* Main Search Bar */}
-                <div className="flex items-center gap-0 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark bg-white dark:bg-[#16181d] shadow-soft-md backdrop-blur-sm overflow-hidden">
-                    {/* Date Filter Popover integrated with filter icon */}
+                {/* Main Search Bar with integrated FilterControls */}
+                <div className="flex items-center gap-0 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark bg-white dark:bg-[#16181d] shadow-soft-md backdrop-blur-sm overflow-visible">
+                    {/* Date Filter Popover - Left */}
                     <Popover.Root>
                         <Popover.Trigger asChild>
                             <button
@@ -103,6 +110,17 @@ export default function SearchBar({
                     <div className="h-11 w-11 flex items-center justify-center text-terminal-text-muted-light dark:text-terminal-text-muted-dark pointer-events-none">
                         <MagnifyingGlass className="w-4 h-4" weight="duotone" />
                     </div>
+
+                    {/* FilterControls - Right */}
+                    {sortBy && sortOrder && onSortChange && (
+                        <div className="border-l border-terminal-border-light dark:border-terminal-border-dark">
+                            <FilterControls
+                                sortBy={sortBy}
+                                sortOrder={sortOrder}
+                                onSortChange={onSortChange}
+                            />
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

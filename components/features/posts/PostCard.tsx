@@ -6,7 +6,7 @@ import { TwitterPost } from '@/lib/supabase'
 import { formatDistanceToNow, format } from 'date-fns'
 import { zhCN } from 'date-fns/locale'
 import ImageModal from '@/components/features/image/ImageModal'
-import { Timer, Eye, Calendar, ArrowSquareOut } from 'phosphor-react'
+import { Timer, Calendar, ArrowSquareOut, ChatCircle, ArrowsClockwise, Heart, Eye } from 'phosphor-react'
 
 interface PostCardProps {
   post: TwitterPost
@@ -16,36 +16,15 @@ interface PostCardProps {
 
 export default function PostCard({ post, showAbsoluteTime = false, onToggleTimeFormat }: PostCardProps) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
-  const [viewCount, setViewCount] = useState<number>(0)
-
-  // 初始化查看次数
-  useEffect(() => {
-    const count = parseInt(localStorage.getItem(`view_count_${post.id}`) || '0')
-    setViewCount(count)
-  }, [post.id])
 
   const handleImageClick = (imageUrl: string) => {
     setSelectedImage(imageUrl)
-
-    // 记录点击查看大图的次数
-    const key = `view_count_${post.id}`
-    const currentCount = parseInt(localStorage.getItem(key) || '0')
-    const newCount = currentCount + 1
-    localStorage.setItem(key, newCount.toString())
-    setViewCount(newCount)
   }
 
   const handleContentClick = () => {
     // 如果有图片，点击文字内容时打开第一张图片
     if (post.images && post.images.length > 0) {
       setSelectedImage(post.images[0])
-
-      // 记录点击查看大图的次数
-      const key = `view_count_${post.id}`
-      const currentCount = parseInt(localStorage.getItem(key) || '0')
-      const newCount = currentCount + 1
-      localStorage.setItem(key, newCount.toString())
-      setViewCount(newCount)
     }
   }
 
@@ -55,6 +34,14 @@ export default function PostCard({ post, showAbsoluteTime = false, onToggleTimeF
 
   const toggleTimeFormat = () => {
     onToggleTimeFormat?.()
+  }
+
+  // 格式化数字显示（K, M格式）
+  const formatNumber = (num: number | undefined) => {
+    if (!num || num === 0) return null
+    if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`
+    if (num >= 1000) return `${(num / 1000).toFixed(1)}K`
+    return num.toString()
   }
 
   return (
@@ -71,37 +58,51 @@ export default function PostCard({ post, showAbsoluteTime = false, onToggleTimeF
             {post.content}
           </p>
 
-          {/* 发布时间和原链接 */}
+          {/* 底部信息：互动数据、时间、原链接 */}
           <div className="flex items-center justify-between text-xs text-terminal-text-secondary-light dark:text-terminal-text-secondary-dark">
-            <button
-              onClick={toggleTimeFormat}
-              className="flex items-center space-x-1 hover:text-terminal-text-primary-light dark:hover:text-terminal-text-primary-dark transition-colors-gentle cursor-pointer"
-              title="点击切换时间格式"
-            >
-              {showAbsoluteTime ? (
-                <Calendar className="w-3.5 h-3.5" weight="duotone" />
-              ) : (
-                <Timer className="w-3.5 h-3.5" weight="duotone" />
-              )}
-              <span className="font-medium">
-                {post.tweet_created_at && (
-                  showAbsoluteTime
-                    ? format(new Date(post.tweet_created_at), 'yyyy年MM月dd日 HH:mm', { locale: zhCN })
-                    : formatDistanceToNow(new Date(post.tweet_created_at), {
-                      addSuffix: true,
-                      locale: zhCN
-                    })
-                )}
-              </span>
-            </button>
+            {/* 左侧：互动数据 */}
+            <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-1">
+                <ChatCircle className="w-3.5 h-3.5" weight="duotone" />
+                <span className="font-medium">{formatNumber(post.comment_count) || 0}</span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <ArrowsClockwise className="w-3.5 h-3.5" weight="duotone" />
+                <span className="font-medium">{formatNumber(post.retweet_count) || 0}</span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <Heart className="w-3.5 h-3.5" weight="duotone" />
+                <span className="font-medium">{formatNumber(post.like_count) || 0}</span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <Eye className="w-3.5 h-3.5" weight="duotone" />
+                <span className="font-medium">{formatNumber(post.view_count) || 0}</span>
+              </div>
+            </div>
+
+            {/* 右侧：时间和原链接 */}
             <div className="flex items-center space-x-2">
-              {/* 已读标记和查看次数 */}
-              {viewCount > 0 && (
-                <div className="flex items-center space-x-1 text-terminal-text-tertiary-light dark:text-terminal-text-tertiary-dark">
-                  <Eye className="w-3.5 h-3.5" weight="duotone" />
-                  <span className="text-xs font-medium">{viewCount}</span>
-                </div>
-              )}
+              <button
+                onClick={toggleTimeFormat}
+                className="flex items-center space-x-1 hover:text-terminal-text-primary-light dark:hover:text-terminal-text-primary-dark transition-colors-gentle cursor-pointer"
+                title="点击切换时间格式"
+              >
+                {showAbsoluteTime ? (
+                  <Calendar className="w-3.5 h-3.5" weight="duotone" />
+                ) : (
+                  <Timer className="w-3.5 h-3.5" weight="duotone" />
+                )}
+                <span className="font-medium">
+                  {post.tweet_created_at && (
+                    showAbsoluteTime
+                      ? format(new Date(post.tweet_created_at), 'yyyy年MM月dd日 HH:mm', { locale: zhCN })
+                      : formatDistanceToNow(new Date(post.tweet_created_at), {
+                        addSuffix: true,
+                        locale: zhCN
+                      })
+                  )}
+                </span>
+              </button>
               {post.tweet_url && (
                 <a
                   href={post.tweet_url}
@@ -109,7 +110,7 @@ export default function PostCard({ post, showAbsoluteTime = false, onToggleTimeF
                   rel="noopener noreferrer"
                   className="flex items-center space-x-0.5 hover:text-terminal-accent-light dark:hover:text-terminal-accent-dark transition-colors-gentle font-medium"
                 >
-                  <span>查看原文</span>
+                  <span>原文</span>
                   <ArrowSquareOut className="w-3.5 h-3.5" weight="duotone" />
                 </a>
               )}

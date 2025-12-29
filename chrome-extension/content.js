@@ -15,7 +15,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 function injectCollectButtons() {
   // 查找所有推文的操作栏
   const tweetActionBars = document.querySelectorAll('[data-testid="tweet"] [role="group"]');
-  
+
   tweetActionBars.forEach((actionBar, index) => {
     // 检查是否已经添加了收藏按钮
     if (actionBar.querySelector('.twitter-collect-btn')) {
@@ -39,7 +39,7 @@ function injectCollectButtons() {
     collectBtn.addEventListener('click', async (e) => {
       e.preventDefault();
       e.stopPropagation();
-      
+
       try {
         // 找到对应的推文元素
         const tweetElement = actionBar.closest('[data-testid="tweet"]');
@@ -47,7 +47,7 @@ function injectCollectButtons() {
 
         // 提取推文数据
         const tweetData = extractTweetDataFromElement(tweetElement);
-        
+
         // 发送到API
         console.log('发送推文数据:', tweetData);
         const response = await fetch('https://eric-base.vercel.app/api/posts', {
@@ -57,7 +57,7 @@ function injectCollectButtons() {
           },
           body: JSON.stringify(tweetData)
         });
-        
+
         console.log('API响应状态:', response.status);
         console.log('API响应头:', response.headers);
 
@@ -71,9 +71,9 @@ function injectCollectButtons() {
               </svg>
             </div>
           `;
-          
+
           showToast('推文收藏成功！', 'success');
-          
+
           // 2秒后恢复原状
           setTimeout(() => {
             collectBtn.innerHTML = originalHTML;
@@ -84,7 +84,7 @@ function injectCollectButtons() {
       } catch (error) {
         console.error('收藏失败:', error);
         console.error('错误详情:', error.stack);
-        
+
         // 错误反馈
         const originalHTML = collectBtn.innerHTML;
         collectBtn.innerHTML = `
@@ -94,7 +94,7 @@ function injectCollectButtons() {
             </svg>
           </div>
         `;
-        
+
         // 显示更详细的错误信息
         let errorMessage = '收藏失败';
         if (error.name === 'TypeError' && error.message.includes('fetch')) {
@@ -102,9 +102,9 @@ function injectCollectButtons() {
         } else if (error.message) {
           errorMessage = `收藏失败: ${error.message}`;
         }
-        
+
         showToast(errorMessage, 'error');
-        
+
         setTimeout(() => {
           collectBtn.innerHTML = originalHTML;
         }, 2000);
@@ -113,7 +113,7 @@ function injectCollectButtons() {
 
     // 将按钮添加到操作栏，确保正确的间距
     actionBar.appendChild(collectBtn);
-    
+
     // 调整按钮容器的样式以确保与其他按钮对齐
     collectBtn.style.marginLeft = '0px';
     collectBtn.style.display = 'flex';
@@ -128,7 +128,7 @@ function extractTweetDataFromElement(tweetElement) {
     '[data-testid="tweetText"]',
     'div[lang]'
   ];
-  
+
   let content = '';
   for (const selector of contentSelectors) {
     const element = tweetElement.querySelector(selector);
@@ -145,15 +145,15 @@ function extractTweetDataFromElement(tweetElement) {
   const images = [];
   const imageElements = tweetElement.querySelectorAll('img[src*="pbs.twimg.com"], img[src*="abs.twimg.com"]');
   imageElements.forEach(img => {
-    if (img.src && 
-        (img.src.includes('pbs.twimg.com') || img.src.includes('abs.twimg.com')) && 
-        !img.src.includes('profile') &&
-        !img.src.includes('avatar')) {
+    if (img.src &&
+      (img.src.includes('pbs.twimg.com') || img.src.includes('abs.twimg.com')) &&
+      !img.src.includes('profile') &&
+      !img.src.includes('avatar')) {
       let highResUrl = img.src;
       highResUrl = highResUrl.replace('_normal', '');
       highResUrl = highResUrl.replace('_small', '');
       highResUrl = highResUrl.replace('&name=small', '');
-      
+
       if (!images.includes(highResUrl)) {
         images.push(highResUrl);
       }
@@ -167,25 +167,29 @@ function extractTweetDataFromElement(tweetElement) {
   // 构建推文URL
   const tweetUrl = window.location.href;
 
+  // 提取互动指标
+  const metrics = extractEngagementMetrics(tweetElement);
+
   return {
     content: content.trim(),
     images: images,
     tweet_created_at: tweetCreatedAt,
-    tweet_url: tweetUrl
+    tweet_url: tweetUrl,
+    ...metrics
   };
 }
 
 // 监听页面变化，动态注入按钮
 const observer = new MutationObserver((mutations) => {
   let shouldInject = false;
-  
+
   mutations.forEach((mutation) => {
     if (mutation.type === 'childList') {
       mutation.addedNodes.forEach((node) => {
         if (node.nodeType === Node.ELEMENT_NODE) {
           // 检查是否有新的推文添加
           if (node.querySelector && (
-            node.querySelector('[data-testid="tweet"]') || 
+            node.querySelector('[data-testid="tweet"]') ||
             node.matches('[data-testid="tweet"]')
           )) {
             shouldInject = true;
@@ -194,7 +198,7 @@ const observer = new MutationObserver((mutations) => {
       });
     }
   });
-  
+
   if (shouldInject) {
     setTimeout(injectCollectButtons, 500); // 延迟执行确保DOM完全加载
   }
@@ -216,11 +220,11 @@ function showToast(message, type = 'info') {
 
   const toast = document.createElement('div');
   toast.className = 'twitter-collect-toast';
-  
-  const bgColor = type === 'success' ? 'rgb(0, 186, 124)' : 
-                  type === 'error' ? 'rgb(244, 33, 46)' : 
-                  'rgb(29, 161, 242)';
-  
+
+  const bgColor = type === 'success' ? 'rgb(0, 186, 124)' :
+    type === 'error' ? 'rgb(244, 33, 46)' :
+      'rgb(29, 161, 242)';
+
   toast.style.cssText = `
     position: fixed;
     top: 20px;
@@ -238,15 +242,15 @@ function showToast(message, type = 'info') {
     max-width: 300px;
     word-wrap: break-word;
   `;
-  
+
   toast.textContent = message;
   document.body.appendChild(toast);
-  
+
   // 动画显示
   setTimeout(() => {
     toast.style.transform = 'translateX(0)';
   }, 10);
-  
+
   // 3秒后自动消失
   setTimeout(() => {
     toast.style.transform = 'translateX(100%)';
@@ -275,7 +279,7 @@ function extractTweetData() {
     'article[role="article"]',
     '.css-1dbjc4n.r-1loqt21.r-18u37iz.r-1ny4l3l'
   ];
-  
+
   let tweetElement = null;
   for (const selector of tweetSelectors) {
     const elements = document.querySelectorAll(selector);
@@ -302,7 +306,7 @@ function extractTweetData() {
     '[data-testid="tweet"] span',
     'div[lang]'
   ];
-  
+
   let content = '';
   for (const selector of contentSelectors) {
     const element = tweetElement.querySelector(selector);
@@ -322,14 +326,14 @@ function extractTweetData() {
     'img[src*="abs.twimg.com"]',
     'img[alt*="Image"]'
   ];
-  
+
   for (const selector of imageSelectors) {
     const imageElements = tweetElement.querySelectorAll(selector);
     imageElements.forEach(img => {
-      if (img.src && 
-          (img.src.includes('pbs.twimg.com') || img.src.includes('abs.twimg.com')) && 
-          !img.src.includes('profile') &&
-          !img.src.includes('avatar')) {
+      if (img.src &&
+        (img.src.includes('pbs.twimg.com') || img.src.includes('abs.twimg.com')) &&
+        !img.src.includes('profile') &&
+        !img.src.includes('avatar')) {
         // 转换为高质量图片URL
         let highResUrl = img.src;
         highResUrl = highResUrl.replace('_normal', '');
@@ -337,7 +341,7 @@ function extractTweetData() {
         highResUrl = highResUrl.replace('_mini', '');
         highResUrl = highResUrl.replace('&name=small', '');
         highResUrl = highResUrl.replace('&name=normal', '');
-        
+
         if (!images.includes(highResUrl)) {
           images.push(highResUrl);
         }
@@ -353,7 +357,7 @@ function extractTweetData() {
     '[data-testid="tweet"] time',
     'a[href*="/status/"] time'
   ];
-  
+
   let tweetCreatedAt = new Date().toISOString();
   for (const selector of timeSelectors) {
     const element = tweetElement.querySelector(selector);
@@ -371,17 +375,109 @@ function extractTweetData() {
     throw new Error('无法提取推文内容，请确保页面中有推文文本');
   }
 
+  // 提取互动指标
+  const metrics = extractEngagementMetrics(tweetElement);
+
   console.log('提取的数据:', {
     content: content.substring(0, 100) + '...',
     images: images.length,
     tweet_created_at: tweetCreatedAt,
-    tweet_url: tweetUrl
+    tweet_url: tweetUrl,
+    ...metrics
   });
 
   return {
     content: content.trim(),
     images: images,
     tweet_created_at: tweetCreatedAt,
-    tweet_url: tweetUrl
+    tweet_url: tweetUrl,
+    ...metrics
   };
+}
+
+// 提取互动指标（评论、转发、点赞、观看量）
+function extractEngagementMetrics(tweetElement) {
+  const metrics = {
+    comment_count: 0,
+    retweet_count: 0,
+    like_count: 0,
+    view_count: 0
+  };
+
+  try {
+    // 提取评论数
+    const replyButton = tweetElement.querySelector('[data-testid="reply"]');
+    if (replyButton) {
+      const replyText = replyButton.getAttribute('aria-label') || '';
+      const replyMatch = replyText.match(/(\d+)/);
+      if (replyMatch) {
+        metrics.comment_count = parseInt(replyMatch[1].replace(/,/g, ''), 10) || 0;
+      }
+    }
+
+    // 提取转发数
+    const retweetButton = tweetElement.querySelector('[data-testid="retweet"]');
+    if (retweetButton) {
+      const retweetText = retweetButton.getAttribute('aria-label') || '';
+      const retweetMatch = retweetText.match(/(\d+)/);
+      if (retweetMatch) {
+        metrics.retweet_count = parseInt(retweetMatch[1].replace(/,/g, ''), 10) || 0;
+      }
+    }
+
+    // 提取点赞数
+    const likeButton = tweetElement.querySelector('[data-testid="like"]');
+    if (likeButton) {
+      const likeText = likeButton.getAttribute('aria-label') || '';
+      const likeMatch = likeText.match(/(\d+)/);
+      if (likeMatch) {
+        metrics.like_count = parseInt(likeMatch[1].replace(/,/g, ''), 10) || 0;
+      }
+    }
+
+    // 提取观看量 - 使用多种方法
+    // Method 1: 在整个推文文本中搜索 "XXK Views" 模式
+    let viewFound = false;
+    const allText = tweetElement.innerText || tweetElement.textContent || '';
+    const viewPatterns = [
+      /(\d+\.?\d*)\s*([KMB])\s*Views?/i,  // "40K Views"
+      /(\d+\.?\d*)\s*([KMB])\s*次查看/i,   // Chinese
+      /(\d+,?\d*)\s*Views?/i,              // "40,000 Views"
+    ];
+
+    for (const pattern of viewPatterns) {
+      const match = allText.match(pattern);
+      if (match) {
+        let count = parseFloat(match[1].replace(/,/g, ''));
+        const suffix = match[2] ? match[2].toUpperCase() : '';
+        if (suffix === 'K') count *= 1000;
+        else if (suffix === 'M') count *= 1000000;
+        else if (suffix === 'B') count *= 1000000000;
+        metrics.view_count = Math.floor(count);
+        viewFound = true;
+        break;
+      }
+    }
+
+    // Method 2: 查找 analytics 链接（备用方法）
+    if (!viewFound) {
+      const viewElements = tweetElement.querySelectorAll('a[href*="/analytics"]');
+      if (viewElements.length > 0) {
+        const viewText = viewElements[0].textContent || '';
+        const viewMatch = viewText.match(/([\d.,]+)\s*([KMB]?)/i);
+        if (viewMatch) {
+          let count = parseFloat(viewMatch[1].replace(/,/g, ''));
+          const suffix = viewMatch[2] ? viewMatch[2].toUpperCase() : '';
+          if (suffix === 'K') count *= 1000;
+          else if (suffix === 'M') count *= 1000000;
+          else if (suffix === 'B') count *= 1000000000;
+          metrics.view_count = Math.floor(count);
+        }
+      }
+    }
+  } catch (error) {
+    console.warn('提取互动指标时出错:', error);
+  }
+
+  return metrics;
 } 

@@ -28,26 +28,42 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Supabase 未配置，请设置 NEXT_PUBLIC_SUPABASE_URL 与 NEXT_PUBLIC_SUPABASE_ANON_KEY' }, { status: 500, headers: { ...corsHeaders } })
     }
     const body = await request.json()
-    const { content, images, tweet_created_at, tweet_url } = body
+    const { content, images, tweet_created_at, tweet_url, comment_count, retweet_count, like_count, view_count } = body
+
+    // Debug: 打印接收到的数据
+    console.log('📥 POST /api/posts - 接收到的数据:')
+    console.log('  评论:', comment_count)
+    console.log('  转发:', retweet_count)
+    console.log('  点赞:', like_count)
+    console.log('  观看:', view_count)
+
+    const insertData = {
+      id: crypto.randomUUID(),
+      content,
+      images: images || [],  // 确保是数组，Supabase 会自动转换为 jsonb
+      tweet_created_at,
+      tweet_url,
+      comment_count: comment_count || 0,
+      retweet_count: retweet_count || 0,
+      like_count: like_count || 0,
+      view_count: view_count || 0,
+      metrics_updated_at: new Date().toISOString(),
+      created_at: new Date().toISOString()
+    }
+
+    console.log('💾 准备插入的数据:', insertData)
 
     const { data, error } = await supabase
       .from('twitter_posts')
-      .insert([
-        {
-          id: crypto.randomUUID(),
-          content,
-          images,
-          tweet_created_at,
-          tweet_url,
-          created_at: new Date().toISOString()
-        }
-      ])
+      .insert([insertData])
       .select()
 
     if (error) {
+      console.error('❌ 数据库插入错误:', error)
       return NextResponse.json({ error: error.message }, { status: 400, headers: { ...corsHeaders } })
     }
 
+    console.log('✅ 插入成功:', data[0])
     return NextResponse.json(data[0], { headers: { ...corsHeaders } })
   } catch (error) {
     console.error('API错误:', error)
@@ -67,6 +83,8 @@ export async function GET(request: NextRequest) {
     const random = searchParams.get('random') === 'true'
     const limit = parseInt(searchParams.get('limit') || '50')
     const offsetParam = parseInt(searchParams.get('offset') || '0')
+    const sortBy = searchParams.get('sortBy') || 'date' // date, comments, retweets, likes, views
+    const sortOrder = searchParams.get('sortOrder') || 'desc' // asc, desc
 
     if (!supabase) {
       return NextResponse.json({ error: 'Supabase 未配置，请设置 NEXT_PUBLIC_SUPABASE_URL 与 NEXT_PUBLIC_SUPABASE_ANON_KEY' }, { status: 500, headers: corsHeaders })
@@ -114,6 +132,15 @@ export async function GET(request: NextRequest) {
     // 计算偏移量
     const offset = (page - 1) * pageSize
 
+    // 确定排序字段
+    let orderColumn = 'tweet_created_at'
+    if (sortBy === 'comments') orderColumn = 'comment_count'
+    else if (sortBy === 'retweets') orderColumn = 'retweet_count'
+    else if (sortBy === 'likes') orderColumn = 'like_count'
+    else if (sortBy === 'views') orderColumn = 'view_count'
+
+    const ascending = sortOrder === 'asc'
+
     // 使用 Supabase 数据库
     // 获取总数
     let baseCount = supabase.from('twitter_posts').select('*', { count: 'exact', head: true })
@@ -130,7 +157,7 @@ export async function GET(request: NextRequest) {
     let baseQuery = supabase
       .from('twitter_posts')
       .select('*')
-      .order('tweet_created_at', { ascending: false })
+      .order(orderColumn, { ascending })
     if (q) baseQuery = baseQuery.ilike('content', `%${q}%`)
     if (from) baseQuery = baseQuery.gte('tweet_created_at', from)
     if (to) baseQuery = baseQuery.lte('tweet_created_at', to)

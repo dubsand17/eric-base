@@ -3,6 +3,7 @@
 import BrandBadge from '@/components/layout/BrandBadge'
 import ToolsBadge from '@/components/layout/ToolsBadge'
 import SearchBar from '@/components/layout/SearchBar'
+import { SortField, SortOrder } from '@/components/features/wander/FilterControls'
 
 interface AppHeaderProps {
     query: string
@@ -12,6 +13,9 @@ interface AppHeaderProps {
     onDateChange: (next: { from?: string; to?: string }) => void
     showAbsoluteTime?: boolean
     onToggleTimeFormat?: () => void
+    sortBy?: SortField
+    sortOrder?: SortOrder
+    onSortChange?: (sortBy: SortField, sortOrder: SortOrder) => void
 }
 
 export default function AppHeader({
@@ -21,7 +25,10 @@ export default function AppHeader({
     to,
     onDateChange,
     showAbsoluteTime,
-    onToggleTimeFormat
+    onToggleTimeFormat,
+    sortBy,
+    sortOrder,
+    onSortChange
 }: AppHeaderProps) {
     return (
         <>
@@ -36,6 +43,9 @@ export default function AppHeader({
                 from={from}
                 to={to}
                 onDateChange={onDateChange}
+                sortBy={sortBy}
+                sortOrder={sortOrder}
+                onSortChange={onSortChange}
             />
             <ToolsBadge
                 showAbsoluteTime={showAbsoluteTime}

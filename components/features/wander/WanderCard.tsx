@@ -1,11 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import Image from 'next/image'
 import { TwitterPost } from '@/lib/supabase'
 import { formatDistanceToNow, format } from 'date-fns'
 import { zhCN } from 'date-fns/locale'
-import { ArrowSquareOut, Eye, Timer, Calendar } from 'phosphor-react'
+import { ArrowSquareOut, Timer, Calendar, ChatCircle, ArrowsClockwise, Heart, Eye } from 'phosphor-react'
+import Image from 'next/image'
 
 interface WanderCardProps {
   post: TwitterPost
@@ -14,15 +13,15 @@ interface WanderCardProps {
 }
 
 export default function WanderCard({ post, showAbsoluteTime = false, onToggleTimeFormat }: WanderCardProps) {
-  const [viewCount, setViewCount] = useState<number>(0)
-
-  // 初始化查看次数
-  useEffect(() => {
-    const count = parseInt(localStorage.getItem(`view_count_${post.id}`) || '0')
-    setViewCount(count)
-  }, [post.id])
-
   const firstImage = post.images && post.images.length > 0 ? post.images[0] : null
+
+  // 格式化数字显示（K, M格式）
+  const formatNumber = (num: number | undefined) => {
+    if (!num || num === 0) return null
+    if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`
+    if (num >= 1000) return `${(num / 1000).toFixed(1)}K`
+    return num.toString()
+  }
 
   return (
     <div
@@ -42,7 +41,7 @@ export default function WanderCard({ post, showAbsoluteTime = false, onToggleTim
           className="flex flex-col overflow-hidden rounded-xl p-4 pt-4"
           style={{
             background: 'var(--wander-card-bg)',
-            width: '320px',
+            width: '400px',
             maxHeight: '50vh'
           }}
         >
@@ -62,38 +61,52 @@ export default function WanderCard({ post, showAbsoluteTime = false, onToggleTim
             </p>
           </div>
 
-          {/* 底部信息 */}
+          {/* 底部信息：互动数据、时间、原链接 */}
           <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400 flex-shrink-0 pt-2 border-t border-gray-400/30 dark:border-gray-600/30">
-            {/* 时间显示 - 支持切换格式 */}
-            <div
-              onClick={onToggleTimeFormat}
-              className="flex items-center space-x-1 hover:text-gray-800 dark:hover:text-gray-200 transition-colors-gentle cursor-pointer"
-              title="点击切换时间格式"
-            >
-              {showAbsoluteTime ? (
-                <Calendar className="w-3.5 h-3.5" weight="duotone" />
-              ) : (
-                <Timer className="w-3.5 h-3.5" weight="duotone" />
-              )}
-              <span className="font-medium">
-                {post.tweet_created_at && (
-                  showAbsoluteTime
-                    ? format(new Date(post.tweet_created_at), 'yyyy年MM月dd日 HH:mm', { locale: zhCN })
-                    : formatDistanceToNow(new Date(post.tweet_created_at), {
-                      addSuffix: true,
-                      locale: zhCN
-                    })
-                )}
-              </span>
-            </div>
+            {/* 左侧：互动数据 */}
             <div className="flex items-center space-x-2">
-              {/* 查看次数 */}
-              {viewCount > 0 && (
-                <div className="flex items-center space-x-1 text-gray-500 dark:text-gray-500">
-                  <Eye className="w-3.5 h-3.5" weight="duotone" />
-                  <span className="text-xs font-medium">{viewCount}</span>
-                </div>
-              )}
+              <div className="flex items-center space-x-1">
+                <ChatCircle className="w-3.5 h-3.5" weight="duotone" />
+                <span className="font-medium">{formatNumber(post.comment_count) || 0}</span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <ArrowsClockwise className="w-3.5 h-3.5" weight="duotone" />
+                <span className="font-medium">{formatNumber(post.retweet_count) || 0}</span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <Heart className="w-3.5 h-3.5" weight="duotone" />
+                <span className="font-medium">{formatNumber(post.like_count) || 0}</span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <Eye className="w-3.5 h-3.5" weight="duotone" />
+                <span className="font-medium">{formatNumber(post.view_count) || 0}</span>
+              </div>
+            </div>
+
+            {/* 右侧：时间和原链接 */}
+            <div className="flex items-center space-x-2">
+              {/* 时间显示 - 支持切换格式 */}
+              <div
+                onClick={onToggleTimeFormat}
+                className="flex items-center space-x-1 hover:text-gray-800 dark:hover:text-gray-200 transition-colors-gentle cursor-pointer"
+                title="点击切换时间格式"
+              >
+                {showAbsoluteTime ? (
+                  <Calendar className="w-3.5 h-3.5" weight="duotone" />
+                ) : (
+                  <Timer className="w-3.5 h-3.5" weight="duotone" />
+                )}
+                <span className="font-medium">
+                  {post.tweet_created_at && (
+                    showAbsoluteTime
+                      ? format(new Date(post.tweet_created_at), 'yyyy年MM月dd日 HH:mm', { locale: zhCN })
+                      : formatDistanceToNow(new Date(post.tweet_created_at), {
+                        addSuffix: true,
+                        locale: zhCN
+                      })
+                  )}
+                </span>
+              </div>
               {/* 原文链接 */}
               {post.tweet_url && (
                 <a

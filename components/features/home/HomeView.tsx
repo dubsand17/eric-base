@@ -10,6 +10,7 @@ import EmptyState from '@/components/shared/EmptyState'
 import TradingChart from '@/components/features/trading/TradingChart'
 import ResizablePanel from '@/components/features/trading/ResizablePanel'
 import MobileMenu from '@/components/layout/MobileMenu'
+import FilterControls, { SortField, SortOrder } from '@/components/features/wander/FilterControls'
 import type { TwitterPost } from '@/lib/supabase'
 
 interface PaginationData {
@@ -50,6 +51,8 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
   const [to, setTo] = useState<string | undefined>(undefined)
   const [debouncedQuery, setDebouncedQuery] = useState('')
   const [showAbsoluteTime, setShowAbsoluteTime] = useState(false)
+  const [sortBy, setSortBy] = useState<SortField>('date')
+  const [sortOrder, setSortOrder] = useState<SortOrder>('desc')
 
   // K线图和加密货币相关
   const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null)
@@ -201,6 +204,8 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
       if (debouncedQuery) url.searchParams.append('q', debouncedQuery)
       if (from) url.searchParams.append('from', from)
       if (to) url.searchParams.append('to', to)
+      url.searchParams.append('sortBy', sortBy)
+      url.searchParams.append('sortOrder', sortOrder)
 
       const key = url.pathname + '?' + url.searchParams.toString()
       const now = Date.now()
@@ -259,10 +264,15 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
     fetchPosts(1, controller.signal)
     return () => controller.abort()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedQuery, from, to])
+  }, [debouncedQuery, from, to, sortBy, sortOrder])
 
   const handleLoadMore = () => {
     fetchPosts(pagination.page + 1)
+  }
+
+  const handleSortChange = (newSortBy: SortField, newSortOrder: SortOrder) => {
+    setSortBy(newSortBy)
+    setSortOrder(newSortOrder)
   }
 
   const renderMainContent = () => {
@@ -408,6 +418,9 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
         onDateChange={({ from: f, to: t }) => { setFrom(f); setTo(t) }}
         showAbsoluteTime={showAbsoluteTime}
         onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)}
+        sortBy={sortBy}
+        sortOrder={sortOrder}
+        onSortChange={handleSortChange}
       />
       <div className="md:hidden fixed top-5 left-4 z-40">
         <MobileMenu showAbsoluteTime={showAbsoluteTime} onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)} />
