@@ -102,8 +102,7 @@ export default function SearchBar({
                             setLocalQuery(e.target.value)
                             onQueryChange?.(e.target.value)
                         }}
-                        className="flex-1 h-11 px-3 bg-transparent text-sm placeholder-terminal-text-muted-light dark:placeholder-terminal-text-muted-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none"
-                        placeholder="Search"
+                        className="flex-1 min-w-0 h-11 px-3 bg-transparent text-sm placeholder-terminal-text-muted-light dark:placeholder-terminal-text-muted-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark focus:outline-none"
                     />
 
                     {/* Search Icon */}
@@ -113,7 +112,7 @@ export default function SearchBar({
 
                     {/* FilterControls - Right */}
                     {sortBy && sortOrder && onSortChange && (
-                        <div className="border-l border-terminal-border-light dark:border-terminal-border-dark">
+                        <div className="border-l border-terminal-border-light dark:border-terminal-border-dark sm:inline">
                             <FilterControls
                                 sortBy={sortBy}
                                 sortOrder={sortOrder}
