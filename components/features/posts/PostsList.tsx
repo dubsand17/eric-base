@@ -19,6 +19,7 @@ interface PostsListProps {
   onToggleTimeFormat: () => void
   onLoadMore: () => void
   containerWidth?: number
+  onDeletePost?: (postId: string) => void
 }
 
 export default function PostsList({
@@ -28,7 +29,8 @@ export default function PostsList({
   showAbsoluteTime,
   onToggleTimeFormat,
   onLoadMore,
-  containerWidth
+  containerWidth,
+  onDeletePost
 }: PostsListProps) {
   const sentinelRef = useRef<HTMLDivElement | null>(null)
 
@@ -56,6 +58,7 @@ export default function PostsList({
         showAbsoluteTime={showAbsoluteTime}
         onToggleTimeFormat={onToggleTimeFormat}
         containerWidth={containerWidth}
+        onDeletePost={onDeletePost}
       />
 
       <div ref={sentinelRef} className="h-1" />

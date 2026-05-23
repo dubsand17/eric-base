@@ -6,15 +6,16 @@ import { TwitterPost } from '@/lib/supabase'
 import { formatDistanceToNow, format } from 'date-fns'
 import { zhCN } from 'date-fns/locale'
 import ImageModal from '@/components/features/image/ImageModal'
-import { Timer, Calendar, ArrowSquareOut, ChatCircle, ArrowsClockwise, Heart, Eye } from 'phosphor-react'
+import { Timer, Calendar, ArrowSquareOut, ChatCircle, ArrowsClockwise, Heart, Eye, Trash } from 'phosphor-react'
 
 interface PostCardProps {
   post: TwitterPost
   showAbsoluteTime?: boolean
   onToggleTimeFormat?: () => void
+  onDelete?: (postId: string) => void
 }
 
-export default function PostCard({ post, showAbsoluteTime = false, onToggleTimeFormat }: PostCardProps) {
+export default function PostCard({ post, showAbsoluteTime = false, onToggleTimeFormat, onDelete }: PostCardProps) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
 
   const handleImageClick = (imageUrl: string) => {
@@ -113,6 +114,15 @@ export default function PostCard({ post, showAbsoluteTime = false, onToggleTimeF
                   <span>原文</span>
                   <ArrowSquareOut className="w-3.5 h-3.5" weight="duotone" />
                 </a>
+              )}
+              {onDelete && (
+                <button
+                  onClick={() => { if (confirm('确定删除这条推文？')) onDelete(post.id) }}
+                  className="flex items-center space-x-0.5 hover:text-red-500 transition-colors-gentle font-medium"
+                  title="删除推文"
+                >
+                  <Trash className="w-3.5 h-3.5" weight="duotone" />
+                </button>
               )}
             </div>
           </div>

@@ -10,7 +10,8 @@ interface PostsGridProps {
   loadingMore?: boolean
   showAbsoluteTime?: boolean
   onToggleTimeFormat?: () => void
-  containerWidth?: number // 可选的容器宽度，用于动态计算列数
+  containerWidth?: number
+  onDeletePost?: (postId: string) => void
 }
 
 // 根据容器宽度计算列数，最少1列
@@ -30,7 +31,7 @@ function getColumnCount(width: number | undefined): number {
   return Math.min(6, Math.floor(width / 320)) // 最多6列，每个卡片约320px
 }
 
-export default function PostsGrid({ posts, loadingMore = false, showAbsoluteTime = false, onToggleTimeFormat, containerWidth }: PostsGridProps) {
+export default function PostsGrid({ posts, loadingMore = false, showAbsoluteTime = false, onToggleTimeFormat, containerWidth, onDeletePost }: PostsGridProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   // 初始化时使用更合理的默认值，避免闪烁
   // 客户端：立即使用窗口宽度计算（避免 SSR/hydration 不匹配）
@@ -124,7 +125,7 @@ export default function PostsGrid({ posts, loadingMore = false, showAbsoluteTime
           return columns.map((col, colIndex) => (
             <div key={`col-${colIndex}`} className="flex flex-col gap-4">
               {col.map((post) => (
-                <PostCard key={post.id} post={post} showAbsoluteTime={showAbsoluteTime} onToggleTimeFormat={onToggleTimeFormat} />
+                <PostCard key={post.id} post={post} showAbsoluteTime={showAbsoluteTime} onToggleTimeFormat={onToggleTimeFormat} onDelete={onDeletePost} />
               ))}
               {loadingMore && colIndex === minIndex && (
                 <PostCardSkeleton />

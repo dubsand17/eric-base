@@ -279,6 +279,17 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
     setSortOrder(newSortOrder)
   }
 
+  const handleDeletePost = async (postId: string) => {
+    try {
+      const res = await fetch(`/api/posts?id=${postId}`, { method: 'DELETE' })
+      if (res.ok) {
+        setPosts(prev => prev.filter(p => p.id !== postId))
+      }
+    } catch (err) {
+      console.error('删除失败:', err)
+    }
+  }
+
   const renderMainContent = () => {
     if (isWideScreen && selectedSymbol) {
       const tradingViewSymbol = getTradingViewSymbol(selectedSymbol)
@@ -324,7 +335,6 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
 
     return (
       <div className="h-full overflow-y-auto no-scrollbar">
-        <GroupsGrid />
         <PostsList
           posts={posts}
           pagination={pagination}
@@ -332,7 +342,9 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
           showAbsoluteTime={showAbsoluteTime}
           onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)}
           onLoadMore={handleLoadMore}
+          onDeletePost={handleDeletePost}
         />
+        <GroupsGrid />
       </div>
     )
   }
