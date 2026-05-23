@@ -48,66 +48,11 @@ function injectCollectButtons() {
         // 提取推文数据
         const tweetData = extractTweetDataFromElement(tweetElement);
 
-        // 发送到API
-        console.log('发送推文数据:', tweetData);
-        const response = await fetch('https://eric-base.vercel.app/api/posts', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(tweetData)
-        });
-
-        console.log('API响应状态:', response.status);
-        console.log('API响应头:', response.headers);
-
-        if (response.ok) {
-          // 成功反馈
-          const originalHTML = collectBtn.innerHTML;
-          collectBtn.innerHTML = `
-            <div style="display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0px; border-radius: 9999px; color: rgb(249, 24, 128); width: 34.75px; height: 34.75px; background-color: rgba(249, 24, 128, 0.1);">
-              <svg viewBox="0 0 24 24" width="18.75" height="18.75" fill="currentColor">
-                <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
-              </svg>
-            </div>
-          `;
-
-          showToast('推文收藏成功！', 'success');
-
-          // 2秒后恢复原状
-          setTimeout(() => {
-            collectBtn.innerHTML = originalHTML;
-          }, 2000);
-        } else {
-          throw new Error('保存失败');
-        }
+        // 弹出分组选择浮层
+        showGroupSelector(tweetData, collectBtn);
       } catch (error) {
-        console.error('收藏失败:', error);
-        console.error('错误详情:', error.stack);
-
-        // 错误反馈
-        const originalHTML = collectBtn.innerHTML;
-        collectBtn.innerHTML = `
-          <div style="display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0px; border-radius: 9999px; color: rgb(239, 68, 68); width: 34.75px; height: 34.75px; background-color: rgba(239, 68, 68, 0.1);">
-            <svg viewBox="0 0 24 24" width="18.75" height="18.75" fill="currentColor">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-            </svg>
-          </div>
-        `;
-
-        // 显示更详细的错误信息
-        let errorMessage = '收藏失败';
-        if (error.name === 'TypeError' && error.message.includes('fetch')) {
-          errorMessage = '网络连接失败，请检查网络或稍后重试';
-        } else if (error.message) {
-          errorMessage = `收藏失败: ${error.message}`;
-        }
-
-        showToast(errorMessage, 'error');
-
-        setTimeout(() => {
-          collectBtn.innerHTML = originalHTML;
-        }, 2000);
+        console.error('提取推文数据失败:', error);
+        showToast('提取推文数据失败', 'error');
       }
     });
 
@@ -480,4 +425,191 @@ function extractEngagementMetrics(tweetElement) {
   }
 
   return metrics;
+}
+
+const API_BASE = 'https://eric-base.vercel.app';
+
+// 分组选择浮层
+async function showGroupSelector(tweetData, collectBtn) {
+  // 移除已有浮层
+  const existing = document.querySelector('.tweet-group-selector');
+  if (existing) existing.remove();
+
+  const overlay = document.createElement('div');
+  overlay.className = 'tweet-group-selector';
+  overlay.style.cssText = `
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6); z-index: 10001;
+    display: flex; align-items: center; justify-content: center;
+  `;
+
+  const panel = document.createElement('div');
+  panel.style.cssText = `
+    background: #1a1a2e; color: #e0e0e0; border-radius: 16px;
+    width: 380px; max-height: 500px; overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    display: flex; flex-direction: column;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  `;
+
+  // 头部
+  const header = document.createElement('div');
+  header.style.cssText = 'padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 15px; font-weight: 600;';
+  header.textContent = '选择主题分组';
+  panel.appendChild(header);
+
+  // 加载中
+  const body = document.createElement('div');
+  body.style.cssText = 'flex: 1; overflow-y: auto; padding: 8px 12px;';
+  body.innerHTML = '<div style="text-align:center;padding:20px;color:#888;">加载中...</div>';
+  panel.appendChild(body);
+
+  // 底部按钮
+  const footer = document.createElement('div');
+  footer.style.cssText = 'padding: 12px 16px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; gap: 8px;';
+
+  const newGroupBtn = document.createElement('button');
+  newGroupBtn.textContent = '＋ 新建主题';
+  newGroupBtn.style.cssText = `
+    flex: 1; padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15);
+    background: transparent; color: #e0e0e0; cursor: pointer; font-size: 13px;
+    transition: background 0.2s;
+  `;
+  newGroupBtn.onmouseover = () => newGroupBtn.style.background = 'rgba(255,255,255,0.05)';
+  newGroupBtn.onmouseout = () => newGroupBtn.style.background = 'transparent';
+
+  const skipBtn = document.createElement('button');
+  skipBtn.textContent = '不分组，直接收藏';
+  skipBtn.style.cssText = `
+    flex: 1; padding: 10px; border-radius: 8px; border: none;
+    background: rgb(249, 24, 128); color: white; cursor: pointer; font-size: 13px;
+    font-weight: 500; transition: opacity 0.2s;
+  `;
+  skipBtn.onmouseover = () => skipBtn.style.opacity = '0.85';
+  skipBtn.onmouseout = () => skipBtn.style.opacity = '1';
+
+  footer.appendChild(newGroupBtn);
+  footer.appendChild(skipBtn);
+  panel.appendChild(footer);
+  overlay.appendChild(panel);
+  document.body.appendChild(overlay);
+
+  // 点击遮罩关闭
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) overlay.remove();
+  });
+
+  // Esc 关闭
+  const escHandler = (e) => {
+    if (e.key === 'Escape') { overlay.remove(); document.removeEventListener('keydown', escHandler); }
+  };
+  document.addEventListener('keydown', escHandler);
+
+  // 不分组直接收藏
+  skipBtn.addEventListener('click', async () => {
+    overlay.remove();
+    await submitTweet(tweetData, null, collectBtn);
+  });
+
+  // 新建主题
+  newGroupBtn.addEventListener('click', async () => {
+    overlay.remove();
+    await submitTweet(tweetData, '__new__', collectBtn);
+  });
+
+  // 加载分组列表
+  try {
+    const res = await fetch(`${API_BASE}/api/groups`);
+    if (!res.ok) throw new Error('加载分组失败');
+    const result = await res.json();
+    const groups = result.data || [];
+
+    if (groups.length === 0) {
+      body.innerHTML = '<div style="text-align:center;padding:20px;color:#888;">暂无分组，点击下方新建</div>';
+      return;
+    }
+
+    body.innerHTML = '';
+    for (const group of groups) {
+      const item = document.createElement('div');
+      item.style.cssText = `
+        display: flex; align-items: center; gap: 12px; padding: 10px 8px;
+        border-radius: 10px; cursor: pointer; transition: background 0.15s;
+      `;
+      item.onmouseover = () => item.style.background = 'rgba(255,255,255,0.06)';
+      item.onmouseout = () => item.style.background = 'transparent';
+
+      const thumb = document.createElement('img');
+      thumb.src = group.cover_image;
+      thumb.style.cssText = 'width: 48px; height: 48px; border-radius: 8px; object-fit: cover; flex-shrink: 0;';
+
+      const info = document.createElement('div');
+      info.style.cssText = 'flex: 1; min-width: 0;';
+      info.innerHTML = `
+        <div style="font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+          ${group.title || '未命名主题'}
+        </div>
+        <div style="font-size: 12px; color: #888; margin-top: 2px;">${group.post_count || 0} 条推文</div>
+      `;
+
+      item.appendChild(thumb);
+      item.appendChild(info);
+      body.appendChild(item);
+
+      item.addEventListener('click', async () => {
+        overlay.remove();
+        await submitTweet(tweetData, group.id, collectBtn);
+      });
+    }
+  } catch (err) {
+    body.innerHTML = `<div style="text-align:center;padding:20px;color:#f44;">加载分组失败: ${err.message}</div>`;
+  }
+}
+
+// 提交推文
+async function submitTweet(tweetData, groupChoice, collectBtn) {
+  try {
+    const payload = { ...tweetData };
+
+    if (groupChoice === '__new__') {
+      payload.new_group = true;
+    } else if (groupChoice) {
+      payload.group_id = groupChoice;
+    }
+
+    console.log('发送推文数据:', payload);
+    const response = await fetch(`${API_BASE}/api/posts`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (response.ok) {
+      const originalHTML = collectBtn.innerHTML;
+      collectBtn.innerHTML = `
+        <div style="display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0px; border-radius: 9999px; color: rgb(249, 24, 128); width: 34.75px; height: 34.75px; background-color: rgba(249, 24, 128, 0.1);">
+          <svg viewBox="0 0 24 24" width="18.75" height="18.75" fill="currentColor">
+            <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+          </svg>
+        </div>
+      `;
+
+      const msg = groupChoice === '__new__' ? '已收藏并新建主题！' :
+                  groupChoice ? '已收藏到主题！' : '推文收藏成功！';
+      showToast(msg, 'success');
+
+      setTimeout(() => { collectBtn.innerHTML = originalHTML; }, 2000);
+    } else {
+      throw new Error('保存失败');
+    }
+  } catch (error) {
+    console.error('收藏失败:', error);
+    let errorMessage = '收藏失败';
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      errorMessage = '网络连接失败，请检查网络或稍后重试';
+    } else if (error.message) {
+      errorMessage = `收藏失败: ${error.message}`;
+    }
+    showToast(errorMessage, 'error');
+  }
 } 

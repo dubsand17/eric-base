@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Supabase 未配置，请设置 NEXT_PUBLIC_SUPABASE_URL 与 NEXT_PUBLIC_SUPABASE_ANON_KEY' }, { status: 500, headers: { ...corsHeaders } })
     }
     const body = await request.json()
-    const { content, images, tweet_created_at, tweet_url, comment_count, retweet_count, like_count, view_count } = body
+    const { content, images, tweet_created_at, tweet_url, comment_count, retweet_count, like_count, view_count, group_id, new_group, new_group_title } = body
 
     // Debug: 打印接收到的数据
     console.log('📥 POST /api/posts - 接收到的数据:')
@@ -36,13 +36,37 @@ export async function POST(request: NextRequest) {
     console.log('  转发:', retweet_count)
     console.log('  点赞:', like_count)
     console.log('  观看:', view_count)
+    console.log('  分组:', group_id || (new_group ? '新建分组' : '无'))
+
+    // 如果需要新建分组
+    let finalGroupId = group_id || null
+    if (new_group && images && images.length > 0) {
+      const { data: groupData, error: groupError } = await supabase
+        .from('post_groups')
+        .insert([{
+          id: crypto.randomUUID(),
+          cover_image: images[0],
+          title: new_group_title || null,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        }])
+        .select()
+
+      if (groupError) {
+        console.error('❌ 创建分组失败:', groupError)
+        return NextResponse.json({ error: groupError.message }, { status: 400, headers: { ...corsHeaders } })
+      }
+      finalGroupId = groupData[0].id
+      console.log('✅ 新分组创建:', finalGroupId)
+    }
 
     const insertData = {
       id: crypto.randomUUID(),
       content,
-      images: images || [],  // 确保是数组，Supabase 会自动转换为 jsonb
+      images: images || [],
       tweet_created_at,
       tweet_url,
+      group_id: finalGroupId,
       comment_count: comment_count || 0,
       retweet_count: retweet_count || 0,
       like_count: like_count || 0,
@@ -61,6 +85,14 @@ export async function POST(request: NextRequest) {
     if (error) {
       console.error('❌ 数据库插入错误:', error)
       return NextResponse.json({ error: error.message }, { status: 400, headers: { ...corsHeaders } })
+    }
+
+    // 如果关联了分组，更新分组的 updated_at
+    if (finalGroupId) {
+      await supabase
+        .from('post_groups')
+        .update({ updated_at: new Date().toISOString() })
+        .eq('id', finalGroupId)
     }
 
     console.log('✅ 插入成功:', data[0])
@@ -85,6 +117,7 @@ export async function GET(request: NextRequest) {
     const offsetParam = parseInt(searchParams.get('offset') || '0')
     const sortBy = searchParams.get('sortBy') || 'date' // date, comments, retweets, likes, views
     const sortOrder = searchParams.get('sortOrder') || 'desc' // asc, desc
+    const ungrouped = searchParams.get('ungrouped') === 'true'
 
     if (!supabase) {
       return NextResponse.json({ error: 'Supabase 未配置，请设置 NEXT_PUBLIC_SUPABASE_URL 与 NEXT_PUBLIC_SUPABASE_ANON_KEY' }, { status: 500, headers: corsHeaders })
@@ -147,6 +180,7 @@ export async function GET(request: NextRequest) {
     if (q) baseCount = baseCount.ilike('content', `%${q}%`)
     if (from) baseCount = baseCount.gte('tweet_created_at', from)
     if (to) baseCount = baseCount.lte('tweet_created_at', to)
+    if (ungrouped) baseCount = baseCount.is('group_id', null)
     const { count, error: countError } = await baseCount
 
     if (countError) {
@@ -161,6 +195,7 @@ export async function GET(request: NextRequest) {
     if (q) baseQuery = baseQuery.ilike('content', `%${q}%`)
     if (from) baseQuery = baseQuery.gte('tweet_created_at', from)
     if (to) baseQuery = baseQuery.lte('tweet_created_at', to)
+    if (ungrouped) baseQuery = baseQuery.is('group_id', null)
     const { data, error } = await baseQuery.range(offset, offset + pageSize - 1)
 
     if (error) {

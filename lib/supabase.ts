@@ -14,9 +14,20 @@ export interface TwitterPost {
   created_at: string
   tweet_created_at?: string
   tweet_url?: string
+  group_id?: string | null
   comment_count?: number
   retweet_count?: number
   like_count?: number
   view_count?: number
   metrics_updated_at?: string
+}
+
+export interface PostGroup {
+  id: string
+  title: string | null
+  cover_image: string
+  created_at: string
+  updated_at: string
+  post_count?: number
+  latest_post_at?: string | null
 } 

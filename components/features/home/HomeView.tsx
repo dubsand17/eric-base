@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import AppHeader from '@/components/layout/AppHeader'
 import CryptoPriceTicker from '@/components/features/crypto/CryptoPriceTicker'
 import PostsList from '@/components/features/posts/PostsList'
+import GroupsGrid from '@/components/features/posts/GroupsGrid'
 import LoadingState from '@/components/shared/LoadingState'
 import ErrorState from '@/components/shared/ErrorState'
 import EmptyState from '@/components/shared/EmptyState'
@@ -206,6 +207,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
       if (to) url.searchParams.append('to', to)
       url.searchParams.append('sortBy', sortBy)
       url.searchParams.append('sortOrder', sortOrder)
+      url.searchParams.append('ungrouped', 'true')
 
       const key = url.pathname + '?' + url.searchParams.toString()
       const now = Date.now()
@@ -256,7 +258,9 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
       return
     }
     const controller = new AbortController()
-    setHasSearched(true)
+    if (debouncedQuery || from || to) {
+      setHasSearched(true)
+    }
     setLoading(true)
     setFetchingInitial(true)
     setPosts([])
@@ -320,6 +324,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
 
     return (
       <div className="h-full overflow-y-auto no-scrollbar">
+        <GroupsGrid />
         <PostsList
           posts={posts}
           pagination={pagination}
@@ -376,7 +381,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
     )
   }
 
-  if (!fetchingInitial && posts.length === 0) {
+  if (!fetchingInitial && posts.length === 0 && hasSearched) {
     return (
       <div className="min-h-screen bg-terminal-bg-light dark:bg-terminal-bg-dark">
         <AppHeader
@@ -393,7 +398,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
         </div>
         <div className="container mx-auto py-6">
           <EmptyState
-            state={hasSearched ? 'no_results' : 'idle'}
+            state={'no_results'}
             query={debouncedQuery}
             onClear={() => { setQuery(''); setFrom(undefined); setTo(undefined) }}
           />
