@@ -21,6 +21,7 @@
 import { createClient } from '@supabase/supabase-js'
 import puppeteer from 'puppeteer'
 import dotenv from 'dotenv'
+import { existsSync } from 'fs'
 
 // Load environment variables from .env.local
 dotenv.config({ path: '.env.local' })
@@ -73,6 +74,15 @@ console.log('Options:', options)
 console.log('')
 
 let browser = null
+
+const chromeCandidates = [
+    process.env.PUPPETEER_EXECUTABLE_PATH,
+    process.env.CHROME_PATH,
+    '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    '/Applications/Chromium.app/Contents/MacOS/Chromium'
+].filter(Boolean)
+
+const chromeExecutablePath = chromeCandidates.find((path) => existsSync(path))
 
 /**
  * Extract engagement metrics from Twitter page using Puppeteer
@@ -285,7 +295,12 @@ async function updatePostMetrics(page, post) {
 async function main() {
     // Launch browser
     console.log('🌐 Launching browser...')
+    if (chromeExecutablePath) {
+        console.log(`🧭 Using Chrome: ${chromeExecutablePath}`)
+    }
+
     browser = await puppeteer.launch({
+        ...(chromeExecutablePath ? { executablePath: chromeExecutablePath } : {}),
         headless: options.headless ? 'new' : false,
         args: ['--no-sandbox', '--disable-setuid-sandbox']
     })
