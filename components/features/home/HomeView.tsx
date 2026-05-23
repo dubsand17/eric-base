@@ -395,7 +395,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
           onDeletePost={handleDeletePost}
           onAssignGroup={handleOpenGroupSelector}
         />
-        <GroupsGrid />
+        <GroupsGrid searchQuery={debouncedQuery} />
       </div>
     )
   }

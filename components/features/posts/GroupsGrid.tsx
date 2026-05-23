@@ -6,6 +6,7 @@ import type { PostGroup } from '@/lib/supabase'
 
 interface GroupsGridProps {
   containerWidth?: number
+  searchQuery?: string
 }
 
 function getColumnCount(width: number | undefined): number {
@@ -20,7 +21,7 @@ function getColumnCount(width: number | undefined): number {
   return Math.min(6, Math.floor(width / 320))
 }
 
-export default function GroupsGrid({ containerWidth }: GroupsGridProps) {
+export default function GroupsGrid({ containerWidth, searchQuery }: GroupsGridProps) {
   const [groups, setGroups] = useState<PostGroup[]>([])
   const [loading, setLoading] = useState(true)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -59,11 +60,17 @@ export default function GroupsGrid({ containerWidth }: GroupsGridProps) {
     load()
   }, [])
 
+  const filteredGroups = useMemo(() => {
+    if (!searchQuery?.trim()) return groups
+    const q = searchQuery.trim().toLowerCase()
+    return groups.filter(g => g.title?.toLowerCase().includes(q))
+  }, [groups, searchQuery])
+
   const columns = useMemo(() => {
     const cols: PostGroup[][] = Array.from({ length: colCount }, () => [])
-    groups.forEach((g, i) => cols[i % colCount].push(g))
+    filteredGroups.forEach((g, i) => cols[i % colCount].push(g))
     return cols
-  }, [groups, colCount])
+  }, [filteredGroups, colCount])
 
   if (loading) {
     // 占位，避免布局跳动
@@ -81,6 +88,13 @@ export default function GroupsGrid({ containerWidth }: GroupsGridProps) {
     )
   }
   if (groups.length === 0) return null
+  if (filteredGroups.length === 0 && searchQuery?.trim()) {
+    return (
+      <div className="w-full px-4 py-6 text-center text-sm text-terminal-text-muted-light dark:text-terminal-text-muted-dark">
+        没有找到匹配「{searchQuery.trim()}」的分组
+      </div>
+    )
+  }
 
   return (
     <div ref={containerRef} className="w-full px-4 py-2 md:py-3 overflow-hidden">
