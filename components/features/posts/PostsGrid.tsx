@@ -113,7 +113,7 @@ export default function PostsGrid({ posts, loadingMore = false, showAbsoluteTime
     <div ref={containerRef} className="w-full px-4 py-2 md:py-3">
       <div
         className="grid gap-4"
-        style={{ gridTemplateColumns: `repeat(${effectiveColCount}, 1fr)` }}
+        style={{ gridTemplateColumns: `repeat(${effectiveColCount}, minmax(0, 1fr))` }}
       >
         {(() => {
           // 计算最短列索引（以条目数量近似列高度）
