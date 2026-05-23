@@ -459,12 +459,8 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
         <div className="md:hidden fixed top-5 left-4 z-40">
           <MobileMenu showAbsoluteTime={showAbsoluteTime} onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)} />
         </div>
-        <div className="container mx-auto py-6">
-          <EmptyState
-            state={'no_results'}
-            query={debouncedQuery}
-            onClear={() => { setQuery(''); setFrom(undefined); setTo(undefined) }}
-          />
+        <div className="pt-20">
+          <GroupsGrid searchQuery={debouncedQuery} />
         </div>
         <CryptoPriceTicker prices={prices} dir={dir} onSymbolClick={handleSymbolClick} />
       </div>
