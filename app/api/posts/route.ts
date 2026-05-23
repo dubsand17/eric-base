@@ -10,10 +10,7 @@ const corsHeaders = {
 
 // CDN caching headers for Vercel/Edge
 const cacheHeaders = {
-  'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
-  // Some CDNs respect these explicit headers too
-  'CDN-Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
-  'Vercel-CDN-Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+  'Cache-Control': 'no-store, no-cache, must-revalidate',
 }
 
 // 仅使用 Supabase，移除临时内存存储
