@@ -5,6 +5,7 @@ import AppHeader from '@/components/layout/AppHeader'
 import CryptoPriceTicker from '@/components/features/crypto/CryptoPriceTicker'
 import PostsList from '@/components/features/posts/PostsList'
 import GroupsGrid from '@/components/features/posts/GroupsGrid'
+import GroupSelectorModal from '@/components/features/posts/GroupSelectorModal'
 import LoadingState from '@/components/shared/LoadingState'
 import ErrorState from '@/components/shared/ErrorState'
 import EmptyState from '@/components/shared/EmptyState'
@@ -290,6 +291,55 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
     }
   }
 
+  // 分组选择
+  const [groupModalOpen, setGroupModalOpen] = useState(false)
+  const [assigningPostId, setAssigningPostId] = useState<string | null>(null)
+
+  const handleOpenGroupSelector = (postId: string) => {
+    setAssigningPostId(postId)
+    setGroupModalOpen(true)
+  }
+
+  const handleAssignToGroup = async (groupId: string) => {
+    if (!assigningPostId) return
+    try {
+      const res = await fetch('/api/posts/assign-group', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ post_id: assigningPostId, group_id: groupId })
+      })
+      if (res.ok) {
+        setPosts(prev => prev.filter(p => p.id !== assigningPostId))
+      }
+    } catch (err) {
+      console.error('归组失败:', err)
+    }
+    setGroupModalOpen(false)
+    setAssigningPostId(null)
+  }
+
+  const handleCreateNewGroup = async (title: string) => {
+    if (!assigningPostId) return
+    const post = posts.find(p => p.id === assigningPostId)
+    const coverImage = post?.images?.[0] || ''
+    try {
+      // 创建分组
+      const groupRes = await fetch('/api/groups', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cover_image: coverImage, title })
+      })
+      if (groupRes.ok) {
+        const newGroup = await groupRes.json()
+        await handleAssignToGroup(newGroup.id)
+      }
+    } catch (err) {
+      console.error('创建分组失败:', err)
+      setGroupModalOpen(false)
+      setAssigningPostId(null)
+    }
+  }
+
   const renderMainContent = () => {
     if (isWideScreen && selectedSymbol) {
       const tradingViewSymbol = getTradingViewSymbol(selectedSymbol)
@@ -343,6 +393,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
           onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)}
           onLoadMore={handleLoadMore}
           onDeletePost={handleDeletePost}
+          onAssignGroup={handleOpenGroupSelector}
         />
         <GroupsGrid />
       </div>
@@ -446,6 +497,12 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
         {renderMainContent()}
       </div>
       <CryptoPriceTicker prices={prices} dir={dir} onSymbolClick={handleSymbolClick} />
+      <GroupSelectorModal
+        isOpen={groupModalOpen}
+        onClose={() => { setGroupModalOpen(false); setAssigningPostId(null) }}
+        onSelect={handleAssignToGroup}
+        onCreateNew={handleCreateNewGroup}
+      />
     </div>
   )
 }

@@ -20,6 +20,7 @@ interface PostsListProps {
   onLoadMore: () => void
   containerWidth?: number
   onDeletePost?: (postId: string) => void
+  onAssignGroup?: (postId: string) => void
 }
 
 export default function PostsList({
@@ -30,7 +31,8 @@ export default function PostsList({
   onToggleTimeFormat,
   onLoadMore,
   containerWidth,
-  onDeletePost
+  onDeletePost,
+  onAssignGroup
 }: PostsListProps) {
   const sentinelRef = useRef<HTMLDivElement | null>(null)
 
@@ -59,6 +61,7 @@ export default function PostsList({
         onToggleTimeFormat={onToggleTimeFormat}
         containerWidth={containerWidth}
         onDeletePost={onDeletePost}
+        onAssignGroup={onAssignGroup}
       />
 
       <div ref={sentinelRef} className="h-1" />
