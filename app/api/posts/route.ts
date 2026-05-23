@@ -215,3 +215,31 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500, headers: { ...corsHeaders, ...cacheHeaders } })
   }
 }
+
+export async function DELETE(request: NextRequest) {
+  try {
+    if (!supabase) {
+      return NextResponse.json({ error: 'Supabase 未配置' }, { status: 500, headers: corsHeaders })
+    }
+
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get('id')
+
+    if (!id) {
+      return NextResponse.json({ error: 'id 参数必填' }, { status: 400, headers: corsHeaders })
+    }
+
+    const { error } = await supabase
+      .from('twitter_posts')
+      .delete()
+      .eq('id', id)
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 400, headers: corsHeaders })
+    }
+
+    return NextResponse.json({ success: true }, { headers: corsHeaders })
+  } catch (error) {
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500, headers: corsHeaders })
+  }
+}

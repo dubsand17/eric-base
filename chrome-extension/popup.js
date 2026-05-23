@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('采集预览:', preview);
 
         // 发送到你的API
-        const response = await fetch('http://localhost:3000/api/posts', {
+        const response = await fetch('https://eric-base-pi.vercel.app/api/posts', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

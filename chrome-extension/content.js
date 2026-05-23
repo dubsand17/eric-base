@@ -427,7 +427,7 @@ function extractEngagementMetrics(tweetElement) {
   return metrics;
 }
 
-const API_BASE = 'https://eric-base.vercel.app';
+const API_BASE = 'https://eric-base-pi.vercel.app';
 
 // 分组选择浮层
 async function showGroupSelector(tweetData, collectBtn) {

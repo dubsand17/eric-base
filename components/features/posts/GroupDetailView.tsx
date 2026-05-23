@@ -6,7 +6,7 @@ import Link from 'next/link'
 import type { TwitterPost, PostGroup } from '@/lib/supabase'
 import { formatDistanceToNow, format } from 'date-fns'
 import { zhCN } from 'date-fns/locale'
-import { ArrowLeft, ArrowSquareOut, ChatCircle, ArrowsClockwise, Heart, Eye, PencilSimple, Check, X } from 'phosphor-react'
+import { ArrowLeft, ArrowSquareOut, ChatCircle, ArrowsClockwise, Heart, Eye, PencilSimple, Check, X, Trash } from 'phosphor-react'
 import ImageModal from '@/components/features/image/ImageModal'
 
 function PostContent({ content, isActive }: { content: string; isActive: boolean }) {
@@ -107,6 +107,22 @@ export default function GroupDetailView({ groupId }: GroupDetailViewProps) {
 
   const cancelRename = () => {
     setIsRenaming(false)
+  }
+
+  const handleDeletePost = async (postId: string) => {
+    if (!confirm('确定删除这条推文？')) return
+    try {
+      const res = await fetch(`/api/posts?id=${postId}`, { method: 'DELETE' })
+      if (res.ok) {
+        const newPosts = posts.filter(p => p.id !== postId)
+        setPosts(newPosts)
+        if (selectedPostId === postId) {
+          setSelectedPostId(newPosts[0]?.id || null)
+        }
+      }
+    } catch (err) {
+      console.error('删除失败:', err)
+    }
   }
 
   const formatNumber = (num: number | undefined) => {
@@ -266,6 +282,13 @@ export default function GroupDetailView({ groupId }: GroupDetailViewProps) {
                             <ArrowSquareOut className="w-3 h-3" weight="duotone" />
                           </a>
                         )}
+                        <button
+                          onClick={(e) => { e.stopPropagation(); handleDeletePost(post.id) }}
+                          className="flex items-center gap-0.5 hover:text-red-500 ml-1 transition-colors"
+                          title="删除推文"
+                        >
+                          <Trash className="w-3 h-3" weight="duotone" />
+                        </button>
                       </div>
                     </div>
                   </div>
