@@ -48,7 +48,7 @@ export default function GroupsGrid({ containerWidth, searchQuery, refreshKey }: 
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch('/api/groups')
+        const res = await fetch(`/api/groups?_t=${Date.now()}`)
         if (!res.ok) throw new Error('Failed to fetch groups')
         const result = await res.json()
         setGroups(result.data || [])
