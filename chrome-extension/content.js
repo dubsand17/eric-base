@@ -109,8 +109,16 @@ function extractTweetDataFromElement(tweetElement) {
   const timeElement = tweetElement.querySelector('time[datetime]');
   const tweetCreatedAt = timeElement ? timeElement.getAttribute('datetime') : new Date().toISOString();
 
-  // 构建推文URL
-  const tweetUrl = window.location.href;
+  // 构建推文URL - 从推文内的链接提取，而非 window.location
+  let tweetUrl = '';
+  const statusLink = tweetElement.querySelector('a[href*="/status/"]');
+  if (statusLink) {
+    const href = statusLink.getAttribute('href');
+    tweetUrl = href.startsWith('http') ? href : `https://x.com${href}`;
+  }
+  if (!tweetUrl) {
+    tweetUrl = window.location.href;
+  }
 
   // 提取互动指标
   const metrics = extractEngagementMetrics(tweetElement);
@@ -312,10 +320,16 @@ function extractTweetData() {
     }
   }
 
-  // 构建推文URL
-  const tweetUrl = window.location.href;
-
-  // 验证数据完整性
+  // 构建推文URL - 从推文内的链接提取
+  let tweetUrl = '';
+  const statusLink2 = tweetElement.querySelector('a[href*="/status/"]');
+  if (statusLink2) {
+    const href = statusLink2.getAttribute('href');
+    tweetUrl = href.startsWith('http') ? href : `https://x.com${href}`;
+  }
+  if (!tweetUrl) {
+    tweetUrl = window.location.href;
+  }
   if (!content || content.length < 5) {
     throw new Error('无法提取推文内容，请确保页面中有推文文本');
   }
