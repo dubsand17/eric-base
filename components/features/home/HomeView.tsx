@@ -208,7 +208,9 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
       if (to) url.searchParams.append('to', to)
       url.searchParams.append('sortBy', sortBy)
       url.searchParams.append('sortOrder', sortOrder)
-      url.searchParams.append('ungrouped', 'true')
+      if (!debouncedQuery && !from && !to) {
+        url.searchParams.append('ungrouped', 'true')
+      }
 
       const key = url.pathname + '?' + url.searchParams.toString()
       const now = Date.now()
@@ -385,6 +387,13 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
 
     return (
       <div className="h-full overflow-y-auto no-scrollbar">
+        {debouncedQuery && posts.length > 0 && (
+          <div className="px-4 pt-3 pb-1">
+            <h2 className="text-sm font-medium text-terminal-text-secondary-light dark:text-terminal-text-secondary-dark">
+              文案匹配「{debouncedQuery}」
+            </h2>
+          </div>
+        )}
         <PostsList
           posts={posts}
           pagination={pagination}
