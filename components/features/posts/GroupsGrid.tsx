@@ -7,6 +7,7 @@ import type { PostGroup } from '@/lib/supabase'
 interface GroupsGridProps {
   containerWidth?: number
   searchQuery?: string
+  refreshKey?: number
 }
 
 function getColumnCount(width: number | undefined): number {
@@ -21,7 +22,7 @@ function getColumnCount(width: number | undefined): number {
   return Math.min(6, Math.floor(width / 320))
 }
 
-export default function GroupsGrid({ containerWidth, searchQuery }: GroupsGridProps) {
+export default function GroupsGrid({ containerWidth, searchQuery, refreshKey }: GroupsGridProps) {
   const [groups, setGroups] = useState<PostGroup[]>([])
   const [loading, setLoading] = useState(true)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -58,7 +59,7 @@ export default function GroupsGrid({ containerWidth, searchQuery }: GroupsGridPr
       }
     }
     load()
-  }, [])
+  }, [refreshKey])
 
   const filteredGroups = useMemo(() => {
     if (!searchQuery?.trim()) return groups

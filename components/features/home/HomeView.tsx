@@ -296,6 +296,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
   // 分组选择
   const [groupModalOpen, setGroupModalOpen] = useState(false)
   const [assigningPostId, setAssigningPostId] = useState<string | null>(null)
+  const [groupsRefreshKey, setGroupsRefreshKey] = useState(0)
 
   const handleOpenGroupSelector = (postId: string) => {
     setAssigningPostId(postId)
@@ -312,6 +313,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
       })
       if (res.ok) {
         setPosts(prev => prev.filter(p => p.id !== assigningPostId))
+        setGroupsRefreshKey(prev => prev + 1)
       }
     } catch (err) {
       console.error('归组失败:', err)
@@ -411,7 +413,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
           onDeletePost={handleDeletePost}
           onAssignGroup={handleOpenGroupSelector}
         />
-        <GroupsGrid searchQuery={debouncedQuery} />
+        <GroupsGrid searchQuery={debouncedQuery} refreshKey={groupsRefreshKey} />
       </div>
     )
   }
@@ -476,7 +478,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
           <MobileMenu showAbsoluteTime={showAbsoluteTime} onToggleTimeFormat={() => setShowAbsoluteTime((v) => !v)} />
         </div>
         <div className="pt-20">
-          <GroupsGrid searchQuery={debouncedQuery} />
+          <GroupsGrid searchQuery={debouncedQuery} refreshKey={groupsRefreshKey} />
         </div>
         <CryptoPriceTicker prices={prices} dir={dir} onSymbolClick={handleSymbolClick} />
       </div>
