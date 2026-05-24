@@ -25,8 +25,10 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
   const [isLoading, setIsLoading] = useState(true)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
+  const isTextOnly = imageUrl === '__text_only__'
+
   // 获取当前图片列表，如果没有传入images则使用单个imageUrl
-  const imageList = images.length > 0 ? images : [imageUrl]
+  const imageList = isTextOnly ? [] : (images.length > 0 ? images : [imageUrl])
   const currentImage = imageList[currentImageIndex] || imageUrl
 
   // 用于处理触摸手势的状态
@@ -313,25 +315,34 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
             >
               {/* 图片展示区域 */}
               <div className="flex-1 flex items-center justify-center relative">
-                {/* 图片导航按钮 */}
-                {imageList.length > 1 && (
+                {isTextOnly ? (
+                  /* 纯文字模式 */
+                  <div className="w-full h-full flex items-center justify-center p-8 md:p-12 overflow-y-auto">
+                    <p className="text-terminal-text-primary-light dark:text-terminal-text-primary-dark text-base md:text-lg leading-relaxed whitespace-pre-wrap max-w-2xl">
+                      {content}
+                    </p>
+                  </div>
+                ) : (
                   <>
-                    <button
-                      onClick={handlePrevImage}
-                      disabled={currentImageIndex === 0}
-                      className="absolute left-4 z-20 p-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:enabled:border-terminal-borderHover-light dark:hover:enabled:border-terminal-borderHover-dark hover:enabled:shadow-soft transition-all-gentle disabled:opacity-30 disabled:cursor-not-allowed active:enabled:scale-95"
-                    >
-                      <CaretLeft className="w-6 h-6" />
-                    </button>
-                    <button
-                      onClick={handleNextImage}
-                      disabled={currentImageIndex === imageList.length - 1}
-                      className="absolute right-4 z-20 p-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:enabled:border-terminal-borderHover-light dark:hover:enabled:border-terminal-borderHover-dark hover:enabled:shadow-soft transition-all-gentle disabled:opacity-30 disabled:cursor-not-allowed active:enabled:scale-95"
-                    >
-                      <CaretRight className="w-6 h-6" />
-                    </button>
-                  </>
-                )}
+                    {/* 图片导航按钮 */}
+                    {imageList.length > 1 && (
+                      <>
+                        <button
+                          onClick={handlePrevImage}
+                          disabled={currentImageIndex === 0}
+                          className="absolute left-4 z-20 p-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:enabled:border-terminal-borderHover-light dark:hover:enabled:border-terminal-borderHover-dark hover:enabled:shadow-soft transition-all-gentle disabled:opacity-30 disabled:cursor-not-allowed active:enabled:scale-95"
+                        >
+                          <CaretLeft className="w-6 h-6" />
+                        </button>
+                        <button
+                          onClick={handleNextImage}
+                          disabled={currentImageIndex === imageList.length - 1}
+                          className="absolute right-4 z-20 p-3 rounded-lg border border-terminal-border-light dark:border-terminal-border-dark glass-light dark:glass-dark text-terminal-text-primary-light dark:text-terminal-text-primary-dark hover:enabled:border-terminal-borderHover-light dark:hover:enabled:border-terminal-borderHover-dark hover:enabled:shadow-soft transition-all-gentle disabled:opacity-30 disabled:cursor-not-allowed active:enabled:scale-95"
+                        >
+                          <CaretRight className="w-6 h-6" />
+                        </button>
+                      </>
+                    )}
 
                 {/* 图片容器 */}
                 <div
@@ -409,6 +420,8 @@ export default function ImageModal({ isOpen, imageUrl, images = [], content, twe
                     </button>
                   </div>
                 </div>
+                  </>
+                )}
               </div>
             </div>
           </div>

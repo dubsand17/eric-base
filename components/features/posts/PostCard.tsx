@@ -139,7 +139,7 @@ export default function PostCard({ post, showAbsoluteTime = false, onToggleTimeF
         </div>
 
         {/* 图片 */}
-        {post.images && post.images.length > 0 && (
+        {post.images && post.images.length > 0 ? (
           <div className="px-5 pb-5">
             <div className={`flex flex-col gap-2 ${post.images.length === 1 ? '' :
               post.images.length === 2 ? 'sm:grid sm:grid-cols-2' :
@@ -167,6 +167,18 @@ export default function PostCard({ post, showAbsoluteTime = false, onToggleTimeF
                   <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-5 transition-all duration-200 rounded-lg" />
                 </div>
               ))}
+            </div>
+          </div>
+        ) : post.content && (
+          <div className="px-5 pb-5">
+            <div
+              className="relative rounded-lg overflow-hidden cursor-pointer bg-terminal-bg-light/50 dark:bg-terminal-bg-dark/50 border border-terminal-border-light dark:border-terminal-border-dark hover:border-terminal-borderHover-light dark:hover:border-terminal-borderHover-dark transition-all-gentle p-4"
+              onClick={() => setSelectedImage('__text_only__')}
+            >
+              <p className="text-terminal-text-primary-light dark:text-terminal-text-primary-dark text-sm leading-relaxed whitespace-pre-wrap line-clamp-6">
+                {post.content}
+              </p>
+              <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-terminal-bg-light/80 dark:from-terminal-bg-dark/80 to-transparent rounded-b-lg pointer-events-none" />
             </div>
           </div>
         )}
