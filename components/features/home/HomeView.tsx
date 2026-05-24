@@ -208,7 +208,7 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
       if (to) url.searchParams.append('to', to)
       url.searchParams.append('sortBy', sortBy)
       url.searchParams.append('sortOrder', sortOrder)
-      if (!debouncedQuery && !from && !to) {
+      if (!debouncedQuery && !from && !to && sortBy === 'date') {
         url.searchParams.append('ungrouped', 'true')
       }
 
@@ -391,6 +391,13 @@ export default function HomeClient({ initialPosts, initialPagination }: HomeClie
           <div className="px-4 pt-3 pb-1">
             <h2 className="text-sm font-medium text-terminal-text-secondary-light dark:text-terminal-text-secondary-dark">
               文案匹配「{debouncedQuery}」
+            </h2>
+          </div>
+        )}
+        {!debouncedQuery && sortBy !== 'date' && posts.length > 0 && (
+          <div className="px-4 pt-3 pb-1">
+            <h2 className="text-sm font-medium text-terminal-text-secondary-light dark:text-terminal-text-secondary-dark">
+              全部推文
             </h2>
           </div>
         )}
