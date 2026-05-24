@@ -6,8 +6,9 @@ import Link from 'next/link'
 import type { TwitterPost, PostGroup } from '@/lib/supabase'
 import { formatDistanceToNow, format } from 'date-fns'
 import { zhCN } from 'date-fns/locale'
-import { ArrowLeft, ArrowSquareOut, ChatCircle, ArrowsClockwise, Heart, Eye, PencilSimple, Check, X, Trash } from 'phosphor-react'
+import { ArrowLeft, ArrowSquareOut, ChatCircle, ArrowsClockwise, Heart, Eye, PencilSimple, Check, X, Trash, FolderPlus } from 'phosphor-react'
 import ImageModal from '@/components/features/image/ImageModal'
+import GroupSelectorModal from '@/components/features/posts/GroupSelectorModal'
 
 function PostContent({ content, isActive }: { content: string; isActive: boolean }) {
   const [expanded, setExpanded] = useState(false)
@@ -58,6 +59,8 @@ export default function GroupDetailView({ groupId }: GroupDetailViewProps) {
   const [isRenaming, setIsRenaming] = useState(false)
   const [renameValue, setRenameValue] = useState('')
   const renameInputRef = useRef<HTMLInputElement>(null)
+  const [groupModalOpen, setGroupModalOpen] = useState(false)
+  const [movingPostId, setMovingPostId] = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
@@ -122,6 +125,54 @@ export default function GroupDetailView({ groupId }: GroupDetailViewProps) {
       }
     } catch (err) {
       console.error('删除失败:', err)
+    }
+  }
+
+  const handleOpenMoveGroup = (postId: string) => {
+    setMovingPostId(postId)
+    setGroupModalOpen(true)
+  }
+
+  const handleMoveToGroup = async (targetGroupId: string) => {
+    if (!movingPostId) return
+    try {
+      const res = await fetch('/api/posts/assign-group', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ post_id: movingPostId, group_id: targetGroupId })
+      })
+      if (res.ok) {
+        const newPosts = posts.filter(p => p.id !== movingPostId)
+        setPosts(newPosts)
+        if (selectedPostId === movingPostId) {
+          setSelectedPostId(newPosts[0]?.id || null)
+        }
+      }
+    } catch (err) {
+      console.error('移动分组失败:', err)
+    }
+    setGroupModalOpen(false)
+    setMovingPostId(null)
+  }
+
+  const handleCreateNewGroupAndMove = async (title: string) => {
+    if (!movingPostId) return
+    const post = posts.find(p => p.id === movingPostId)
+    const coverImage = post?.images?.[0] || group?.cover_image || ''
+    try {
+      const groupRes = await fetch('/api/groups', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cover_image: coverImage, title })
+      })
+      if (groupRes.ok) {
+        const newGroup = await groupRes.json()
+        await handleMoveToGroup(newGroup.id)
+      }
+    } catch (err) {
+      console.error('创建分组失败:', err)
+      setGroupModalOpen(false)
+      setMovingPostId(null)
     }
   }
 
@@ -289,6 +340,13 @@ export default function GroupDetailView({ groupId }: GroupDetailViewProps) {
                         >
                           <Trash className="w-3 h-3" weight="duotone" />
                         </button>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); handleOpenMoveGroup(post.id) }}
+                          className="flex items-center gap-0.5 hover:text-terminal-accent-light dark:hover:text-terminal-accent-dark ml-1 transition-colors"
+                          title="移动到其他分组"
+                        >
+                          <FolderPlus className="w-3 h-3" weight="duotone" />
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -326,6 +384,14 @@ export default function GroupDetailView({ groupId }: GroupDetailViewProps) {
         tweetUrl={selectedPost?.tweet_url}
         tweetCreatedAt={selectedPost?.tweet_created_at}
         onClose={() => setShowImageModal(false)}
+      />
+
+      {/* 分组选择模态框 */}
+      <GroupSelectorModal
+        isOpen={groupModalOpen}
+        onClose={() => { setGroupModalOpen(false); setMovingPostId(null) }}
+        onSelect={handleMoveToGroup}
+        onCreateNew={handleCreateNewGroupAndMove}
       />
     </div>
   )
